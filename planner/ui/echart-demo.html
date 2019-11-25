@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <title>ECharts</title>
+    <script src='jquery-3.4.1.js'></script>
+    <script src='echarts.js'></script>
+    <script src='echarts-gl.js'></script>
+
+</head>
+<body>
+<div id='main' style='width: 100%;height:800px;'>
+
+</div>
+</body>
+<script>
+
+    $.get('http://log.hwsc.ingbyr.com/life-expectancy-table.json', function (data) {
+
+        var myChart = echarts.init(document.getElementById('main'));
+
+        var symbolSize = 5;
+        option = {
+            grid3D: {},
+            xAxis3D: {
+                type: 'category'
+            },
+            yAxis3D: {},
+            zAxis3D: {},
+            dataset: {
+                dimensions: [
+                    'Income',
+                    'Life Expectancy',
+                    'Population',
+                    'Country',
+                    {name: 'Year', type: 'ordinal'}
+                ],
+                // dimensions: [
+                //     'Step',
+                //     'Res',
+                //     'Ava',
+                //     'Suc',
+                //     'Rel',
+                //     'Lat',
+                //     'Pri'
+                // ],
+                source: data
+            },
+            series: [
+                {
+                    type: 'scatter3D',
+                    symbolSize: symbolSize,
+                    encode: {
+                        x: 'Country',
+                        y: 'Life Expectancy',
+                        z: 'Income',
+                        // x: 'Step',
+                        // y: 'Suc',
+                        // z: 'Rel',
+                        tooltip: [0, 1, 2, 3, 4]
+                    }
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    });
+</script>
+</html>

@@ -1,0 +1,9 @@
+.DS_Store
+.gradle/
+.idea/
+log/
+build/
+gradle/
+gradlew
+gradlew.bat
+planner/daex.properties

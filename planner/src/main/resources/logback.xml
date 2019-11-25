@@ -1,0 +1,35 @@
+<configuration debug="false">
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%-5level %boldGreen([%logger{0}]) %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${user.dir}/log/debug.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>[%logger{0}] %msg %n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <logger name="com.ingbyr.hwsc.planner.cpg" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.reader.XMLDataSetReader" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.planner.yashp2" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.dae.MutationAddState" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.dae.MutationDelState" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.dae.MutationAddConcept" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.dae.MutationDelConcept" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.dae.CrossoverSwapState" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.dae.EvaluatorGoalDistance" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.dae.EvaluatorGoalDistanceConcurrent" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.dae.IndividualGenerator" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.indicators.BinaryIndicator" level="OFF"/>
+
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</configuration>

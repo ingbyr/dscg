@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taxonomy>
+	<concept name="con51">
+	    <concept name="con44">
+	        <instance name="inst46" />
+	        <concept name="con43">
+	            <instance name="inst41" />
+	        </concept>
+	    </concept>
+	    <concept name="con46">
+	        <instance name="inst47" />
+	        <concept name="con45">
+	            <instance name="inst43" />
+	        </concept>
+	    </concept>
+	    <concept name="con50">
+	        <instance name="inst78" />
+	        <concept name="con49">
+	            <instance name="inst48" />
+	        </concept>
+	    </concept>
+	    <concept name="con48">
+	        <instance name="inst79" />
+	        <concept name="con47">
+	            <instance name="inst64" />
+	            <instance name="inst62" />
+	            <instance name="inst45" />
+	        </concept>
+	    </concept>
+	    <concept name="con42">
+	        <instance name="inst40" />
+	        <concept name="con41">
+	            <instance name="inst37" />
+	        </concept>
+	    </concept>
+	    <concept name="con34">
+	        <instance name="inst76" />
+	        <concept name="con33">
+	            <instance name="inst35" />
+	        </concept>
+	    </concept>
+	    <concept name="con36">
+	        <instance name="inst77" />
+	        <concept name="con35">
+	            <instance name="inst28" />
+	        </concept>
+	    </concept>
+	    <concept name="con40">
+	        <instance name="inst42" />
+	        <concept name="con39">
+	            <instance name="inst38" />
+	        </concept>
+	    </concept>
+	    <concept name="con32">
+	        <instance name="inst33" />
+	        <concept name="con31">
+	            <instance name="inst29" />
+	        </concept>
+	    </concept>
+	    <concept name="con26">
+	        <instance name="inst27" />
+	        <concept name="con25">
+	            <instance name="inst69" />
+	            <instance name="inst66" />
+	            <instance name="inst23" />
+	        </concept>
+	    </concept>
+	    <concept name="con28">
+	        <instance name="inst73" />
+	        <instance name="inst30" />
+	        <concept name="con27">
+	            <instance name="inst70" />
+	            <instance name="inst67" />
+	            <instance name="inst24" />
+	        </concept>
+	    </concept>
+	    <concept name="con30">
+	        <instance name="inst34" />
+	        <concept name="con29">
+	            <instance name="inst32" />
+	            <instance name="inst75" />
+	        </concept>
+	    </concept>
+	    <concept name="con0">
+	        <instance name="inst19" />
+	        <instance name="inst59" />
+	        <instance name="inst55" />
+	        <instance name="inst51" />
+	        <instance name="inst17" />
+	        <concept name="con1">
+	            <instance name="inst36" />
+	            <instance name="inst60" />
+	            <instance name="inst56" />
+	            <instance name="inst52" />
+	            <instance name="inst18" />
+	        </concept>
+	    </concept>
+	    <concept name="con22">
+	        <instance name="inst25" />
+	        <concept name="con21">
+	            <instance name="inst21" />
+	        </concept>
+	    </concept>
+	    <concept name="con24">
+	        <instance name="inst74" />
+	        <instance name="inst31" />
+	        <concept name="con23">
+	            <instance name="inst26" />
+	        </concept>
+	    </concept>
+	    <concept name="con15">
+	        <instance name="inst57" />
+	        <instance name="inst53" />
+	        <instance name="inst49" />
+	        <instance name="inst12" />
+	        <concept name="con14">
+	            <instance name="inst9" />
+	            <instance name="inst72" />
+	        </concept>
+	    </concept>
+	    <concept name="con17">
+	        <instance name="inst58" />
+	        <instance name="inst54" />
+	        <instance name="inst50" />
+	        <instance name="inst16" />
+	        <concept name="con16">
+	            <instance name="inst15" />
+	        </concept>
+	    </concept>
+	    <concept name="con20">
+	        <instance name="inst68" />
+	        <instance name="inst65" />
+	        <instance name="inst22" />
+	        <concept name="con19">
+	            <instance name="inst20" />
+	        </concept>
+	    </concept>
+	    <concept name="con38">
+	        <instance name="inst63" />
+	        <instance name="inst61" />
+	        <instance name="inst44" />
+	        <concept name="con37">
+	            <instance name="inst39" />
+	        </concept>
+	    </concept>
+	    <concept name="con3">
+	        <instance name="inst3" />
+	        <concept name="con2">
+	            <instance name="inst1" />
+	        </concept>
+	    </concept>
+	    <concept name="con5">
+	        <instance name="inst4" />
+	        <concept name="con4">
+	            <instance name="inst2" />
+	        </concept>
+	    </concept>
+	    <concept name="con7">
+	        <instance name="inst7" />
+	        <instance name="inst71" />
+	        <concept name="con6">
+	            <instance name="inst5" />
+	        </concept>
+	    </concept>
+	    <concept name="con9">
+	        <instance name="inst8" />
+	        <concept name="con8">
+	            <instance name="inst6" />
+	        </concept>
+	    </concept>
+		<concept name="con11">
+		    <instance name="inst13" />
+		    <concept name="con10">
+		        <instance name="inst10" />
+		    </concept>
+		</concept>
+		<concept name="con13">
+		    <instance name="inst14" />
+		    <concept name="con12">
+		        <instance name="inst11" />
+		    </concept>
+		</concept>
+	</concept>
+</taxonomy>
+

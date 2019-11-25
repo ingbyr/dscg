@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problemStructure>
+	<task>
+		<provided>
+			<instance name="inst43636117"/>
+			<instance name="inst881738507"/>
+			<instance name="inst1855428275"/>
+			<instance name="inst63298417"/>
+			<instance name="inst1006470412"/>
+			<instance name="inst376664759"/>
+			<instance name="inst160585594"/>
+			<instance name="inst1781080486"/>
+		</provided>
+		<options>
+			<condition>
+				<general concept="con1545953204" />
+				<specific concept="con21721128" />
+			</condition>
+			<if>
+				<instance name="inst896485213"/>
+				<instance name="inst1707346842"/>
+				<instance name="inst1074264139"/>
+				<instance name="inst1594084593"/>
+				<instance name="inst765813391"/>
+			</if>
+			<else>
+				<instance name="inst226330599"/>
+				<instance name="inst1871403385"/>
+				<instance name="inst1395208904"/>
+			</else>
+		</options>
+	</task>
+	<solutions />
+</problemStructure>

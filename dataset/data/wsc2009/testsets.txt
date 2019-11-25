@@ -1,0 +1,33 @@
+Testset01
+----------
+Services:  500
+Concepts:  5000
+Solutions: 5,5,10,10
+
+
+Testset02
+----------
+Services:  4000
+Concepts:  40000
+Solutions: 20,20,20
+
+
+Testset03
+----------
+Services:  8000
+Concepts:  60000
+Solutions: 20,20,20
+
+
+Testset04
+----------
+Services:  8000
+Concepts:  60000
+Solutions: 40,40,40
+
+
+Testset05
+----------
+Services:  15000
+Concepts:  100000
+Solutions: 30,30,30
