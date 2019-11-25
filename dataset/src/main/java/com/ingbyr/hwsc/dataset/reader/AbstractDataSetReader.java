@@ -1,11 +1,13 @@
 package com.ingbyr.hwsc.dataset.reader;
 
 import com.ingbyr.hwsc.common.models.*;
+import com.ingbyr.hwsc.common.util.FileUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.dom4j.DocumentException;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -13,30 +15,16 @@ import java.util.Set;
 @Getter
 @Slf4j
 public abstract class AbstractDataSetReader implements DataSetReader {
-    protected final String PREFIX_URL = "dataset//data//wsc";
-    protected final String DATA_SET;
-    protected final String DATA_SET_ID;
 
-    protected Map<String, Thing> thingMap;
-    protected Map<String, Service> serviceMap;
-    protected Map<String, Param> paramMap;
-    protected Map<String, Concept> conceptMap;
+    protected Map<String, Thing> thingMap = new HashMap<>();
+    protected Map<String, Service> serviceMap = new HashMap<>();
+    protected Map<String, Param> paramMap = new HashMap<>();
+    protected Map<String, Concept> conceptMap = new HashMap<>();
 
     // Left value is init p level and right value is goal set
     protected Pair<Set<Concept>, Set<Concept>> problem;
     protected Qos minOriginQos = new Qos(Double.MAX_VALUE);
     protected Qos maxOriginQos = new Qos(Double.MIN_VALUE);
-
-    protected AbstractDataSetReader(String data_set, String data_set_id) {
-        this.DATA_SET = data_set;
-        this.DATA_SET_ID = data_set_id;
-
-
-        this.thingMap = new HashMap<>();
-        this.serviceMap = new HashMap<>();
-        this.paramMap = new HashMap<>();
-        this.conceptMap = new HashMap<>();
-    }
 
     /**
      * Parse taxonomy file
@@ -113,5 +101,11 @@ public abstract class AbstractDataSetReader implements DataSetReader {
                 concept.addProducedByService(service);
             }
         });
+    }
+
+    protected File loadFile(String filePath) {
+        File file = new File(filePath);
+        log.debug("Load file {}", file.getAbsolutePath());
+        return file;
     }
 }

@@ -1,6 +1,7 @@
 package com.ingbyr.hwsc.dae;
 
 import com.ingbyr.hwsc.common.models.Qos;
+import com.ingbyr.hwsc.dataset.Dataset;
 import com.ingbyr.hwsc.exception.DAEXConfigException;
 import com.ingbyr.hwsc.indicators.BinaryIndicator;
 import com.ingbyr.hwsc.planner.yashp2.Yashp2Planner;
@@ -199,12 +200,11 @@ public class DAEX {
 
     }
 
-
     public static void main(String[] args) throws ConfigurationException {
 
         DAEXConfig config = new DAEXConfig();
 
-        DataSetReader dataSetReader = new XMLDataSetReader(config.dataset, config.datasetId);
+        DataSetReader dataSetReader = new XMLDataSetReader(Dataset.wsc2009_01);
         dataSetReader.process();
 
         Planner planner = new Yashp2Planner(dataSetReader.getServiceMap(), dataSetReader.getConceptMap(), 1);

@@ -1,6 +1,6 @@
 package com.ingbyr.hwsc.pg;
 
-import com.ingbyr.hwsc.models.PlanningGraph;
+import com.ingbyr.hwsc.model.PlanningGraph;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

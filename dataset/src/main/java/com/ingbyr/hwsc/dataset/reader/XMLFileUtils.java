@@ -1,5 +1,6 @@
 package com.ingbyr.hwsc.dataset.reader;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -10,10 +11,13 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.function.Consumer;
 
+@Slf4j
 public class XMLFileUtils {
 
-    public static Element loadRootElement(String xmlFileUrl) throws DocumentException {
-        return loadRootElement(FileUtils.getFile(xmlFileUrl));
+    public static Element loadRootElement(String xmlFilePath) throws DocumentException {
+        File xmlFile = FileUtils.getFile(xmlFilePath);
+        log.debug("Load xml file {}", xmlFile.getAbsolutePath());
+        return loadRootElement(FileUtils.getFile(xmlFilePath));
     }
 
     public static Element loadRootElement(File xmlFile) throws DocumentException {

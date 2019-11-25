@@ -4,32 +4,36 @@ import com.ingbyr.hwsc.common.models.Concept;
 import com.ingbyr.hwsc.common.models.Param;
 import com.ingbyr.hwsc.common.models.Service;
 import com.ingbyr.hwsc.common.models.Thing;
+import com.ingbyr.hwsc.dataset.Dataset;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 
+import java.io.File;
 import java.util.*;
 
 @Getter
+@Slf4j
 public class WSDLDataSetReader extends AbstractDataSetReader implements DataSetReader {
 
     private final String TAXONOMY_URL;
     private final String SERVICES_URL;
     private final String PROBLEM_URL;
 
-    public WSDLDataSetReader(String data_set, String dataSetId) {
-        super(data_set, dataSetId);
-        this.TAXONOMY_URL = PREFIX_URL + DATA_SET + "//Testset" + DATA_SET_ID + "//Taxonomy.owl";
-        this.SERVICES_URL = PREFIX_URL + DATA_SET + "//Testset" + DATA_SET_ID + "//Services.wsdl";
-        this.PROBLEM_URL = PREFIX_URL + DATA_SET + "//Testset" + DATA_SET_ID + "//Challenge.wsdl";
+    public WSDLDataSetReader(Dataset dataset) {
+        this.TAXONOMY_URL = dataset.getPath() + "//Taxonomy.owl";
+        this.SERVICES_URL = dataset.getPath() + "//Services.wsdl";
+        this.PROBLEM_URL = dataset.getPath()+ "//Challenge.wsdl";
     }
 
     @Override
     protected Map<String, Concept> parseTaxonomyDocument() throws DocumentException {
-        Element taxonomyRoot = XMLFileUtils.loadRootElement(FileUtils.getFile(TAXONOMY_URL));
+
+        Element taxonomyRoot = XMLFileUtils.loadRootElement(loadFile(TAXONOMY_URL));
 
         /**
          * loop through semantic elements to check taxonomy
@@ -67,7 +71,7 @@ public class WSDLDataSetReader extends AbstractDataSetReader implements DataSetR
     @Override
     protected Map<String, Service> parseServicesDocument() throws DocumentException {
 
-        Element servicesRoot = XMLFileUtils.loadRootElement(FileUtils.getFile(SERVICES_URL));
+        Element servicesRoot = XMLFileUtils.loadRootElement(loadFile(SERVICES_URL));
         Element semRoot = servicesRoot.element("semExtension");
 
         /**
@@ -126,7 +130,7 @@ public class WSDLDataSetReader extends AbstractDataSetReader implements DataSetR
         Set<Concept> initPLevel = new HashSet<>();
         Set<Concept> goalSet = new HashSet<>();
 
-        Element servicesRoot = XMLFileUtils.loadRootElement(FileUtils.getFile(PROBLEM_URL));
+        Element servicesRoot = XMLFileUtils.loadRootElement(loadFile(PROBLEM_URL));
         Element semRoot = servicesRoot.element("semExtension");
 
         for (Iterator i = semRoot.elementIterator(); i.hasNext(); ) {

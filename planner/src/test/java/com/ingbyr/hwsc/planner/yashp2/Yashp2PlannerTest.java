@@ -3,9 +3,9 @@ package com.ingbyr.hwsc.planner.yashp2;
 import com.ingbyr.hwsc.dae.DAEAnalyzer;
 import com.ingbyr.hwsc.dae.Planner;
 import com.ingbyr.hwsc.dae.Solution;
+import com.ingbyr.hwsc.dataset.reader.DataSetReader;
+import com.ingbyr.hwsc.dataset.reader.XMLDataSetReader;
 import com.ingbyr.hwsc.exception.NotValidSolutionException;
-import com.ingbyr.hwsc.reader.DataSetReader;
-import com.ingbyr.hwsc.reader.XMLDataSetReader;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

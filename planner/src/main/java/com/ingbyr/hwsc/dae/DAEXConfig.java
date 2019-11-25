@@ -1,5 +1,6 @@
 package com.ingbyr.hwsc.dae;
 
+import com.ingbyr.hwsc.dataset.Dataset;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration2.Configuration;
@@ -27,10 +28,7 @@ public final class DAEXConfig {
     private static final String CONFIG_PATH = "planner//daex.properties";
 
     private static final String DATASET = "dataset";
-    String dataset;
-
-    private static final String DATASET_ID = "dataset_id";
-    String datasetId;
+    Dataset dataset;
 
     private static final String POPULATION_SIZE = "population_size";
     int populationSize;
@@ -79,8 +77,7 @@ public final class DAEXConfig {
 
         Configuration config = configHelp.properties(new File(CONFIG_PATH));
 
-        dataset = config.getString(DATASET);
-        datasetId = config.getString(DATASET_ID);
+        dataset = Dataset.valueOf(config.getString(DATASET));
         populationSize = config.getInt(POPULATION_SIZE);
         offspringSize = config.getInt(OFFSPRING_SIZE);
         survivalSize = config.getInt(SURVIVAL_SIZE);

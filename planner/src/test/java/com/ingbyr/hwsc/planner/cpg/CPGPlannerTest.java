@@ -2,7 +2,7 @@ package com.ingbyr.hwsc.planner.cpg;
 
 import com.ingbyr.hwsc.dae.Planner;
 import com.ingbyr.hwsc.dae.Solution;
-import com.ingbyr.hwsc.models.PlanningGraph;
+import com.ingbyr.hwsc.model.PlanningGraph;
 import com.ingbyr.hwsc.pg.GeneratePlanningGraph;
 import com.ingbyr.hwsc.planner.cpg.extractors.*;
 import com.ingbyr.hwsc.planner.cpg.models.CompletePlaningGraph;

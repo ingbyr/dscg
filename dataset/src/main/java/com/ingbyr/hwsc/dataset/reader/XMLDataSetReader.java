@@ -1,6 +1,8 @@
 package com.ingbyr.hwsc.dataset.reader;
 
 import com.ingbyr.hwsc.common.models.*;
+import com.ingbyr.hwsc.dataset.Dataset;
+import com.ingbyr.hwsc.dataset.util.QosUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -33,11 +35,10 @@ public class XMLDataSetReader extends AbstractDataSetReader implements DataSetRe
     private final String SERVICES_URL;
     private final String PROBLEM_URL;
 
-    public XMLDataSetReader(String data_set, String dataSetId) {
-        super(data_set, dataSetId);
-        this.TAXONOMY_URL = PREFIX_URL + DATA_SET + "//Testset" + DATA_SET_ID + "//taxonomy.xml";
-        this.SERVICES_URL = PREFIX_URL + DATA_SET + "//Testset" + DATA_SET_ID + "//services-qos.xml";
-        this.PROBLEM_URL = PREFIX_URL + DATA_SET + "//Testset" + DATA_SET_ID + "//problem.xml";
+    public XMLDataSetReader(Dataset dataset) {
+        this.TAXONOMY_URL = dataset.getPath() + "//taxonomy.xml";
+        this.SERVICES_URL = dataset.getPath() + "//services-qos.xml";
+        this.PROBLEM_URL = dataset.getPath()+ "//problem.xml";
     }
 
     @Override

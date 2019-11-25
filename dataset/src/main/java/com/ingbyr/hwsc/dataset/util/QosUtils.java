@@ -1,4 +1,4 @@
-package com.ingbyr.hwsc.dataset.reader;
+package com.ingbyr.hwsc.dataset.util;
 
 import com.ingbyr.hwsc.common.models.Qos;
 import com.ingbyr.hwsc.common.models.Service;

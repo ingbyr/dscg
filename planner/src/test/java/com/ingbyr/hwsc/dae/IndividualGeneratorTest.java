@@ -1,7 +1,7 @@
 package com.ingbyr.hwsc.dae;
 
-import com.ingbyr.hwsc.reader.DataSetReader;
-import com.ingbyr.hwsc.reader.XMLDataSetReader;
+import com.ingbyr.hwsc.dataset.reader.DataSetReader;
+import com.ingbyr.hwsc.dataset.reader.XMLDataSetReader;
 import com.ingbyr.hwsc.utils.UniformUtils;
 import org.junit.jupiter.api.Test;
 

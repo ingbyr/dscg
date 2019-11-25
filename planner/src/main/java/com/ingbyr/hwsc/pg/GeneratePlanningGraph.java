@@ -2,6 +2,7 @@ package com.ingbyr.hwsc.pg;
 
 import com.ingbyr.hwsc.common.models.Concept;
 import com.ingbyr.hwsc.common.models.Service;
+import com.ingbyr.hwsc.dataset.Dataset;
 import com.ingbyr.hwsc.dataset.reader.DataSetReader;
 import com.ingbyr.hwsc.dataset.reader.WSDLDataSetReader;
 import com.ingbyr.hwsc.dataset.reader.XMLDataSetReader;
@@ -19,19 +20,19 @@ public class GeneratePlanningGraph {
     /**
      * Generate planning graph from wsdl file which has no QOS
      *
-     * @param datasetId Data set id (01 - 05)
+     * @param dataset Dataset
      * @return PlanningGraph
      */
-    public static PlanningGraph fromWSDL(String dataset, String datasetId) {
-        DataSetReader dataSetReader = initDataSetReader(new WSDLDataSetReader(dataset, datasetId));
+    public static PlanningGraph fromWSDL(Dataset dataset) {
+        DataSetReader dataSetReader = initDataSetReader(new WSDLDataSetReader(dataset));
         return generatePlanningGraph(dataSetReader);
     }
 
     /**
      * Generate planning graph from xml file
      */
-    public static PlanningGraph fromXML(String dataset, String datasetId) {
-        DataSetReader dataSetReader = initDataSetReader(new XMLDataSetReader(dataset, datasetId));
+    public static PlanningGraph fromXML(Dataset dataset) {
+        DataSetReader dataSetReader = initDataSetReader(new XMLDataSetReader(dataset));
         return generatePlanningGraph(dataSetReader);
     }
 
