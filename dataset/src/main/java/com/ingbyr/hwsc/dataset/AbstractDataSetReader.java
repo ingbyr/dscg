@@ -25,6 +25,7 @@ public abstract class AbstractDataSetReader implements DataSetReader {
     protected Qos minOriginQos = new Qos(Double.MAX_VALUE);
     protected Qos maxOriginQos = new Qos(Double.MIN_VALUE);
 
+
     /**
      * Parse taxonomy file
      *

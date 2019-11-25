@@ -9,6 +9,10 @@ import java.util.Set;
 
 public interface DataSetReader {
 
+    void setDataset(Dataset dataset);
+
+    void setDataset(String dataset);
+
     void process();
 
     Qos getMaxOriginQos();
