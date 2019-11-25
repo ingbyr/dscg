@@ -1,32 +1,40 @@
 package com.ingbyr.hwsc.dataset;
 
 import com.ingbyr.hwsc.common.util.FileUtils;
+import lombok.Getter;
 
 public enum Dataset {
 
-    wsc2008_01("//wsc2008//Testset01"),
-    wsc2008_02("//wsc2008//Testset02"),
-    wsc2008_03("//wsc2008//Testset03"),
-    wsc2008_04("//wsc2008//Testset04"),
-    wsc2008_05("//wsc2008//Testset05"),
-    wsc2008_06("//wsc2008//Testset06"),
-    wsc2008_07("//wsc2008//Testset07"),
-    wsc2008_08("//wsc2008//Testset08"),
-    wsc2009_01("//wsc2009//Testset01"),
-    wsc2009_02("//wsc2009//Testset02"),
-    wsc2009_03("//wsc2009//Testset03"),
-    wsc2009_04("//wsc2009//Testset04"),
-    wsc2009_05("//wsc2009//Testset05");
+    wsc2008_01("2008", "01"),
+    wsc2008_02("2008", "02"),
+    wsc2008_03("2008", "03"),
+    wsc2008_04("2008", "04"),
+    wsc2008_05("2008", "05"),
+    wsc2008_06("2008", "06"),
+    wsc2008_07("2008", "07"),
+    wsc2008_08("2008", "08"),
+    wsc2009_01("2009", "01"),
+    wsc2009_02("2009", "02"),
+    wsc2009_03("2009", "03"),
+    wsc2009_04("2009", "04"),
+    wsc2009_05("2009", "05");
 
+    @Getter
+    private final String datasetId1;
+
+    @Getter
+    private final String datasetId2;
+
+    @Getter
     private String path;
 
-    private static final String DATA_PATH_PREFIX = FileUtils.PROJECT_DIR.resolve("data").normalize().toString();
-
-    Dataset(String path) {
-        this.path = path;
-    }
-
-    public String getPath() {
-        return DATA_PATH_PREFIX + path;
+    Dataset(String datasetId1, String datasetId2) {
+        this.datasetId1 = datasetId1;
+        this.datasetId2 = datasetId2;
+        this.path = FileUtils.CURRENT_DIR.resolve("data")
+                .resolve("wsc" + datasetId1)
+                .resolve("Testset" + datasetId2)
+                .normalize()
+                .toString();
     }
 }

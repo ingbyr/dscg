@@ -15,18 +15,18 @@
         </encoder>
     </appender>
 
-    <logger name="com.ingbyr.hwsc.planner.cpg" level="OFF"/>
     <logger name="com.ingbyr.hwsc.reader.XMLDataSetReader" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.planner.yashp2" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.dae.MutationAddState" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.dae.MutationDelState" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.dae.MutationAddConcept" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.dae.MutationDelConcept" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.dae.CrossoverSwapState" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.dae.EvaluatorGoalDistance" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.dae.EvaluatorGoalDistanceConcurrent" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.dae.IndividualGenerator" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.indicators.BinaryIndicator" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.planner.planner.cpg" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.planner.planner.yashp2" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.planner.MutationAddState" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.planner.MutationDelState" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.planner.MutationAddConcept" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.planner.MutationDelConcept" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.planner.CrossoverSwapState" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.planner.EvaluatorGoalDistance" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.planner.EvaluatorGoalDistanceConcurrent" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.planner.IndividualGenerator" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.planner.indicators.BinaryIndicator" level="OFF"/>
 
     <root level="DEBUG">
         <appender-ref ref="STDOUT"/>

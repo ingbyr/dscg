@@ -2,4 +2,6 @@ rootProject.name = 'hwsc'
 include 'planner'
 include 'common'
 include 'dataset'
+include 'test'
+include 'services'
 
