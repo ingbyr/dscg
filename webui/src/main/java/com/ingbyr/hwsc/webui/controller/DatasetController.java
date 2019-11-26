@@ -1,5 +1,6 @@
 package com.ingbyr.hwsc.webui.controller;
 
+import com.ingbyr.hwsc.common.models.Service;
 import com.ingbyr.hwsc.dataset.Dataset;
 import com.ingbyr.hwsc.webui.service.DatasetService;
 import com.ingbyr.hwsc.webui.service.RedisService;
@@ -13,10 +14,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("dataset")
 @Slf4j
-@Api(tags = "Control local dataset and database")
+@Api(tags = "Dataset controller")
 public class DatasetController {
 
     private DatasetService datasetService;
@@ -44,4 +47,6 @@ public class DatasetController {
         datasetService.saveDatasetToDatabase(Dataset.valueOf(dataset.toLowerCase()));
         return "Loaded dataset to db";
     }
+
+
 }

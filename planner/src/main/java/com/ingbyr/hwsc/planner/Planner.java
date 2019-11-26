@@ -13,6 +13,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -180,12 +181,17 @@ public class Planner {
 
     protected void afterExec() {
         analyzer.recordEndTime();
-        analyzer.displayLog();
         analyzer.displayRuntime();
+        analyzer.displayLog();
+        try {
+            analyzer.transToUIData();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void checkConfig() throws DAEXConfigException {
-        log.info("Check the daex config");
+        log.info("Check the planner config");
         log.info(config.toString());
 
         if (populationSize + offspringSize < survivalSize)

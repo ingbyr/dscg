@@ -6,14 +6,14 @@
         </encoder>
     </appender>
 
-    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>${user.dir}/log/debug.log</file>
-        <append>false</append>
-        <encoder>
-            <pattern>[%logger{0}] %msg %n</pattern>
-            <charset>UTF-8</charset>
-        </encoder>
-    </appender>
+<!--    <appender name="FILE" class="ch.qos.logback.core.FileAppender">-->
+<!--        <file>${user.dir}/log/debug.log</file>-->
+<!--        <append>false</append>-->
+<!--        <encoder>-->
+<!--            <pattern>[%logger{0}] %msg %n</pattern>-->
+<!--            <charset>UTF-8</charset>-->
+<!--        </encoder>-->
+<!--    </appender>-->
 
     <logger name="com.ingbyr.hwsc.reader.XMLDataSetReader" level="OFF"/>
     <logger name="com.ingbyr.hwsc.planner.innerplanner.cpg" level="OFF"/>

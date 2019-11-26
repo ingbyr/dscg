@@ -17,9 +17,9 @@ public class Service extends NamedObject {
     private Set<Param> outputParamSet;
     private Set<Concept> inputConceptSet;
     private Set<Concept> outputConceptSet;
-    private Set<Concept> commonOutputs;
-    private Set<Service> backupServiceSet;
-    private boolean solutionService;
+//    private Set<Concept> commonOutputs;
+//    private Set<Service> backupServiceSet;
+//    private boolean solutionService;
     private Qos qos;
     private Qos originQos;
     private double cost;
@@ -30,9 +30,9 @@ public class Service extends NamedObject {
         outputParamSet = new HashSet<>();
         inputConceptSet = new HashSet<>();
         outputConceptSet = new HashSet<>();
-        commonOutputs = new HashSet<>();
-        backupServiceSet = new HashSet<>();
-        solutionService = false;
+//        commonOutputs = new HashSet<>();
+//        backupServiceSet = new HashSet<>();
+//        solutionService = false;
         qos = new Qos();
         originQos = new Qos();
         cost = 0.0;

@@ -1,34 +1,38 @@
 package com.ingbyr.hwsc.planner;
 
 import com.ingbyr.hwsc.dataset.Dataset;
+import lombok.Getter;
+import lombok.ToString;
 
-public interface PlannerConfig {
+@ToString
+@Getter
+public abstract class PlannerConfig {
 
-    Dataset getDataset();
+    Dataset dataset;
 
-    int getPopulationSize();
+    int populationSize;
 
-    int getOffspringSize();
+    int offspringSize;
 
-    int getSurvivalSize();
+    int survivalSize;
 
-    double getCrossoverPossibility();
+    double crossoverPossibility;
 
-    double getMutationPossibility();
+    double mutationPossibility;
 
-    int getMutationAddStateWeight();
+    int mutationAddStateWeight;
 
-    int getMutationAddConceptWeight();
+    int mutationAddConceptWeight;
 
-    int getMutationDelStateWeight();
+    int mutationDelStateWeight;
 
-    int getMutationDelConceptWeight();
+    int mutationDelConceptWeight;
 
-    boolean isEnableConcurrentMode();
+    boolean enableConcurrentMode;
 
-    boolean isEnableAutoStop();
+    boolean enableAutoStop;
 
-    int getMaxGen();
+    int maxGen;
 
-    int getAutoStopStep();
+    int autoStopStep;
 }

@@ -2,7 +2,6 @@ package com.ingbyr.hwsc.planner;
 
 import com.ingbyr.hwsc.common.util.FileUtils;
 import com.ingbyr.hwsc.dataset.Dataset;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
@@ -15,11 +14,10 @@ import java.io.File;
  *
  * @author ingbyr
  */
-@ToString
 @Slf4j
-public final class PlannerLocalConfig extends AbstractPlannerConfig {
+public final class PlannerLocalConfig extends PlannerConfig {
 
-    private static final File CONFIG_FILE = FileUtils.CURRENT_DIR.resolve("planner.properties").toFile();
+    private static final File CONFIG_FILE = FileUtils.WORK_DIR.resolve("planner.properties").toFile();
 
     private static final String DATASET = "dataset";
 
@@ -51,6 +49,7 @@ public final class PlannerLocalConfig extends AbstractPlannerConfig {
 
     /**
      * Load planner config from planner.properties file
+     *
      * @throws ConfigurationException
      */
     public PlannerLocalConfig() throws ConfigurationException {

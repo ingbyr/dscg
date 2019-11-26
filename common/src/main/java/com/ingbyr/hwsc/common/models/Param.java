@@ -18,6 +18,5 @@ public class Param extends NamedObject {
     public void setThing(Thing thing) {
         this.thing = thing;
     }
-
-
+    
 }

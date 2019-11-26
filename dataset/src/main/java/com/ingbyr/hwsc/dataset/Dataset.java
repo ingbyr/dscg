@@ -33,7 +33,7 @@ public enum Dataset {
     Dataset(String datasetId1, String datasetId2) {
         this.datasetId1 = datasetId1;
         this.datasetId2 = datasetId2;
-        this.path = FileUtils.CURRENT_DIR.resolve("data")
+        this.path = FileUtils.WORK_DIR.resolve("data")
                 .resolve("wsc" + datasetId1)
                 .resolve("Testset" + datasetId2)
                 .normalize();
