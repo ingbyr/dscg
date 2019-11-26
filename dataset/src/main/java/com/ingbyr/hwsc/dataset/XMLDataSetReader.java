@@ -75,7 +75,6 @@ public class XMLDataSetReader extends AbstractDataSetReader implements DataSetRe
                         concept.setDirectParentName(conceptParentName);
                     } else {
                         concept.setRoot(true);
-                        concept.addConceptToParentIndex(null);
                     }
                     // store concept
                     conceptMap.put(concept.getName(), concept);

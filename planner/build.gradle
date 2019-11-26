@@ -1,11 +1,13 @@
+version '2.0'
+
 application {
-    mainClassName = "com.ingbyr.hwsc.dae.DAEX"
+    mainClassName = 'com.ingbyr.hwsc.planner.Planner'
     applicationDefaultJvmArgs =["-Xmx32000m"]
 }
 
 jar {
     manifest {
-        attributes 'Main-Class' : 'com.ingbyr.hwsc.dae.DAEX'
+        attributes 'Main-Class' : 'com.ingbyr.hwsc.planner.Planner'
     }
 
     from {

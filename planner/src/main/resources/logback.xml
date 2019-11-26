@@ -16,8 +16,8 @@
     </appender>
 
     <logger name="com.ingbyr.hwsc.reader.XMLDataSetReader" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.planner.planner.cpg" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.planner.planner.yashp2" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.planner.innerplanner.cpg" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.planner.innerplanner.yashp2" level="OFF"/>
     <logger name="com.ingbyr.hwsc.planner.MutationAddState" level="OFF"/>
     <logger name="com.ingbyr.hwsc.planner.MutationDelState" level="OFF"/>
     <logger name="com.ingbyr.hwsc.planner.MutationAddConcept" level="OFF"/>

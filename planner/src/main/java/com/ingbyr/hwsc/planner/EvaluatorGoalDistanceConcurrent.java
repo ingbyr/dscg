@@ -2,6 +2,7 @@ package com.ingbyr.hwsc.planner;
 
 import com.ingbyr.hwsc.common.models.Concept;
 import com.ingbyr.hwsc.common.models.Service;
+import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
 import com.ingbyr.hwsc.planner.model.State;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +50,7 @@ public class EvaluatorGoalDistanceConcurrent implements Evaluator {
 
         private int end;
 
-        private Planner planner;
+        private InnerPlanner innerPlanner;
 
         @Override
         protected void compute() {
@@ -60,14 +61,14 @@ public class EvaluatorGoalDistanceConcurrent implements Evaluator {
                         .individuals(individuals)
                         .start(start)
                         .end(mid)
-                        .planner(planner.copy())
+                        .innerPlanner(innerPlanner.copy())
                         .build();
                 EvaluatorTask evaluatorTask2 = EvaluatorTask.builder()
                         .bMax(bMax).lMax(lMax)
                         .individuals(individuals)
                         .start(mid)
                         .end(end)
-                        .planner(planner.copy())
+                        .innerPlanner(innerPlanner.copy())
                         .build();
                 invokeAll(evaluatorTask1, evaluatorTask2);
             } else {
@@ -97,7 +98,7 @@ public class EvaluatorGoalDistanceConcurrent implements Evaluator {
                 log.trace("Evaluate the state {}", currentState);
                 middleGoalSet = currentState.concepts;
 
-                Solution solution = planner.solve(middleInputSet, middleGoalSet, bMax);
+                Solution solution = innerPlanner.solve(middleInputSet, middleGoalSet, bMax);
 
                 if (solution == null || solution.services == null) {
                     Solution noSolution = new Solution(
@@ -182,14 +183,14 @@ public class EvaluatorGoalDistanceConcurrent implements Evaluator {
     }
 
     @Override
-    public void evaluate(List<Individual> individuals, Planner planner) {
+    public void evaluate(List<Individual> individuals, InnerPlanner innerPlanner) {
         log.debug("Start evaluating");
         RecursiveAction action = EvaluatorTask.builder()
                 .bMax(bMax).lMax(lMax)
                 .individuals(individuals)
                 .start(0)
                 .end(individuals.size())
-                .planner(planner.copy())
+                .innerPlanner(innerPlanner.copy())
                 .build();
         commonPool.execute(action);
         action.join();

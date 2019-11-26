@@ -70,10 +70,10 @@ public abstract class AbstractDataSetReader implements DataSetReader {
 
     }
 
+    /**
+     * Set concept's parents and children
+     */
     protected void buildConceptIndex() {
-        /**
-         * build indexing for concept
-         */
         for (String key : conceptMap.keySet()) {
             Concept concept = conceptMap.get(key);
             Concept varConcept = conceptMap.get(key);
@@ -83,14 +83,16 @@ public abstract class AbstractDataSetReader implements DataSetReader {
                 if (varConcept.isRoot()) {
                     varConcept = null;
                 } else {
-                    varConcept = conceptMap.get(varConcept
-                            .getDirectParentName());
+                    varConcept = conceptMap.get(varConcept.getDirectParentName());
                 }
 
             } while (varConcept != null);
         }
     }
 
+    /**
+     * Set used and produced by service cache
+     */
     protected void buildServiceIndex() {
         serviceMap.forEach((name, service) -> {
             for (Concept concept : service.getInputConceptSet()) {

@@ -3,6 +3,8 @@ package com.ingbyr.hwsc.dataset;
 import com.ingbyr.hwsc.common.util.FileUtils;
 import lombok.Getter;
 
+import java.nio.file.Path;
+
 public enum Dataset {
 
     wsc2008_01("2008", "01"),
@@ -26,7 +28,7 @@ public enum Dataset {
     private final String datasetId2;
 
     @Getter
-    private String path;
+    private Path path;
 
     Dataset(String datasetId1, String datasetId2) {
         this.datasetId1 = datasetId1;
@@ -34,7 +36,6 @@ public enum Dataset {
         this.path = FileUtils.CURRENT_DIR.resolve("data")
                 .resolve("wsc" + datasetId1)
                 .resolve("Testset" + datasetId2)
-                .normalize()
-                .toString();
+                .normalize();
     }
 }

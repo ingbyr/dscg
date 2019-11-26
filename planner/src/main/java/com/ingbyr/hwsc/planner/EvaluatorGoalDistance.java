@@ -2,6 +2,7 @@ package com.ingbyr.hwsc.planner;
 
 import com.ingbyr.hwsc.common.models.Concept;
 import com.ingbyr.hwsc.common.models.Service;
+import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
 import com.ingbyr.hwsc.planner.model.State;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
@@ -26,13 +27,13 @@ public class EvaluatorGoalDistance implements Evaluator {
     private int lMax;
 
     @Override
-    public void evaluate(List<Individual> individuals, Planner planner) {
+    public void evaluate(List<Individual> individuals, InnerPlanner innerPlanner) {
         for (Individual individual : individuals) {
-            evaluate(individual, planner);
+            evaluate(individual, innerPlanner);
         }
     }
 
-    private boolean evaluate(Individual individual, Planner planner) {
+    private boolean evaluate(Individual individual, InnerPlanner innerPlanner) {
         // Intermediate goal counter
         int k = 0;
         // Useful states counter
@@ -53,7 +54,7 @@ public class EvaluatorGoalDistance implements Evaluator {
             log.trace("Evaluate the state {}", currentState);
             middleGoalSet = currentState.concepts;
 
-            Solution solution = planner.solve(middleInputSet, middleGoalSet, bMax);
+            Solution solution = innerPlanner.solve(middleInputSet, middleGoalSet, bMax);
 
             if (solution == null || solution.services == null) {
                 Solution noSolution = new Solution(

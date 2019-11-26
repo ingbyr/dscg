@@ -10,25 +10,19 @@ public class Concept extends NamedObject {
 
     private boolean root;
     private String directParentName;
-//    private Set<Service> servicesIndex;
-//    private Set<Service> originServiceSet;
     private Set<Concept> parentConceptsIndex;
     private Set<Concept> childrenConceptsIndex;
     private Set<Service> producedByServices;
     private Set<Service> usedByServices;
-    private boolean rin;
     private boolean goal;
 
     public Concept(String name) {
         super(name);
         this.root = false;
-//        this.servicesIndex = new HashSet<>();
-//        this.originServiceSet = new HashSet<>();
         this.parentConceptsIndex = new HashSet<>();
         this.childrenConceptsIndex = new HashSet<>();
         this.producedByServices = new HashSet<>();
         this.usedByServices = new HashSet<>();
-        this.rin = false;
         this.goal = false;
     }
 
@@ -47,14 +41,6 @@ public class Concept extends NamedObject {
     public void setRoot(boolean root) {
         this.root = root;
     }
-
-//    public Set<Service> getServicesIndex() {
-//        return servicesIndex;
-//    }
-//
-//    public void addServiceToIndex(Service service) {
-//        this.servicesIndex.add(service);
-//    }
 
     public void addConceptToParentIndex(Concept concept) {
         this.parentConceptsIndex.add(concept);
@@ -80,19 +66,6 @@ public class Concept extends NamedObject {
         return childrenConceptsIndex;
     }
 
-//    public void addServiceToOrigin(Service service) {
-//        this.originServiceSet.add(service);
-//    }
-//
-//    public Set<Service> getOriginServiceSet() {
-//        return originServiceSet;
-//    }
-//
-//    public void resetServiceIndex() {
-//        this.servicesIndex = new HashSet<Service>();
-//        this.originServiceSet = new HashSet<Service>();
-//    }
-
     public void addProducedByService(Service service) {
         this.producedByServices.add(service);
     }
@@ -107,14 +80,6 @@ public class Concept extends NamedObject {
 
     public Set<Service> getUsedByServices() {
         return usedByServices;
-    }
-
-    public boolean isRin() {
-        return rin;
-    }
-
-    public void setRin(boolean rin) {
-        this.rin = rin;
     }
 
     public boolean isGoal() {

@@ -1,5 +1,7 @@
 package com.ingbyr.hwsc.planner;
 
+import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
+
 import java.util.List;
 
 /**
@@ -9,7 +11,7 @@ public interface Evaluator {
     /**
      * Evaluate the individual by someone planner
      * @param individuals Individuals
-     * @param planner Planner
+     * @param innerPlanner Planner
      */
-    void evaluate(List<Individual> individuals, Planner planner);
+    void evaluate(List<Individual> individuals, InnerPlanner innerPlanner);
 }

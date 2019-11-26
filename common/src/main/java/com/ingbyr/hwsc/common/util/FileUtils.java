@@ -5,6 +5,6 @@ import java.nio.file.Paths;
 
 public final class FileUtils {
 
-    public static final Path CURRENT_DIR = Paths.get(System.getProperty("user.dir")).getParent();
+    public static final Path CURRENT_DIR = Paths.get(System.getProperty("user.dir"));
 
 }

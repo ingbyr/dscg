@@ -6,4 +6,4 @@ build/
 gradle/
 gradlew
 gradlew.bat
-planner/daex.properties
+innerPlanner.properties
