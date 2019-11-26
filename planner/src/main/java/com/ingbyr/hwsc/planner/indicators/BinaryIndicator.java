@@ -30,7 +30,6 @@ public class BinaryIndicator implements Indicator {
         double fitness = 0.0;
         for (Individual otherInd : others) {
             // Skip itself
-            // FIXME others all equal to ind
             if (otherInd.equals(ind))
                 continue;
             log.trace("Ind {}, other ind {}", ind.getId(), otherInd.getId());

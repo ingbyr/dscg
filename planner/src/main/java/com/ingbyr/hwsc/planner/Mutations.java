@@ -27,7 +27,7 @@ public class Mutations {
     }
 
     /**
-     * FIXME Must do one mutation
+     * TODO Must do one mutation
      * @param individual Individual
      */
     public void mutate(Individual individual) {

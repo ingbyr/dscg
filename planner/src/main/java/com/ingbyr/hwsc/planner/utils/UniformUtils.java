@@ -85,7 +85,6 @@ public final class UniformUtils {
 
     /**
      * Select random size element from set
-     * TODO Improve performance
      *
      * @param set        Data collection
      * @param wantedSize Wanted element size

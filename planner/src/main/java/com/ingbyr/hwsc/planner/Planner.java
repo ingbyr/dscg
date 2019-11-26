@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO use fork/join to speed up
- * TODO process auto stop when no improvements
  * TODO support changeable services
  *
  * @author ingbyr

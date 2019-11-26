@@ -228,7 +228,6 @@ public class CompletePlaningGraph {
             debug("{}: {}", concept, levelCache.get(level).get(concept));
             availableServices.add(Lists.newArrayList(levelCache.get(level).get(concept)));
             combinationSize *= availableServices.size();
-            // TODO just a warning
             if (combinationSize <= 0) {
                 throw new RuntimeException("Too big size of service combination");
             }

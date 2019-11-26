@@ -59,7 +59,7 @@ public class PlannerAnalyzer {
     }
 
     /**
-     * TODO Remove this to web app
+     * TODO Move this to web app
      *
      * @throws IOException
      */

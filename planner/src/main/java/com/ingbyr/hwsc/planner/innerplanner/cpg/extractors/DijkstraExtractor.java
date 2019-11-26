@@ -22,7 +22,6 @@ public class DijkstraExtractor extends AbstractExtractor implements PlanExtracto
         DijkstraShortestPath<DWGNode, DWGEdge> dijkstraAlg = new DijkstraShortestPath<>(g);
         GraphPath<DWGNode, DWGEdge> path = dijkstraAlg.getPath(cpg.getStartNode(), cpg.getTargetNode());
         paths = Lists.newArrayList(path);
-        // TODO Steps can not be calculated in this alg
         steps = path.getLength();
     }
 }

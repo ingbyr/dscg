@@ -119,7 +119,6 @@ public class Individual implements Comparable {
      * @param services Services
      */
     public void setServices(List<Service> services) {
-        // FIXME
         if (services == null)
             return;
 

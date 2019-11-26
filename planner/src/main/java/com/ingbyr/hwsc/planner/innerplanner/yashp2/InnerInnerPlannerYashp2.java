@@ -232,6 +232,7 @@ public class InnerInnerPlannerYashp2 extends AbstractInnerInnerPlanner implement
 
     /**
      * Compute heuristic value and generate applicable services
+     * TODO Cost too manny time
      *
      * @param state State
      * @return NamedObject value map and applicable services
@@ -425,13 +426,6 @@ public class InnerInnerPlannerYashp2 extends AbstractInnerInnerPlanner implement
         return rPlan;
     }
 
-    /**
-     * TODO Better alg
-     *
-     * @param usedByServices
-     * @param cost
-     * @return
-     */
     private Service minCostService(Set<Service> usedByServices, Map<NamedObject, Integer> cost) {
         Service minCostService = null;
         int minCost = Integer.MAX_VALUE;
