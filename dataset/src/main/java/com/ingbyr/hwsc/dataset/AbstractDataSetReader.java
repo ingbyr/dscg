@@ -22,8 +22,9 @@ public abstract class AbstractDataSetReader implements DataSetReader {
 
     // Left value is init p level and right value is goal set
     protected Pair<Set<Concept>, Set<Concept>> problem;
-    protected Qos minOriginQos = new Qos(Double.MAX_VALUE);
-    protected Qos maxOriginQos = new Qos(Double.MIN_VALUE);
+    protected Qos minQos = new Qos(Double.MAX_VALUE);
+    protected Qos maxQos = new Qos(Double.MIN_VALUE);
+    protected Qos distanceQos = new Qos();
 
 
     /**
@@ -55,7 +56,6 @@ public abstract class AbstractDataSetReader implements DataSetReader {
         try {
             parseTaxonomyDocument();
             parseServicesDocument();
-            rescaleQos();
             parseProblemDocument();
             log.debug("Input set: {}", getInputSet());
             log.debug("Goal set: {}", getGoalSet());
@@ -64,10 +64,6 @@ public abstract class AbstractDataSetReader implements DataSetReader {
         } catch (DocumentException e) {
             e.printStackTrace();
         }
-    }
-
-    protected void rescaleQos() {
-
     }
 
     /**

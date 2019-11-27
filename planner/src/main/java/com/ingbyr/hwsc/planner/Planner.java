@@ -6,7 +6,7 @@ import com.ingbyr.hwsc.dataset.XMLDataSetReader;
 import com.ingbyr.hwsc.planner.exception.DAEXConfigException;
 import com.ingbyr.hwsc.planner.indicators.BinaryIndicator;
 import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
-import com.ingbyr.hwsc.planner.innerplanner.yashp2.InnerInnerPlannerYashp2;
+import com.ingbyr.hwsc.planner.innerplanner.yashp2.InnerPlannerYashp2;
 import com.ingbyr.hwsc.planner.utils.UniformUtils;
 import lombok.Builder;
 import lombok.Setter;
@@ -141,11 +141,9 @@ public class Planner {
             // Check the termination condition
             Qos bestQos = population.get(0).getQos();
 
-
             // Auto stop the process when no improvements
             if (enableAutoStop) {
-                log.debug("Previous best qos {}", preQos);
-                log.debug("Current best qos {}", bestQos);
+                log.debug("Current best {}", bestQos);
                 if (bestQos.equals(preQos)) {
                     if (++stopStepCount >= stopStep) {
                         log.info("Auto stop process because of no improvements");
@@ -202,7 +200,7 @@ public class Planner {
         DataSetReader dataSetReader = new XMLDataSetReader(config.getDataset());
         dataSetReader.process();
 
-        InnerPlanner innerPlanner = new InnerInnerPlannerYashp2(dataSetReader.getServiceMap(), dataSetReader.getConceptMap(), 1);
+        InnerPlanner innerPlanner = new InnerPlannerYashp2(dataSetReader.getServiceMap(), dataSetReader.getConceptMap(), 1);
 
         Evaluator evaluator = null;
         if (config.isEnableConcurrentMode())

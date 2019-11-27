@@ -55,7 +55,7 @@ public class BinaryIndicator implements Indicator {
         double minDistance = Double.MAX_VALUE;
         double maxDistance = Double.MIN_EXPONENT;
         boolean isPositive = false;
-        for (int type : Qos.types) {
+        for (int type : Qos.TYPES) {
             double distance = qos1.get(type) - qos2.get(type);
             if (distance >= 0) {
                 isPositive = true;

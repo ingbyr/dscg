@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.ingbyr.hwsc.common.models.Concept;
 import com.ingbyr.hwsc.common.models.Qos;
 import com.ingbyr.hwsc.common.models.Service;
+import com.ingbyr.hwsc.dataset.util.QosUtils;
 import com.ingbyr.hwsc.planner.exception.NotValidSolutionException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,7 +26,7 @@ public class PlannerAnalyzer {
     private final List<Double> fitnessLog = new LinkedList<>();
 
     // Qos log
-    private final List<Qos> qosLog = new LinkedList<>();
+    private final List<Qos> originQos = new LinkedList<>();
 
     private Instant startTime;
 
@@ -33,13 +34,13 @@ public class PlannerAnalyzer {
 
     public void addLog(Individual individual) {
         fitnessLog.add(individual.getFitness());
-        qosLog.add(individual.getQos());
+        originQos.add(QosUtils.flip(individual.getOriginQos()));
     }
 
     public void displayLog() {
         log.info("Process log:");
         Iterator<Double> fitnessItr = fitnessLog.iterator();
-        Iterator<Qos> qosItr = qosLog.iterator();
+        Iterator<Qos> qosItr = originQos.iterator();
         int step = 0;
         while (fitnessItr.hasNext() && qosItr.hasNext()) {
             log.debug("[{}] Fitness {}, {}", step++, fitnessItr.next(), qosItr.next());
@@ -67,17 +68,17 @@ public class PlannerAnalyzer {
         final ObjectMapper mapper = new ObjectMapper();
         final ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
 
-        List<Object> data = new ArrayList<>(qosLog.size() + 1);
-        String[] qosTypes = new String[Qos.names.length + 1];
-        System.arraycopy(Qos.names, 0, qosTypes, 1, Qos.names.length);
+        List<Object> data = new ArrayList<>(originQos.size() + 1);
+        String[] qosTypes = new String[Qos.NAMES.length + 1];
+        System.arraycopy(Qos.NAMES, 0, qosTypes, 1, Qos.NAMES.length);
         qosTypes[0] = "Step";
         data.add(qosTypes);
 
-        int qosNum = Qos.names.length;
+        int qosNum = Qos.NAMES.length;
         // Add step to qos log
-        for (int i = 0; i < qosLog.size(); i++) {
+        for (int i = 0; i < originQos.size(); i++) {
             double[] qosWithStep = new double[qosNum + 1];
-            System.arraycopy(qosLog.get(i).getValues(), 0, qosWithStep, 1, qosNum);
+            System.arraycopy(originQos.get(i).getValues(), 0, qosWithStep, 1, qosNum);
             qosWithStep[0] = i;
             data.add(qosWithStep);
         }

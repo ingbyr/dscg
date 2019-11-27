@@ -5,7 +5,7 @@ import com.google.common.collect.Sets;
 import com.ingbyr.hwsc.common.models.Concept;
 import com.ingbyr.hwsc.common.models.NamedObject;
 import com.ingbyr.hwsc.common.models.Service;
-import com.ingbyr.hwsc.planner.innerplanner.AbstractInnerInnerPlanner;
+import com.ingbyr.hwsc.planner.innerplanner.AbstractInnerPlanner;
 import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
 import com.ingbyr.hwsc.planner.Solution;
 import com.ingbyr.hwsc.planner.model.State;
@@ -22,7 +22,7 @@ import java.util.*;
  */
 
 @Slf4j
-public class InnerInnerPlannerYashp2 extends AbstractInnerInnerPlanner implements InnerPlanner {
+public class InnerPlannerYashp2 extends AbstractInnerPlanner implements InnerPlanner {
 
     private PriorityQueue<YNode> open = new PriorityQueue<>();
 
@@ -34,7 +34,7 @@ public class InnerInnerPlannerYashp2 extends AbstractInnerInnerPlanner implement
 
     private int bMax;
 
-    public InnerInnerPlannerYashp2(Map<String, Service> serviceMap, Map<String, Concept> conceptMap, int w) {
+    public InnerPlannerYashp2(Map<String, Service> serviceMap, Map<String, Concept> conceptMap, int w) {
         super(serviceMap, conceptMap);
         this.w = w;
         this.step = 0;
@@ -101,7 +101,7 @@ public class InnerInnerPlannerYashp2 extends AbstractInnerInnerPlanner implement
 
     @Override
     public InnerPlanner copy() {
-        return new InnerInnerPlannerYashp2(serviceMap, conceptMap, w);
+        return new InnerPlannerYashp2(serviceMap, conceptMap, w);
     }
 
     /**
@@ -286,7 +286,6 @@ public class InnerInnerPlannerYashp2 extends AbstractInnerInnerPlanner implement
             }
 
         }
-//        log.debug("Cost {}", cost);
         return new ImmutablePair<>(cost, app);
     }
 

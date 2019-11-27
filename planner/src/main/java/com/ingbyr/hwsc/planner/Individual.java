@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Set;
@@ -22,6 +23,7 @@ import java.util.Set;
 @ToString
 @Getter
 @Setter
+@Slf4j
 public class Individual implements Comparable {
 
     private static int globalId = 0;
@@ -47,6 +49,10 @@ public class Individual implements Comparable {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Qos qos = null;
+
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Qos originQos = null;
 
     /**
      * State index that can be reached by executing the services
@@ -124,10 +130,12 @@ public class Individual implements Comparable {
 
         this.services = services;
         this.qos = new Qos();
+        this.originQos = new Qos();
         // Update qos
-        for (Service service : this.services) {
-            for (int type : Qos.types) {
+        for (Service service : services) {
+            for (int type : Qos.TYPES) {
                 qos.set(type, qos.get(type) + service.getQos().get(type));
+                originQos.set(type, originQos.get(type) + service.getOriginQos().get(type));
             }
         }
     }

@@ -4,7 +4,7 @@ import com.ingbyr.hwsc.dataset.Dataset;
 import com.ingbyr.hwsc.dataset.DataSetReader;
 import com.ingbyr.hwsc.dataset.XMLDataSetReader;
 import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
-import com.ingbyr.hwsc.planner.innerplanner.yashp2.InnerInnerPlannerYashp2;
+import com.ingbyr.hwsc.planner.innerplanner.yashp2.InnerPlannerYashp2;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ class EvaluatorGoalDistanceConcurrentTest {
         DataSetReader dataSetReader = new XMLDataSetReader(Dataset.wsc2009_01);
         dataSetReader.process();
 
-        InnerPlanner innerPlanner = new InnerInnerPlannerYashp2(dataSetReader.getServiceMap(), dataSetReader.getConceptMap(), 1);
+        InnerPlanner innerPlanner = new InnerPlannerYashp2(dataSetReader.getServiceMap(), dataSetReader.getConceptMap(), 1);
 
         Evaluator evaluator = EvaluatorGoalDistance.builder().lMax(10).bMax(10).build();
 

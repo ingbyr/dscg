@@ -32,6 +32,7 @@ public class XMLDataSetReader extends AbstractDataSetReader implements DataSetRe
     private static final String PROVIDED = "provided";
     private static final String WANTED = "wanted";
 
+
     private String TAXONOMY_URL;
     private String SERVICES_URL;
     private String PROBLEM_URL;
@@ -99,48 +100,55 @@ public class XMLDataSetReader extends AbstractDataSetReader implements DataSetRe
      */
     private void parseServiceQos(Service service, Element serviceElement) {
         Qos originQos = service.getOriginQos();
-        for (int type : Qos.types) {
-            originQos.set(type, Double.parseDouble(serviceElement.attribute(Qos.names[type]).getText()));
+        for (int type : Qos.TYPES) {
+            originQos.set(type, Double.parseDouble(serviceElement.attribute(Qos.NAMES[type]).getText()));
         }
 
-        // Normalize qos value
-        service.setQos(QosUtils.normalize(originQos));
+        // Standard qos value
+        service.setQos(QosUtils.flip(originQos));
 
-        // Single cost that not used in daex process
-        service.setCost(QosUtils.toSimpleSingeQos(service));
+        log.trace("{} origin {}", service, service.getOriginQos());
+
+        // Single cost that not used in plan process
+        service.setCost(QosUtils.toSimpleCost(service));
     }
 
-    @Override
-    protected void rescaleQos() {
+    /**
+     * Rescale qos
+     */
+    private void rescaleQos() {
         // Init min qos and max qos
         for (Map.Entry<String, Service> entry : serviceMap.entrySet()) {
-            Qos serviceOriginQos = entry.getValue().getOriginQos();
-            for (int type : Qos.types) {
-                if (minOriginQos.get(type) > serviceOriginQos.get(type))
-                    minOriginQos.set(type, serviceOriginQos.get(type));
-                if (maxOriginQos.get(type) < serviceOriginQos.get(type))
-                    maxOriginQos.set(type, serviceOriginQos.get(type));
+            Qos standardQos = entry.getValue().getQos();
+            for (int type : Qos.TYPES) {
+                if (minQos.get(type) > standardQos.get(type))
+                    minQos.set(type, standardQos.get(type));
+                if (maxQos.get(type) < standardQos.get(type))
+                    maxQos.set(type, standardQos.get(type));
             }
         }
-
-        Qos maxMinQos = new Qos();
-        // FIXME max-min must not equal 0
-        for (int type : Qos.types) {
-            maxMinQos.set(type, maxOriginQos.get(type) - minOriginQos.get(type));
+        // Calculate distance qos
+        for (int type : Qos.TYPES) {
+            distanceQos.set(type, maxQos.get(type) - minQos.get(type));
         }
-        log.debug("Min origin qos {}", minOriginQos);
-        log.debug("Max origin qos {}", maxOriginQos);
-        log.debug("Max - Min origin qos {}", maxMinQos);
+        log.debug("Min {}", minQos);
+        log.debug("Max {}", maxQos);
+        log.debug("Distance {}", distanceQos);
 
-        // rescale
+        // Rescale qos
         for (Map.Entry<String, Service> entry : serviceMap.entrySet()) {
-            Qos serviceOriginQos = entry.getValue().getOriginQos();
-            Qos serviceQos = entry.getValue().getQos();
-            for (int type : Qos.types) {
-                serviceQos.set(type, (serviceOriginQos.get(type) - minOriginQos.get(type)) / maxMinQos.get(type));
+            Qos standardQos = entry.getValue().getQos();
+            Qos rescaledQos = new Qos();
+            for (int type : Qos.TYPES) {
+                double distance = distanceQos.get(type);
+                // Avoid distance equals 0
+                if (distance == 0.0) {
+                    distance = 1.0;
+                }
+                rescaledQos.set(type, (standardQos.get(type) - minQos.get(type)) / distance);
             }
-            log.trace("service origin qos {}", serviceOriginQos);
-            log.trace("service qos {}", serviceQos);
+            entry.getValue().setQos(rescaledQos);
+            log.trace("{} rescale {}", entry.getKey(), standardQos);
         }
 
     }
@@ -191,6 +199,7 @@ public class XMLDataSetReader extends AbstractDataSetReader implements DataSetRe
             serviceMap.put(service.getName(), service);
         });
         buildServiceIndex();
+        rescaleQos();
         return serviceMap;
     }
 

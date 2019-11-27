@@ -23,11 +23,16 @@ public class Qos {
     public static final int PRI = 5;
 
     // Qos type
-    public static final int[] types = new int[]{
+    public static final int[] TYPES = new int[]{
             RES, AVA, SUC, REL, REL, LAT, PRI
     };
 
-    public static final String[] names = new String[]{
+    public static final int[] FLIP_QOS_TYPES = new int[]{
+            AVA, SUC, REL
+    };
+
+
+    public static final String[] NAMES = new String[]{
             "Res", "Ava", "Suc", "Rel", "Lat", "Pri"
     };
 

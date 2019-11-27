@@ -15,9 +15,9 @@ public interface DataSetReader {
 
     void process();
 
-    Qos getMaxOriginQos();
+    Qos getMaxQos();
 
-    Qos getMinOriginQos();
+    Qos getMinQos();
 
     /**
      * Get service map

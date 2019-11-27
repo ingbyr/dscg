@@ -8,7 +8,7 @@ import com.ingbyr.hwsc.planner.Solution;
 import com.ingbyr.hwsc.planner.model.PlanningGraph;
 import com.ingbyr.hwsc.planner.pg.searching.ForwardPlanningGraphSearcher;
 import com.ingbyr.hwsc.planner.pg.searching.PlanningGraphSearcher;
-import com.ingbyr.hwsc.planner.innerplanner.AbstractInnerInnerPlanner;
+import com.ingbyr.hwsc.planner.innerplanner.AbstractInnerPlanner;
 import com.ingbyr.hwsc.planner.innerplanner.cpg.extractors.PlanExtractor;
 import com.ingbyr.hwsc.planner.innerplanner.cpg.models.CompletePlaningGraph;
 import com.ingbyr.hwsc.planner.innerplanner.cpg.models.DWGEdge;
@@ -23,7 +23,7 @@ import java.util.*;
  * @author ingbyr
  */
 @Slf4j
-public class InnerPlannerCPG extends AbstractInnerInnerPlanner implements InnerPlanner {
+public class InnerPlannerCPG extends AbstractInnerPlanner implements InnerPlanner {
 
     private PlanExtractor extractor;
 

@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * @author ingbyr
  */
-public abstract class AbstractInnerInnerPlanner implements InnerPlanner {
+public abstract class AbstractInnerPlanner implements InnerPlanner {
 
     protected Map<String, Service> serviceMap;
 
@@ -19,7 +19,7 @@ public abstract class AbstractInnerInnerPlanner implements InnerPlanner {
 
     protected Set<Concept> goalSet;
 
-    public AbstractInnerInnerPlanner(Map<String, Service> serviceMap, Map<String, Concept> conceptMap) {
+    public AbstractInnerPlanner(Map<String, Service> serviceMap, Map<String, Concept> conceptMap) {
         this.serviceMap = serviceMap;
         this.conceptMap = conceptMap;
     }

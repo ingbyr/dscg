@@ -46,8 +46,8 @@ public class DatasetDao {
             serviceData.put(SERVICE_OUTPUTS,
                     service.getOutputParamSet().stream().map(Param::toString).collect(Collectors.joining(split)));
             Qos qos = service.getOriginQos();
-            for (int qosType : Qos.types) {
-                serviceData.put(Qos.names[qosType], Double.toString(qos.get(qosType)));
+            for (int qosType : Qos.TYPES) {
+                serviceData.put(Qos.NAMES[qosType], Double.toString(qos.get(qosType)));
             }
             hashOp.putAll(serviceName, serviceData);
         }

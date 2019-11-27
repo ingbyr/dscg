@@ -19,10 +19,10 @@ class Yashp2InnerPlannerTest {
 
     @Test
     void openNode() {
-        InnerInnerPlannerYashp2.YNode n1 = InnerInnerPlannerYashp2.YNode.builder().heuristic(1).build();
-        InnerInnerPlannerYashp2.YNode n2 = InnerInnerPlannerYashp2.YNode.builder().heuristic(2).build();
-        InnerInnerPlannerYashp2.YNode n3 = InnerInnerPlannerYashp2.YNode.builder().heuristic(3).build();
-        PriorityQueue<InnerInnerPlannerYashp2.YNode> open = new PriorityQueue<>();
+        InnerPlannerYashp2.YNode n1 = InnerPlannerYashp2.YNode.builder().heuristic(1).build();
+        InnerPlannerYashp2.YNode n2 = InnerPlannerYashp2.YNode.builder().heuristic(2).build();
+        InnerPlannerYashp2.YNode n3 = InnerPlannerYashp2.YNode.builder().heuristic(3).build();
+        PriorityQueue<InnerPlannerYashp2.YNode> open = new PriorityQueue<>();
         open.add(n2);
         open.add(n1);
         open.add(n3);
@@ -35,7 +35,7 @@ class Yashp2InnerPlannerTest {
     void solve() throws NotValidSolutionException {
         DataSetReader reader = new XMLDataSetReader(Dataset.wsc2009_01);
         reader.process();
-        InnerPlanner innerPlanner = new InnerInnerPlannerYashp2(reader.getServiceMap(),reader.getConceptMap(),1);
+        InnerPlanner innerPlanner = new InnerPlannerYashp2(reader.getServiceMap(),reader.getConceptMap(),1);
         Solution solution = innerPlanner.solve(reader.getInputSet(), reader.getGoalSet(), 1);
         PlannerAnalyzer.checkSolution(reader.getInputSet(), reader.getGoalSet(), solution.services);
     }
