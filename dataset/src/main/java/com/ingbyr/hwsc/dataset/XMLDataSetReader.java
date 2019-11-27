@@ -104,11 +104,8 @@ public class XMLDataSetReader extends AbstractDataSetReader implements DataSetRe
             originQos.set(type, Double.parseDouble(serviceElement.attribute(Qos.NAMES[type]).getText()));
         }
 
-//        // Standard qos value
-//        service.setQos(QosUtils.flip(originQos));
 
         log.trace("{} origin {}", service, service.getOriginQos());
-        log.trace("{} standard {}", service, service.getQos());
 
         // Single cost that not used in plan process
         service.setCost(QosUtils.toSimpleCost(service));
