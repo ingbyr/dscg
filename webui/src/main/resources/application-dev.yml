@@ -17,4 +17,5 @@ spring:
     database: 0
 logging:
   level:
+    root: info
     com.ingbyr.hwsc: debug

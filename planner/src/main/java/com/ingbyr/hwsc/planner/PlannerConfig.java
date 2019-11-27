@@ -2,11 +2,13 @@ package com.ingbyr.hwsc.planner;
 
 import com.ingbyr.hwsc.dataset.Dataset;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 @ToString
 @Getter
-public abstract class PlannerConfig {
+@Setter
+public class PlannerConfig {
 
     Dataset dataset;
 
