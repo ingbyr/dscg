@@ -1,9 +1,9 @@
 function displayQos() {
-    $("#main").append("<div id='qos' style='width: 100%;height:800px;'>");
+    $("#display-qos").append("<div id='chart' style='width: 100%;height:800px;'>");
 
     $.get("http://log.hwsc.ingbyr.com/qos.json", function (data) {
 
-        var myChart = echarts.init(document.getElementById("qos"));
+        var myChart = echarts.init(document.getElementById("chart"));
         var symbolSize = 4;
         var chartHeight = "25%";
         var chartWidth = "38%";

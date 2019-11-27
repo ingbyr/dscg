@@ -1,0 +1,15 @@
+.card {
+    width: 100%;
+}
+
+.top-buffer {
+    margin-top: 20px;
+}
+
+.row {
+    margin-top: 10px;
+}
+
+.form-check-inline {
+    margin-left: 20px;
+}
