@@ -20,15 +20,15 @@ public class BinaryIndicator implements Indicator {
     private double k;
 
     @Override
-    public void calcFitness(List<Individual> population) {
+    public void calculatePopulationFitness(List<Individual> population) {
         for (Individual ind : population) {
-            ind.setFitness(calculateFitness(ind, population));
+            ind.setFitness(calculateIndividualFitness(ind, population));
         }
     }
 
-    private double calculateFitness(Individual ind, List<Individual> others) {
+    private double calculateIndividualFitness(Individual ind, List<Individual> population) {
         double fitness = 0.0;
-        for (Individual otherInd : others) {
+        for (Individual otherInd : population) {
             // Skip itself
             if (otherInd.equals(ind))
                 continue;

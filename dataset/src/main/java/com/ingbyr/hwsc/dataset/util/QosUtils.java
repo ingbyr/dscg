@@ -2,6 +2,7 @@ package com.ingbyr.hwsc.dataset.util;
 
 import com.ingbyr.hwsc.common.models.Qos;
 import com.ingbyr.hwsc.common.models.Service;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
 
@@ -11,6 +12,7 @@ import static com.ingbyr.hwsc.common.models.Qos.TYPES;
 /**
  * @author ingbyr
  */
+@Slf4j
 public class QosUtils {
 
     public static Qos flip(Qos qos) {

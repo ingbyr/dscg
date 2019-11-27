@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.ingbyr.hwsc.common.models.Concept;
 import com.ingbyr.hwsc.common.models.Qos;
 import com.ingbyr.hwsc.common.models.Service;
+import com.ingbyr.hwsc.dataset.util.QosUtils;
 import com.ingbyr.hwsc.planner.model.State;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -138,6 +139,8 @@ public class Individual implements Comparable {
                 originQos.set(type, originQos.get(type) + service.getOriginQos().get(type));
             }
         }
+        log.trace("{} origin {}", id, originQos);
+        log.trace("{} scaled {}", id, qos);
     }
 
     /**

@@ -32,7 +32,7 @@ public class SurvivalSelectorIndicator implements SurvivalSelector {
         feasibleIndividuals.forEach(ind -> log.trace("{}", ind));
 
         // Recalculate the fitness because individual has feasible solution
-        indicator.calcFitness(feasibleIndividuals);
+        indicator.calculatePopulationFitness(feasibleIndividuals);
 
         List<Individual> bestIndividuals = null;
         if (feasibleIndividuals.size() >= survivalSize) {

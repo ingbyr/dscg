@@ -9,6 +9,6 @@ import java.util.List;
  */
 public interface Indicator {
 
-    void calcFitness(List<Individual> population);
+    void calculatePopulationFitness(List<Individual> population);
 
 }

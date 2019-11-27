@@ -27,18 +27,20 @@ public class Qos {
             RES, AVA, SUC, REL, REL, LAT, PRI
     };
 
+    // Qos that need flip
     public static final int[] FLIP_QOS_TYPES = new int[]{
             AVA, SUC, REL
     };
 
-
+    // Qos name
     public static final String[] NAMES = new String[]{
             "Res", "Ava", "Suc", "Rel", "Lat", "Pri"
     };
 
     // Qos total number
-    public static final int QOS_NUM = 6;
+    public static final int QOS_NUM = TYPES.length;
 
+    // Qos values
     private final double[] values = new double[QOS_NUM];
 
     public Qos() {

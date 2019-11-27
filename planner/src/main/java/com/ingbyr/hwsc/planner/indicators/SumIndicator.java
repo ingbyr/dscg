@@ -11,7 +11,7 @@ import java.util.List;
 public class SumIndicator implements Indicator {
 
     @Override
-    public void calcFitness(List<Individual> population) {
+    public void calculatePopulationFitness(List<Individual> population) {
         population.forEach(individual -> {
             individual.setFitness(Arrays.stream(individual.getQos().getValues()).sum());
         });

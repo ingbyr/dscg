@@ -104,10 +104,11 @@ public class XMLDataSetReader extends AbstractDataSetReader implements DataSetRe
             originQos.set(type, Double.parseDouble(serviceElement.attribute(Qos.NAMES[type]).getText()));
         }
 
-        // Standard qos value
-        service.setQos(QosUtils.flip(originQos));
+//        // Standard qos value
+//        service.setQos(QosUtils.flip(originQos));
 
         log.trace("{} origin {}", service, service.getOriginQos());
+        log.trace("{} standard {}", service, service.getQos());
 
         // Single cost that not used in plan process
         service.setCost(QosUtils.toSimpleCost(service));
@@ -119,7 +120,7 @@ public class XMLDataSetReader extends AbstractDataSetReader implements DataSetRe
     private void rescaleQos() {
         // Init min qos and max qos
         for (Map.Entry<String, Service> entry : serviceMap.entrySet()) {
-            Qos standardQos = entry.getValue().getQos();
+            Qos standardQos = entry.getValue().getOriginQos();
             for (int type : Qos.TYPES) {
                 if (minQos.get(type) > standardQos.get(type))
                     minQos.set(type, standardQos.get(type));
@@ -137,18 +138,20 @@ public class XMLDataSetReader extends AbstractDataSetReader implements DataSetRe
 
         // Rescale qos
         for (Map.Entry<String, Service> entry : serviceMap.entrySet()) {
-            Qos standardQos = entry.getValue().getQos();
-            Qos rescaledQos = new Qos();
+            Service service = entry.getValue();
+            Qos originQos = service.getOriginQos();
+            Qos qos = new Qos();
             for (int type : Qos.TYPES) {
                 double distance = distanceQos.get(type);
                 // Avoid distance equals 0
                 if (distance == 0.0) {
                     distance = 1.0;
                 }
-                rescaledQos.set(type, (standardQos.get(type) - minQos.get(type)) / distance);
+                qos.set(type, (originQos.get(type) - minQos.get(type)) / distance);
             }
-            entry.getValue().setQos(rescaledQos);
-            log.trace("{} rescale {}", entry.getKey(), standardQos);
+            service.setQos(qos);
+            log.trace("{} origin {}", service, service.getOriginQos().getValues());
+            log.trace("{} rescale {}", service, service.getQos().getValues());
         }
 
     }
