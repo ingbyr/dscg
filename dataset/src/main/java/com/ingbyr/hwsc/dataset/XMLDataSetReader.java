@@ -99,16 +99,17 @@ public class XMLDataSetReader extends AbstractDataSetReader implements DataSetRe
      * @param serviceElement
      */
     private void parseServiceQos(Service service, Element serviceElement) {
-        Qos originQos = service.getOriginQos();
+        Qos originQos = new Qos();
         for (int type : Qos.TYPES) {
             originQos.set(type, Double.parseDouble(serviceElement.attribute(Qos.NAMES[type]).getText()));
         }
-
-
+        service.setOriginQos(originQos);
+        service.setQos(QosUtils.flip(originQos));
         log.trace("{} origin {}", service, service.getOriginQos());
+        log.trace("{} flipped {}", service, service.getQos());
 
         // Single cost that not used in plan process
-        service.setCost(QosUtils.toSimpleCost(service));
+        service.setCost(QosUtils.toSimpleCost(service.getQos()));
     }
 
     /**
@@ -117,14 +118,15 @@ public class XMLDataSetReader extends AbstractDataSetReader implements DataSetRe
     private void rescaleQos() {
         // Init min qos and max qos
         for (Map.Entry<String, Service> entry : serviceMap.entrySet()) {
-            Qos standardQos = entry.getValue().getOriginQos();
+            Qos qos = entry.getValue().getQos();
             for (int type : Qos.TYPES) {
-                if (minQos.get(type) > standardQos.get(type))
-                    minQos.set(type, standardQos.get(type));
-                if (maxQos.get(type) < standardQos.get(type))
-                    maxQos.set(type, standardQos.get(type));
+                if (minQos.get(type) > qos.get(type))
+                    minQos.set(type, qos.get(type));
+                if (maxQos.get(type) < qos.get(type))
+                    maxQos.set(type, qos.get(type));
             }
         }
+
         // Calculate distance qos
         for (int type : Qos.TYPES) {
             distanceQos.set(type, maxQos.get(type) - minQos.get(type));
@@ -136,17 +138,15 @@ public class XMLDataSetReader extends AbstractDataSetReader implements DataSetRe
         // Rescale qos
         for (Map.Entry<String, Service> entry : serviceMap.entrySet()) {
             Service service = entry.getValue();
-            Qos originQos = service.getOriginQos();
-            Qos qos = new Qos();
+            Qos qos = service.getQos();
             for (int type : Qos.TYPES) {
                 double distance = distanceQos.get(type);
                 // Avoid distance equals 0
                 if (distance == 0.0) {
                     distance = 1.0;
                 }
-                qos.set(type, (originQos.get(type) - minQos.get(type)) / distance);
+                qos.set(type, (qos.get(type) - minQos.get(type)) / distance);
             }
-            service.setQos(qos);
             log.trace("{} origin {}", service, service.getOriginQos().getValues());
             log.trace("{} rescale {}", service, service.getQos().getValues());
         }

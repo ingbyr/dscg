@@ -1,6 +1,7 @@
 package com.ingbyr.hwsc.planner;
 
 import com.ingbyr.hwsc.dataset.Dataset;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -8,6 +9,7 @@ import lombok.ToString;
 @ToString
 @Getter
 @Setter
+@EqualsAndHashCode
 public class PlannerConfig {
 
     Dataset dataset;

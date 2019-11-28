@@ -51,10 +51,6 @@ public class Individual implements Comparable {
     @ToString.Exclude
     private Qos qos = null;
 
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private Qos originQos = null;
-
     /**
      * State index that can be reached by executing the services
      */
@@ -131,15 +127,12 @@ public class Individual implements Comparable {
 
         this.services = services;
         this.qos = new Qos();
-        this.originQos = new Qos();
         // Update qos
         for (Service service : services) {
             for (int type : Qos.TYPES) {
                 qos.set(type, qos.get(type) + service.getQos().get(type));
-                originQos.set(type, originQos.get(type) + service.getOriginQos().get(type));
             }
         }
-        log.trace("{} origin {}", id, originQos);
         log.trace("{} scaled {}", id, qos);
     }
 

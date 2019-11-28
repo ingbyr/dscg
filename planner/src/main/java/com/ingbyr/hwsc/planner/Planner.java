@@ -8,8 +8,7 @@ import com.ingbyr.hwsc.planner.indicators.BinaryIndicator;
 import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
 import com.ingbyr.hwsc.planner.innerplanner.yashp2.InnerPlannerYashp2;
 import com.ingbyr.hwsc.planner.utils.UniformUtils;
-import lombok.Builder;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
@@ -23,8 +22,7 @@ import java.util.List;
  * @author ingbyr
  */
 @Slf4j
-@Builder
-@Setter
+@NoArgsConstructor
 public class Planner {
 
     private DataSetReader dataSetReader;
@@ -165,13 +163,6 @@ public class Planner {
     }
 
     protected void beforeExec() {
-        try {
-            checkConfig();
-        } catch (DAEXConfigException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
-        }
-
         analyzer.recordStartTime();
     }
 
@@ -186,69 +177,65 @@ public class Planner {
         }
     }
 
-    private void checkConfig() throws DAEXConfigException {
-        log.info("Check the planner config");
-        log.info(config.toString());
-
+    private void checkAndSaveConfig(PlannerConfig config) throws DAEXConfigException {
+        log.info("Check the planner config {}", config);
         if (populationSize + offspringSize < survivalSize)
             throw new DAEXConfigException("populationSize + offspringSize < survivalSize");
+        this.config = config;
     }
 
-    public static void main(String[] args) throws ConfigurationException {
-        PlannerConfig config = new PlannerLocalConfig();
+    public void setup(PlannerConfig config) throws DAEXConfigException {
+        // If already setup then skip
+        if (config != null && config.equals(this.config))
+            return;
 
-        DataSetReader dataSetReader = new XMLDataSetReader(config.getDataset());
+        checkAndSaveConfig(config);
+
+        populationSize = config.getPopulationSize();
+        offspringSize = config.getOffspringSize();
+        pCross = config.getCrossoverPossibility();
+        pMut = config.getMutationPossibility();
+        maxGen = config.getMaxGen();
+        enableMutate = true;
+        enableCrossover = true;
+        enableConcurrent = config.isEnableConcurrentMode();
+        stopStep = config.getAutoStopStep();
+        enableAutoStop = config.isEnableAutoStop();
+
+        dataSetReader = new XMLDataSetReader(config.getDataset());
         dataSetReader.process();
 
-        InnerPlanner innerPlanner = new InnerPlannerYashp2(dataSetReader.getServiceMap(), dataSetReader.getConceptMap(), 1);
+        innerPlanner = new InnerPlannerYashp2(dataSetReader.getServiceMap(), dataSetReader.getConceptMap(), 1);
 
-        Evaluator evaluator = null;
-        if (config.isEnableConcurrentMode())
+        if (enableConcurrent)
             evaluator = EvaluatorGoalDistanceConcurrent.builder().bMax(10).lMax(10).build();
         else
             evaluator = EvaluatorGoalDistance.builder().bMax(10).lMax(10).build();
 
-        ConceptTime conceptTime = new ConceptTime();
+        conceptTime = new ConceptTime();
         conceptTime.build(dataSetReader);
 
-        IndividualGenerator individualGenerator = new IndividualGenerator(dataSetReader, conceptTime);
+        individualGenerator = new IndividualGenerator(dataSetReader, conceptTime);
 
-        Crossover crossover = new CrossoverSwapState();
+        crossover = new CrossoverSwapState();
 
         // TODO Move config
-        Mutations mutations = new Mutations();
+        mutations = new Mutations();
         mutations.addMutation(new MutationAddState(conceptTime, 0), config.getMutationAddStateWeight());
         mutations.addMutation(new MutationAddConcept(conceptTime, 0.5, 0.5), config.getMutationAddConceptWeight());
         mutations.addMutation(new MutationDelState(), config.getMutationDelStateWeight());
         mutations.addMutation(new MutationDelConcept(), config.getMutationDelConceptWeight());
 
-        SurvivalSelector survivalSelector = new SurvivalSelectorIndicator(config.getSurvivalSize(), new BinaryIndicator(2));
+        survivalSelector = new SurvivalSelectorIndicator(config.getSurvivalSize(), new BinaryIndicator(2));
 
-        PlannerAnalyzer analyzer = new PlannerAnalyzer();
+        analyzer = new PlannerAnalyzer();
+    }
 
-        Planner planner = Planner.builder()
-                .dataSetReader(dataSetReader)
-                .config(config)
-                .conceptTime(conceptTime)
-                .individualGenerator(individualGenerator)
-                .innerPlanner(innerPlanner)
-                .crossover(crossover)
-                .evaluator(evaluator)
-                .populationSize(config.getPopulationSize())
-                .offspringSize(config.getOffspringSize())
-                .pCross(config.getCrossoverPossibility())
-                .pMut(config.getMutationPossibility())
-                .mutations(mutations)
-                .survivalSelector(survivalSelector)
-                .maxGen(config.getMaxGen())
-                .enableMutate(true)
-                .enableCrossover(true)
-                .analyzer(analyzer)
-                .enableConcurrent(config.isEnableConcurrentMode())
-                .stopStep(config.getAutoStopStep())
-                .enableAutoStop(config.isEnableAutoStop())
-                .build();
-
+    public static void main(String[] args) throws ConfigurationException, DAEXConfigException {
+        PlannerConfig config = new PlannerLocalConfig();
+        log.debug("{}", config);
+        Planner planner = new Planner();
+        planner.setup(config);
         planner.exec();
     }
 }

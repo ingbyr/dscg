@@ -2,7 +2,7 @@ package com.ingbyr.hwsc.webui.controller;
 
 import com.ingbyr.hwsc.dataset.Dataset;
 import com.ingbyr.hwsc.webui.service.DatasetService;
-import com.ingbyr.hwsc.webui.service.RedisService;
+import com.ingbyr.hwsc.webui.service.RedisServerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -21,29 +21,28 @@ public class DatasetController {
 
     private DatasetService datasetService;
 
-    private RedisService redisService;
+    private RedisServerService redisServerService;
 
     @Autowired
     public DatasetController(DatasetService datasetService,
-                             RedisService redisService) {
+                             RedisServerService redisServerService) {
         this.datasetService = datasetService;
-        this.redisService = redisService;
+        this.redisServerService = redisServerService;
     }
 
     @ApiOperation("Clear database")
     @GetMapping("/clear")
     String clearData() {
-        redisService.deleteAll();
+        redisServerService.deleteAll();
         return "Cleared db";
     }
 
     @ApiOperation("Reload dataset to database")
     @GetMapping("/reload/{dataset}")
     String reloadData(@ApiParam(value = "Dataset id", example = "wsc2009_01") @PathVariable(value = "dataset") String dataset) {
-        redisService.deleteAll();
+        redisServerService.deleteAll();
         datasetService.saveDatasetToDatabase(Dataset.valueOf(dataset.toLowerCase()));
         return "Loaded dataset to db";
     }
-
 
 }

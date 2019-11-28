@@ -33,7 +33,8 @@
                             </div>
                             <div class="col">
                                 <label for="maxGen">maxGen</label>
-                                <input type="text" class="form-control" id="maxGen" name="maxGen" value="200"
+                                <input type="text" class="form-control" id="maxGen" name="maxGen"
+                                       value=${(planner_config.maxGen)!"200"}
                                        required>
                             </div>
                         </div>
@@ -42,19 +43,19 @@
                             <div class="col">
                                 <label for="populationSize">populationSize</label>
                                 <input type="text" class="form-control" id="populationSize" name="populationSize"
-                                       value="50"
+                                       value=${(planner_config.populationSize)!"50"}
                                        required>
                             </div>
                             <div class="col">
                                 <label for="offspringSize">offspringSize</label>
                                 <input type="text" class="form-control" id="offspringSize" name="offspringSize"
-                                       value="200"
+                                       value=${(planner_config.offspringSize)!"200"}
                                        required>
                             </div>
                             <div class="col">
                                 <label for="survivalSize">survivalSize</label>
                                 <input type="text" class="form-control" id="survivalSize" name="survivalSize"
-                                       value="20"
+                                       value=${(planner_config.survivalSize)!"20"}
                                        required>
                             </div>
                         </div>
@@ -64,13 +65,13 @@
                                 <label for="crossoverPossibility">crossoverPossibility</label>
                                 <input type="text" class="form-control" id="crossoverPossibility"
                                        name="crossoverPossibility"
-                                       value="0.7" required>
+                                       value=${(planner_config.crossoverPossibility)!"0.7"} required>
                             </div>
                             <div class="col">
                                 <label for="mutationPossibility">mutationPossibility</label>
                                 <input type="text" class="form-control" id="mutationPossibility"
                                        name="mutationPossibility"
-                                       value="0.3" required>
+                                       value=${(planner_config.mutationPossibility)!"0.3"} required>
                             </div>
                         </div>
 
@@ -78,40 +79,46 @@
                             <div class="col">
                                 <label for="mutationAddStateWeight">mutationAddStateWeight</label>
                                 <input type="text" class="form-control" id="mutationAddStateWeight"
-                                       name="mutationAddStateWeight" value="3" required>
+                                       name="mutationAddStateWeight"
+                                       value=${(planner_config.mutationAddStateWeight)!"3"} required>
                             </div>
                             <div class="col">
                                 <label for="mutationAddConceptWeight">mutationAddConceptWeight</label>
                                 <input type="text" class="form-control" id="mutationAddConceptWeight"
-                                       name="mutationAddConceptWeight" value="5" required>
+                                       name="mutationAddConceptWeight"
+                                       value=${(planner_config.mutationAddConceptWeight)!"5"} required>
                             </div>
                             <div class="col">
                                 <label for="mutationDelStateWeight">mutationDelStateWeight</label>
                                 <input type="text" class="form-control" id="mutationDelStateWeight"
-                                       name="mutationDelStateWeight" value="1" required>
+                                       name="mutationDelStateWeight"
+                                       value=${(planner_config.mutationDelStateWeight)!"1"} required>
                             </div>
                             <div class="col">
                                 <label for="mutationDelConceptWeight">mutationDelConceptWeight</label>
                                 <input type="text" class="form-control" id="mutationDelConceptWeight"
-                                       name="mutationDelConceptWeight" value="1" required>
+                                       name="mutationDelConceptWeight"
+                                       value=${(planner_config.mutationDelConceptWeight)!"1"} required>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="checkbox" id="enableConcurrentMode"
-                                       name="enableConcurrentMode" value="option1">
+                                       name="enableConcurrentMode"
+                                       <#if planner_config.enableConcurrentMode == true>checked</#if>>
                                 <label class="form-check-label" for="inlineCheckbox1">enableConcurrentMode</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="checkbox" id="enableAutoStop"
-                                       name="enableAutoStop" value="option2">
+                                       name="enableAutoStop"
+                                       <#if planner_config.enableAutoStop == true>checked</#if>>
                                 <label class="form-check-label" for="inlineCheckbox2">enableAutoStop</label>
                             </div>
                             <div class="col">
                                 <label for="autoStopStep">autoStopStep</label>
                                 <input type="text" class="form-control" id="autoStopStep" name="autoStopStep"
-                                       value="10" required>
+                                       value=${(planner_config.autoStopStep)! "10"} required>
                             </div>
                         </div>
 

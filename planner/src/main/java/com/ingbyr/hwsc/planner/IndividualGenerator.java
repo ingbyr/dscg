@@ -20,8 +20,6 @@ import java.util.Set;
 @Setter
 public final class IndividualGenerator {
 
-    private DataSetReader dataSetReader;
-
     private ConceptTime conceptTime;
 
     private State inputState;
@@ -29,7 +27,6 @@ public final class IndividualGenerator {
     private State goalState;
 
     public IndividualGenerator(DataSetReader dataSetReader, ConceptTime conceptTime) {
-        this.dataSetReader = dataSetReader;
         this.conceptTime = conceptTime;
         this.inputState = new State(dataSetReader.getInputSet(), 0);
         this.goalState = new State(dataSetReader.getGoalSet(), conceptTime.time + 1);

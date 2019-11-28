@@ -26,7 +26,7 @@ public class PlannerAnalyzer {
     private final List<Double> fitnessLog = new LinkedList<>();
 
     // Qos log
-    private final List<Qos> originQos = new LinkedList<>();
+    private final List<Qos> realQosLog = new LinkedList<>();
 
     private Instant startTime;
 
@@ -34,16 +34,19 @@ public class PlannerAnalyzer {
 
     public void addLog(Individual individual) {
         fitnessLog.add(individual.getFitness());
-        originQos.add(QosUtils.flip(individual.getOriginQos()));
+        realQosLog.add(individual.getQos());
     }
 
     public void displayLog() {
         log.info("Process log:");
         Iterator<Double> fitnessItr = fitnessLog.iterator();
-        Iterator<Qos> qosItr = originQos.iterator();
+        Iterator<Qos> originQosItr = realQosLog.iterator();
         int step = 0;
-        while (fitnessItr.hasNext() && qosItr.hasNext()) {
-            log.debug("[{}] Fitness {}, {}", step++, fitnessItr.next(), qosItr.next());
+        while (fitnessItr.hasNext() && originQosItr.hasNext()) {
+            log.debug("[{}] Fitness {}", step, fitnessItr.next());
+            log.debug("[{}] origin qos {}", step, originQosItr.next());
+            log.debug("");
+            step++;
         }
     }
 
@@ -68,7 +71,7 @@ public class PlannerAnalyzer {
         final ObjectMapper mapper = new ObjectMapper();
         final ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
 
-        List<Object> data = new ArrayList<>(originQos.size() + 1);
+        List<Object> data = new ArrayList<>(realQosLog.size() + 1);
         String[] qosTypes = new String[Qos.NAMES.length + 1];
         System.arraycopy(Qos.NAMES, 0, qosTypes, 1, Qos.NAMES.length);
         qosTypes[0] = "Step";
@@ -76,9 +79,9 @@ public class PlannerAnalyzer {
 
         int qosNum = Qos.NAMES.length;
         // Add step to qos log
-        for (int i = 0; i < originQos.size(); i++) {
+        for (int i = 0; i < realQosLog.size(); i++) {
             double[] qosWithStep = new double[qosNum + 1];
-            System.arraycopy(originQos.get(i).getValues(), 0, qosWithStep, 1, qosNum);
+            System.arraycopy(realQosLog.get(i).getValues(), 0, qosWithStep, 1, qosNum);
             qosWithStep[0] = i;
             data.add(qosWithStep);
         }

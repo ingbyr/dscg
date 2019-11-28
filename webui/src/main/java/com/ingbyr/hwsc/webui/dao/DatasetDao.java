@@ -3,6 +3,7 @@ package com.ingbyr.hwsc.webui.dao;
 import com.ingbyr.hwsc.common.models.Concept;
 import com.ingbyr.hwsc.common.models.Param;
 import com.ingbyr.hwsc.common.models.Qos;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -20,12 +21,12 @@ public class DatasetDao {
     private static final String SERVICE_KEY_PREFIX = "action:";
     private static final String SERVICE_INPUTS = "inputs";
     private static final String SERVICE_OUTPUTS = "outputs";
-    private static final String SERVICE_QOS = "qos";
     private static final String CONCEPT_KEY_PREFIX = "atom:";
     private static final String CONCEPT_DIRECT_PARENT = "directParent";
     private static final String CONCEPT_PARENTS = "parents";
     private static final String CONCEPT_CHILDREN = "children";
 
+    @Autowired
     public DatasetDao(StringRedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
     }

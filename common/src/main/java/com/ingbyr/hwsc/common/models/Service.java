@@ -27,8 +27,6 @@ public class Service extends NamedObject {
         outputParamSet = new HashSet<>();
         inputConceptSet = new HashSet<>();
         outputConceptSet = new HashSet<>();
-        qos = new Qos();
-        originQos = new Qos();
         cost = 0.0;
     }
 
