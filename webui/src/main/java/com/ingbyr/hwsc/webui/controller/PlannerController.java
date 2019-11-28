@@ -1,5 +1,6 @@
 package com.ingbyr.hwsc.webui.controller;
 
+import com.ingbyr.hwsc.dataset.Dataset;
 import com.ingbyr.hwsc.planner.Planner;
 import com.ingbyr.hwsc.planner.PlannerConfig;
 import com.ingbyr.hwsc.webui.service.DatasetService;
@@ -41,9 +42,11 @@ public class PlannerController {
     @ApiOperation("Exec planner")
     @PostMapping("/exec")
     public void exec(@ApiParam(value = "Planner config") PlannerConfig plannerConfig, HttpServletResponse response) throws IOException {
-        log.debug("Get {}", plannerConfig);
-        if (plannerService.needLoadDataset(plannerConfig.getDataset())) {
-            datasetService.resetDataset(plannerConfig.getDataset());
+        log.debug("Load {}", plannerConfig);
+        Dataset dataset = plannerConfig.getDataset();
+        if (datasetService.needLoadDataset(dataset)) {
+            log.debug("Need to reload dataset {}", dataset);
+            datasetService.resetDataset(dataset);
         }
         plannerService.saveConfig(plannerConfig);
         plannerService.exec(planner, plannerConfig);

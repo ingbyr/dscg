@@ -2,119 +2,30 @@ package com.ingbyr.hwsc.dataset;
 
 import com.ingbyr.hwsc.common.models.*;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
-import org.dom4j.DocumentException;
 
-import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 @Getter
 @Slf4j
+@ToString
 public abstract class AbstractDataSetReader implements DataSetReader {
 
-    protected Map<String, Thing> thingMap = new HashMap<>();
-    protected Map<String, Service> serviceMap = new HashMap<>();
-    protected Map<String, Param> paramMap = new HashMap<>();
-    protected Map<String, Concept> conceptMap = new HashMap<>();
-
-    // Left value is init p level and right value is goal set
-    protected Pair<Set<Concept>, Set<Concept>> problem = null;
-    protected Qos minQos = new Qos(Double.MAX_VALUE);
-    protected Qos maxQos = new Qos(Double.MIN_VALUE);
-    protected Qos distanceQos = new Qos();
+    protected Dataset dataset;
+    protected Map<String, Thing> thingMap;
+    protected Map<String, Service> serviceMap;
+    protected Map<String, Param> paramMap;
+    protected Map<String, Concept> conceptMap;
+    protected Set<Concept> inputSet;
+    protected Set<Concept> goalSet;
+    protected Qos minQos;
+    protected Qos maxQos;
+    protected Qos distanceQos;
 
     @Override
     public void setDataset(Dataset dataset) {
-        thingMap = new HashMap<>();
-        serviceMap = new HashMap<>();
-        paramMap = new HashMap<>();
-        conceptMap = new HashMap<>();
-        problem = null;
-        minQos = new Qos(Double.MAX_VALUE);
-        maxQos = new Qos(Double.MIN_VALUE);
-        distanceQos = new Qos();
-    }
-
-    /**
-     * Parse taxonomy file
-     *
-     * @return Concept map
-     * @throws DocumentException
-     */
-    protected abstract Map<String, Concept> parseTaxonomyDocument() throws DocumentException;
-
-    /**
-     * Parse services file
-     *
-     * @return Service map
-     * @throws DocumentException
-     */
-    protected abstract Map<String, Service> parseServicesDocument() throws DocumentException;
-
-    /**
-     * Parse problem or challenge file
-     *
-     * @return Problem
-     * @throws DocumentException
-     */
-    protected abstract Pair<Set<Concept>, Set<Concept>> parseProblemDocument() throws DocumentException;
-
-    @Override
-    public void process() {
-        try {
-            parseTaxonomyDocument();
-            parseServicesDocument();
-            parseProblemDocument();
-            log.debug("Input set: {}", getInputSet());
-            log.debug("Goal set: {}", getGoalSet());
-            log.debug("Service map: {}", getServiceMap().size());
-            log.debug("Concept map: {}", getConceptMap().size());
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Set concept's parents and children
-     */
-    protected void buildConceptIndex() {
-        for (String key : conceptMap.keySet()) {
-            Concept concept = conceptMap.get(key);
-            Concept varConcept = conceptMap.get(key);
-            do {
-                concept.addConceptToParentIndex(varConcept);//ancestor classes
-                varConcept.addConceptToChildrenIndex(concept);//descendant classes
-                if (varConcept.isRoot()) {
-                    varConcept = null;
-                } else {
-                    varConcept = conceptMap.get(varConcept.getDirectParentName());
-                }
-
-            } while (varConcept != null);
-        }
-    }
-
-    /**
-     * Set used and produced by service cache
-     */
-    protected void buildServiceIndex() {
-        serviceMap.forEach((name, service) -> {
-            for (Concept concept : service.getInputConceptSet()) {
-                concept.addUsedByService(service);
-            }
-
-            for (Concept concept : service.getOutputConceptSet()) {
-                concept.addProducedByService(service);
-            }
-        });
-    }
-
-    protected File loadFile(String filePath) {
-        File file = new File(filePath);
-        log.debug("Load file {}", file.getAbsolutePath());
-        return file;
+        this.dataset = dataset;
     }
 }

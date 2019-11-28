@@ -203,7 +203,6 @@ public class Planner {
         enableAutoStop = config.isEnableAutoStop();
 
         dataSetReader = new XMLDataSetReader(config.getDataset());
-        dataSetReader.process();
 
         innerPlanner = new InnerPlannerYashp2(dataSetReader.getServiceMap(), dataSetReader.getConceptMap(), 1);
 

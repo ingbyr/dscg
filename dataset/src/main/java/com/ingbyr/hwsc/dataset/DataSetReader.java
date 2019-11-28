@@ -1,8 +1,6 @@
 package com.ingbyr.hwsc.dataset;
 
-import com.ingbyr.hwsc.common.models.Concept;
-import com.ingbyr.hwsc.common.models.Qos;
-import com.ingbyr.hwsc.common.models.Service;
+import com.ingbyr.hwsc.common.models.*;
 
 import java.util.Map;
 import java.util.Set;
@@ -11,11 +9,13 @@ public interface DataSetReader {
 
     void setDataset(Dataset dataset);
 
-    void process();
+    Dataset getDataset();
 
     Qos getMaxQos();
 
     Qos getMinQos();
+
+    Qos getDistanceQos();
 
     /**
      * Get service map
@@ -30,6 +30,10 @@ public interface DataSetReader {
      * @return Concept map
      */
     Map<String, Concept> getConceptMap();
+
+    Map<String, Thing> getThingMap();
+
+    Map<String, Param> getParamMap();
 
     Set<Concept> getInputSet();
 

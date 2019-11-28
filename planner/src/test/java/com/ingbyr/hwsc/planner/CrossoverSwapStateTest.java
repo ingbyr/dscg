@@ -19,7 +19,6 @@ class CrossoverSwapStateTest {
     @Test
     void doCrossover() {
         DataSetReader dataSetReader = new XMLDataSetReader(Dataset.wsc2009_01);
-        dataSetReader.process();
         ConceptTime conceptTime = new ConceptTime();
         conceptTime.build(dataSetReader);
         IndividualGenerator individualGenerator = new IndividualGenerator(dataSetReader, conceptTime);

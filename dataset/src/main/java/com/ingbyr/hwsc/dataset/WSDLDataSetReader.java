@@ -7,8 +7,6 @@ import com.ingbyr.hwsc.common.models.Thing;
 import com.ingbyr.hwsc.dataset.util.XMLFileUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 
@@ -16,7 +14,7 @@ import java.util.*;
 
 @Getter
 @Slf4j
-public class WSDLDataSetReader extends AbstractDataSetReader implements DataSetReader {
+public class WSDLDataSetReader extends LocalDatasetSetReader {
 
     private String TAXONOMY_URL;
     private String SERVICES_URL;
@@ -40,6 +38,8 @@ public class WSDLDataSetReader extends AbstractDataSetReader implements DataSetR
 
     @Override
     public Map<String, Concept> parseTaxonomyDocument() throws DocumentException {
+        conceptMap = new HashMap<>();
+        thingMap = new HashMap<>();
 
         Element taxonomyRoot = XMLFileUtils.loadRootElement(loadFile(TAXONOMY_URL));
 
@@ -49,13 +49,13 @@ public class WSDLDataSetReader extends AbstractDataSetReader implements DataSetR
         for (Iterator i = taxonomyRoot.elementIterator(); i.hasNext(); ) {
             Element el = (Element) i.next();
             if (el.getName().equals("Class")) {
-                Concept concept = new Concept(el.attribute("ID").getText());//Get the concept name(ID)
+                Concept concept = new Concept(el.attribute("ID").getText());// Get the concept name(ID)
                 List<Element> list = el.elements();
                 if (list.size() != 0) {
                     for (Element dummy : list) {
                         concept.setDirectParentName(dummy
                                 .attribute("resource").getText()
-                                .replaceAll("#", ""));//Get the direct parant class
+                                .replaceAll("#", ""));// Get the direct parent class
 
                     }
                 } else {
@@ -67,7 +67,7 @@ public class WSDLDataSetReader extends AbstractDataSetReader implements DataSetR
                 Thing thing = new Thing(el.attribute("ID").getText());
 
                 thing.setType(el.element("type").attribute("resource")
-                        .getText().replaceAll("#", ""));//type = parant class
+                        .getText().replaceAll("#", ""));// type = parent class
                 thingMap.put(thing.getName(), thing);
             }
         }
@@ -78,6 +78,8 @@ public class WSDLDataSetReader extends AbstractDataSetReader implements DataSetR
 
     @Override
     public Map<String, Service> parseServicesDocument() throws DocumentException {
+        serviceMap = new HashMap<>();
+        paramMap = new HashMap<>();
 
         Element servicesRoot = XMLFileUtils.loadRootElement(loadFile(SERVICES_URL));
         Element semRoot = servicesRoot.element("semExtension");
@@ -133,10 +135,10 @@ public class WSDLDataSetReader extends AbstractDataSetReader implements DataSetR
     }
 
     @Override
-    public Pair<Set<Concept>, Set<Concept>> parseProblemDocument() throws DocumentException {
+    public void parseProblemDocument() throws DocumentException {
 
-        Set<Concept> initPLevel = new HashSet<>();
-        Set<Concept> goalSet = new HashSet<>();
+        inputSet = new HashSet<>();
+        goalSet = new HashSet<>();
 
         Element servicesRoot = XMLFileUtils.loadRootElement(loadFile(PROBLEM_URL));
         Element semRoot = servicesRoot.element("semExtension");
@@ -164,7 +166,7 @@ public class WSDLDataSetReader extends AbstractDataSetReader implements DataSetR
                         param.setThing(thing);
                         paramMap.put(param.getName(), param);
                         if (isRequestParam) {
-                            initPLevel.addAll(conceptMap.get(thing.getType()).getParentConceptsIndex());
+                            inputSet.addAll(conceptMap.get(thing.getType()).getParentConceptsIndex());
                         } else {
                             goalSet.add(conceptMap.get(thing.getType()));
                         }
@@ -172,17 +174,5 @@ public class WSDLDataSetReader extends AbstractDataSetReader implements DataSetR
                 }
             }
         }
-        problem = new ImmutablePair<>(initPLevel, goalSet);
-        return getProblem();
-    }
-
-    @Override
-    public Set<Concept> getInputSet() {
-        return problem.getLeft();
-    }
-
-    @Override
-    public Set<Concept> getGoalSet() {
-        return problem.getRight();
     }
 }

@@ -34,7 +34,6 @@ class Yashp2InnerPlannerTest {
     @Test
     void solve() throws NotValidSolutionException {
         DataSetReader reader = new XMLDataSetReader(Dataset.wsc2009_01);
-        reader.process();
         InnerPlanner innerPlanner = new InnerPlannerYashp2(reader.getServiceMap(),reader.getConceptMap(),1);
         Solution solution = innerPlanner.solve(reader.getInputSet(), reader.getGoalSet(), 1);
         PlannerAnalyzer.checkSolution(reader.getInputSet(), reader.getGoalSet(), solution.services);

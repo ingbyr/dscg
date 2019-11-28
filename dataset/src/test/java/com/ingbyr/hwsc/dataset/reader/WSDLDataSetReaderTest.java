@@ -29,7 +29,7 @@ class WSDLDataSetReaderTest {
         reader.parseTaxonomyDocument();
         reader.parseServicesDocument();
         reader.parseProblemDocument();
-        assertEquals(38, reader.getProblem().getLeft().size());
-        assertEquals(4, reader.getProblem().getRight().size());
+        assertEquals(38, reader.getInputSet().size());
+        assertEquals(4, reader.getGoalSet().size());
     }
 }

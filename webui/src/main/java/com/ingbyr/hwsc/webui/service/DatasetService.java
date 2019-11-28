@@ -2,10 +2,9 @@ package com.ingbyr.hwsc.webui.service;
 
 import com.ingbyr.hwsc.dataset.DataSetReader;
 import com.ingbyr.hwsc.dataset.Dataset;
-import com.ingbyr.hwsc.webui.dao.DatasetDao;
+import com.ingbyr.hwsc.webui.model.MemoryDatasetReader;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.connection.RedisCommands;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -14,25 +13,25 @@ public class DatasetService {
 
     private final DataSetReader xmlDatasetReader;
 
-    private final DatasetDao datasetDao;
-
-    private final RedisCommands redisCommands;
+    private final MemoryDatasetReader memoryDatasetReader;
 
 
     @Autowired
-    public DatasetService(DataSetReader xmlDatasetReader, DatasetDao datasetDao
-            , RedisCommands redisCommands) {
+    public DatasetService(DataSetReader xmlDatasetReader,
+                          MemoryDatasetReader memoryDatasetReader) {
         this.xmlDatasetReader = xmlDatasetReader;
-        this.datasetDao = datasetDao;
-        this.redisCommands = redisCommands;
+        this.memoryDatasetReader = memoryDatasetReader;
     }
 
     public void resetDataset(Dataset dataset) {
-        log.debug("Flush database and load {}", dataset);
-        redisCommands.flushDb();
+        log.debug("Reload dataset from {}", dataset);
         xmlDatasetReader.setDataset(dataset);
-        xmlDatasetReader.process();
-        datasetDao.saveServiceMap(xmlDatasetReader.getServiceMap());
-        datasetDao.saveConceptMap(xmlDatasetReader.getConceptMap());
+        memoryDatasetReader.cloneFrom(xmlDatasetReader);
+    }
+
+    public boolean needLoadDataset(Dataset dataset) {
+        return memoryDatasetReader == null
+                || memoryDatasetReader.getDataset() == null
+                || !(memoryDatasetReader.getDataset() == dataset);
     }
 }

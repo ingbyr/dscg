@@ -4,8 +4,6 @@ import com.ingbyr.hwsc.common.models.*;
 import com.ingbyr.hwsc.dataset.util.QosUtils;
 import com.ingbyr.hwsc.dataset.util.XMLFileUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 
@@ -16,7 +14,7 @@ import java.util.*;
  * @author ing
  */
 @Slf4j
-public class XMLDataSetReader extends AbstractDataSetReader implements DataSetReader {
+public class XMLDataSetReader extends LocalDatasetSetReader {
 
     // taxonomy xml constants
     private static final String NAME = "name";
@@ -50,10 +48,14 @@ public class XMLDataSetReader extends AbstractDataSetReader implements DataSetRe
         this.TAXONOMY_URL = dataset.getPath() + File.separator + "taxonomy.xml";
         this.SERVICES_URL = dataset.getPath() + File.separator + "services-qos.xml";
         this.PROBLEM_URL = dataset.getPath() + File.separator + "problem.xml";
+        process();
     }
 
     @Override
     public Map<String, Concept> parseTaxonomyDocument() throws DocumentException {
+
+        conceptMap = new HashMap<>();
+        thingMap = new HashMap<>();
 
         Queue<Element> elementsQueue = new LinkedList<>();
         elementsQueue.offer(XMLFileUtils.loadRootElement(TAXONOMY_URL));
@@ -112,6 +114,11 @@ public class XMLDataSetReader extends AbstractDataSetReader implements DataSetRe
      * Rescale qos
      */
     private void rescaleQos() {
+
+        minQos = new Qos(Double.MAX_VALUE);
+        maxQos = new Qos(Double.MIN_VALUE);
+        distanceQos = new Qos();
+
         // Init min qos and max qos
         for (Map.Entry<String, Service> entry : serviceMap.entrySet()) {
             Qos qos = entry.getValue().getQos();
@@ -156,6 +163,8 @@ public class XMLDataSetReader extends AbstractDataSetReader implements DataSetRe
      * @param paramsElement Params element
      */
     private void parseServiceParams(Service service, Element paramsElement) {
+        paramMap = new HashMap<>();
+
         XMLFileUtils.walkOnChild(paramsElement, paramElement -> {
             String instanceName = paramElement.attribute(NAME).getText();
             Param param = new Param(instanceName);
@@ -186,6 +195,7 @@ public class XMLDataSetReader extends AbstractDataSetReader implements DataSetRe
      */
     @Override
     public Map<String, Service> parseServicesDocument() throws DocumentException {
+        serviceMap = new HashMap<>();
         Element servicesRoot = XMLFileUtils.loadRootElement(SERVICES_URL);
         XMLFileUtils.walkOnChild(servicesRoot, serviceElement -> {
             Service service = new Service(serviceElement.attribute(NAME).getText());
@@ -222,22 +232,13 @@ public class XMLDataSetReader extends AbstractDataSetReader implements DataSetRe
     }
 
     @Override
-    public Pair<Set<Concept>, Set<Concept>> parseProblemDocument() throws DocumentException {
+    public void parseProblemDocument() throws DocumentException {
+        inputSet = new HashSet<>();
+        goalSet = new HashSet<>();
+
         Element problemRoot = XMLFileUtils.loadRootElement(PROBLEM_URL);
         Element taskRoot = problemRoot.element(TASK);
-        Set<Concept> initPLevel = parseInitialParas(taskRoot.element(PROVIDED));
-        Set<Concept> goalSet = parseInitialParas(taskRoot.element(WANTED));
-        problem = new ImmutablePair<>(initPLevel, goalSet);
-        return problem;
-    }
-
-    @Override
-    public Set<Concept> getInputSet() {
-        return problem.getLeft();
-    }
-
-    @Override
-    public Set<Concept> getGoalSet() {
-        return problem.getRight();
+        inputSet = parseInitialParas(taskRoot.element(PROVIDED));
+        goalSet = parseInitialParas(taskRoot.element(WANTED));
     }
 }

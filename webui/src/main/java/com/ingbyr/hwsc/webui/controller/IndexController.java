@@ -24,9 +24,9 @@ public class IndexController {
     @ApiOperation("Index controller")
     @GetMapping("/")
     public String index(Model model) {
-        model.addAttribute("all_dataset", Dataset.values());
         PlannerConfig config = plannerService.loadConfig();
         model.addAttribute("planner_config", config);
+        model.addAttribute("dataset_list", Dataset.values());
         log.debug("Load planner config {}", config);
         return "index";
     }

@@ -37,7 +37,6 @@ public class GeneratePlanningGraph {
     }
 
     private static DataSetReader initDataSetReader(DataSetReader dataSetReader) {
-        dataSetReader.process();
         log.debug("Parsing Successfully Completed");
         return dataSetReader;
     }

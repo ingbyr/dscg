@@ -18,7 +18,6 @@ class EvaluatorGoalDistanceConcurrentTest {
     @Test
     void evaluate() {
         DataSetReader dataSetReader = new XMLDataSetReader(Dataset.wsc2009_01);
-        dataSetReader.process();
 
         InnerPlanner innerPlanner = new InnerPlannerYashp2(dataSetReader.getServiceMap(), dataSetReader.getConceptMap(), 1);
 

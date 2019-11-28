@@ -13,7 +13,6 @@ class MutationDelStateTest {
     @Test
     void mutate() {
         DataSetReader dataSetReader = new XMLDataSetReader(Dataset.wsc2009_01);
-        dataSetReader.process();
 
         ConceptTime conceptTime = new ConceptTime();
         conceptTime.build(dataSetReader);
