@@ -21,11 +21,22 @@ public abstract class AbstractDataSetReader implements DataSetReader {
     protected Map<String, Concept> conceptMap = new HashMap<>();
 
     // Left value is init p level and right value is goal set
-    protected Pair<Set<Concept>, Set<Concept>> problem;
+    protected Pair<Set<Concept>, Set<Concept>> problem = null;
     protected Qos minQos = new Qos(Double.MAX_VALUE);
     protected Qos maxQos = new Qos(Double.MIN_VALUE);
     protected Qos distanceQos = new Qos();
 
+    @Override
+    public void setDataset(Dataset dataset) {
+        thingMap = new HashMap<>();
+        serviceMap = new HashMap<>();
+        paramMap = new HashMap<>();
+        conceptMap = new HashMap<>();
+        problem = null;
+        minQos = new Qos(Double.MAX_VALUE);
+        maxQos = new Qos(Double.MIN_VALUE);
+        distanceQos = new Qos();
+    }
 
     /**
      * Parse taxonomy file

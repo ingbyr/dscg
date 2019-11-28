@@ -45,12 +45,8 @@ public class XMLDataSetReader extends AbstractDataSetReader implements DataSetRe
     }
 
     @Override
-    public void setDataset(String dataset) {
-        setDataset(Dataset.valueOf(dataset));
-    }
-
-    @Override
     public void setDataset(Dataset dataset) {
+        super.setDataset(dataset);
         this.TAXONOMY_URL = dataset.getPath() + File.separator + "taxonomy.xml";
         this.SERVICES_URL = dataset.getPath() + File.separator + "services-qos.xml";
         this.PROBLEM_URL = dataset.getPath() + File.separator + "problem.xml";

@@ -11,8 +11,6 @@ public interface DataSetReader {
 
     void setDataset(Dataset dataset);
 
-    void setDataset(String dataset);
-
     void process();
 
     Qos getMaxQos();

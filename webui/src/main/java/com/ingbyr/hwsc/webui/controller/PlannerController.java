@@ -1,10 +1,11 @@
 package com.ingbyr.hwsc.webui.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ingbyr.hwsc.planner.Planner;
 import com.ingbyr.hwsc.planner.PlannerConfig;
-import com.ingbyr.hwsc.planner.exception.DAEXConfigException;
+import com.ingbyr.hwsc.webui.service.DatasetService;
 import com.ingbyr.hwsc.webui.service.PlannerService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,29 +25,34 @@ public class PlannerController {
 
     private final PlannerService plannerService;
 
+    private final DatasetService datasetService;
+
     private Planner planner;
 
     @Autowired
     public PlannerController(PlannerService plannerService,
+                             DatasetService datasetService,
                              Planner planner) {
         this.plannerService = plannerService;
+        this.datasetService = datasetService;
         this.planner = planner;
     }
 
-    @PostMapping("/run")
-    public void exec(PlannerConfig plannerConfig, HttpServletResponse response) throws IOException, DAEXConfigException {
-        log.debug("{}", plannerConfig);
+    @ApiOperation("Exec planner")
+    @PostMapping("/exec")
+    public void exec(@ApiParam(value = "Planner config") PlannerConfig plannerConfig, HttpServletResponse response) throws IOException {
+        log.debug("Get {}", plannerConfig);
+        if (plannerService.needLoadDataset(plannerConfig.getDataset())) {
+            datasetService.resetDataset(plannerConfig.getDataset());
+        }
+        plannerService.saveConfig(plannerConfig);
         plannerService.exec(planner, plannerConfig);
         response.sendRedirect("/");
     }
 
-    @PostMapping("/config/save")
-    public void saveConfig(PlannerConfig plannerConfig) throws JsonProcessingException {
-        plannerService.saveConfig(plannerConfig);
-    }
-
+    @ApiOperation("Get current planner config")
     @GetMapping("/config")
-    public ResponseEntity<PlannerConfig> loadConfig() throws IOException {
+    public ResponseEntity<PlannerConfig> loadConfig() {
         PlannerConfig plannerConfig = plannerService.loadConfig();
         if (plannerConfig == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);

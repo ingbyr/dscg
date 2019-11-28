@@ -2,12 +2,12 @@ package com.ingbyr.hwsc.webui.controller;
 
 import com.ingbyr.hwsc.dataset.Dataset;
 import com.ingbyr.hwsc.webui.service.DatasetService;
-import com.ingbyr.hwsc.webui.service.RedisServerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.connection.RedisCommands;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,29 +19,29 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = "Dataset controller")
 public class DatasetController {
 
-    private DatasetService datasetService;
+    private final DatasetService datasetService;
 
-    private RedisServerService redisServerService;
+    private final RedisCommands redisCommands;
 
     @Autowired
     public DatasetController(DatasetService datasetService,
-                             RedisServerService redisServerService) {
+                             RedisCommands redisCommands) {
         this.datasetService = datasetService;
-        this.redisServerService = redisServerService;
+        this.redisCommands = redisCommands;
     }
 
     @ApiOperation("Clear database")
     @GetMapping("/clear")
     String clearData() {
-        redisServerService.deleteAll();
+        redisCommands.flushDb();
         return "Cleared db";
     }
 
     @ApiOperation("Reload dataset to database")
     @GetMapping("/reload/{dataset}")
     String reloadData(@ApiParam(value = "Dataset id", example = "wsc2009_01") @PathVariable(value = "dataset") String dataset) {
-        redisServerService.deleteAll();
-        datasetService.saveDatasetToDatabase(Dataset.valueOf(dataset.toLowerCase()));
+        redisCommands.flushDb();
+        datasetService.resetDataset(Dataset.valueOf(dataset.toLowerCase()));
         return "Loaded dataset to db";
     }
 

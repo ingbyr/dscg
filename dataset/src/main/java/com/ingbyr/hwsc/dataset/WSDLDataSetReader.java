@@ -29,13 +29,10 @@ public class WSDLDataSetReader extends AbstractDataSetReader implements DataSetR
         setDataset(dataset);
     }
 
-    @Override
-    public void setDataset(String dataset) {
-        setDataset(Dataset.valueOf(dataset));
-    }
 
     @Override
     public void setDataset(Dataset dataset) {
+        super.setDataset(dataset);
         this.TAXONOMY_URL = dataset.getPath() + "//Taxonomy.owl";
         this.SERVICES_URL = dataset.getPath() + "//Services.wsdl";
         this.PROBLEM_URL = dataset.getPath() + "//Challenge.wsdl";
