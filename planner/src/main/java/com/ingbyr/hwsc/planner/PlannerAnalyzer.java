@@ -6,14 +6,20 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.ingbyr.hwsc.common.models.Concept;
 import com.ingbyr.hwsc.common.models.Qos;
 import com.ingbyr.hwsc.common.models.Service;
+import com.ingbyr.hwsc.common.util.WorkDir;
+import com.ingbyr.hwsc.dataset.Dataset;
 import com.ingbyr.hwsc.dataset.util.QosUtils;
 import com.ingbyr.hwsc.planner.exception.NotValidSolutionException;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -22,60 +28,67 @@ import java.util.*;
 @Slf4j
 public class PlannerAnalyzer {
 
+    private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+
     // Fitness log
     private final List<Double> fitnessLog = new LinkedList<>();
 
     // Qos log
     private final List<Qos> realQosLog = new LinkedList<>();
 
+    @Getter
+    private List<Object> echartQosLog;
+
+    @Getter
     private Instant startTime;
 
+    @Getter
     private Instant endTime;
+
+    @Getter
+    private double runtime;
+
+    @Setter
+    private Dataset dataset;
 
     public void addLog(Individual individual) {
         fitnessLog.add(individual.getFitness());
-        realQosLog.add(individual.getQos());
+        Qos realQos = QosUtils.flip(individual.getServices().size(), individual.getQos());
+        log.debug("Fitness {}, Real {}", individual.getFitness(), realQos);
+        realQosLog.add(realQos);
     }
 
-    public void displayLog() {
+    void recordStartTime() {
+        startTime = Instant.now();
+    }
+
+    void recordEndTime() {
+        endTime = Instant.now();
+        runtime = Duration.between(startTime, endTime).toMillis() / 1000.0;
+    }
+
+    public void displayLogOnConsole() {
+        log.info("Time used {} seconds", getRuntime());
+        displayLog();
+    }
+
+    private void displayLog() {
         log.info("Process log:");
         Iterator<Double> fitnessItr = fitnessLog.iterator();
-        Iterator<Qos> originQosItr = realQosLog.iterator();
+        Iterator<Qos> qosLogItr = realQosLog.iterator();
         int step = 0;
-        while (fitnessItr.hasNext() && originQosItr.hasNext()) {
-            log.debug("[{}] Fitness {}", step, fitnessItr.next());
-            log.debug("[{}] origin qos {}", step, originQosItr.next());
-            log.debug("");
+        while (fitnessItr.hasNext() && qosLogItr.hasNext()) {
+            log.debug("[{}] Fitness {}, Qos {}", step, fitnessItr.next(), qosLogItr.next());
             step++;
         }
     }
 
-    public void recordStartTime() {
-        startTime = Instant.now();
-    }
-
-    public void recordEndTime() {
-        endTime = Instant.now();
-    }
-
-    public void displayRuntime() {
-        log.info("Time used {} seconds", Duration.between(startTime, endTime).toMillis() / 1000.0F);
-    }
-
-    /**
-     * TODO Move this to web app
-     *
-     * @throws IOException
-     */
-    public void transToUIData() throws IOException {
-        final ObjectMapper mapper = new ObjectMapper();
-        final ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
-
-        List<Object> data = new ArrayList<>(realQosLog.size() + 1);
+    void buildEchartData() {
+        echartQosLog = new ArrayList<>(realQosLog.size() + 1);
         String[] qosTypes = new String[Qos.NAMES.length + 1];
         System.arraycopy(Qos.NAMES, 0, qosTypes, 1, Qos.NAMES.length);
         qosTypes[0] = "Step";
-        data.add(qosTypes);
+        echartQosLog.add(qosTypes);
 
         int qosNum = Qos.NAMES.length;
         // Add step to qos log
@@ -83,10 +96,18 @@ public class PlannerAnalyzer {
             double[] qosWithStep = new double[qosNum + 1];
             System.arraycopy(realQosLog.get(i).getValues(), 0, qosWithStep, 1, qosNum);
             qosWithStep[0] = i;
-            data.add(qosWithStep);
+            echartQosLog.add(qosWithStep);
         }
+    }
 
-        writer.writeValue(new File(".//log//qos.json"), data);
+    public void saveQosLogToFile() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
+        File qosLogFile = WorkDir.LOG_DIR.resolve("qos@" + dataset.name() + "@"
+                + LocalDateTime.now().format(DATETIME_FORMATTER)
+                + ".json").toFile();
+        log.info("Save qos log to {}", qosLogFile);
+        writer.writeValue(qosLogFile, getEchartQosLog());
     }
 
     public static void displayPopulation(List<Individual> individuals) {

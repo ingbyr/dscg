@@ -2,6 +2,7 @@ package com.ingbyr.hwsc.common.models;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.util.Arrays;
@@ -24,7 +25,7 @@ public class Qos {
 
     // Qos type
     public static final int[] TYPES = new int[]{
-            RES, AVA, SUC, REL, REL, LAT, PRI
+            RES, AVA, SUC, REL, LAT, PRI
     };
 
     // Qos that need flip
@@ -41,7 +42,9 @@ public class Qos {
     public static final int QOS_NUM = TYPES.length;
 
     // Qos values
-    private final double[] values = new double[QOS_NUM];
+    // TODO setter for debug
+    @Setter
+    private double[] values = new double[QOS_NUM];
 
     public Qos() {
         Arrays.fill(values, 0.0);

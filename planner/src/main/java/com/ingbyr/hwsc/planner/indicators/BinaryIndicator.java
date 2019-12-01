@@ -42,13 +42,13 @@ public class BinaryIndicator implements Indicator {
     private double toPartFitness(double indicatorValue) {
         double fitness = Math.exp(-indicatorValue / k);
         log.trace("Part fitness {}", fitness);
-        return Math.exp(-indicatorValue / k);
+        return fitness;
     }
 
     private double indicatorValue(Individual ind1, Individual ind2) {
         double distance = indicatorValue(ind1.getQos(), ind2.getQos());
-        log.trace("distance {}", distance);
-        return indicatorValue(ind1.getQos(), ind2.getQos());
+        log.trace("Distance {}", distance);
+        return distance;
     }
 
     private double indicatorValue(Qos qos1, Qos qos2) {

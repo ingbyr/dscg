@@ -102,6 +102,7 @@ public class XMLDataSetReader extends LocalDatasetSetReader {
             originQos.set(type, Double.parseDouble(serviceElement.attribute(Qos.NAMES[type]).getText()));
         }
         service.setOriginQos(originQos);
+        // TODO Flip qos
         service.setQos(QosUtils.flip(originQos));
         log.trace("{} origin {}", service, service.getOriginQos());
         log.trace("{} flipped {}", service, service.getQos());

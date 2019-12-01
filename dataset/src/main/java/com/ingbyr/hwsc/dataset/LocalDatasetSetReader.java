@@ -49,6 +49,7 @@ public abstract class LocalDatasetSetReader extends AbstractDataSetReader {
     }
 
     /**
+     * TODO Use Localdataset reader
      * Set concept's parents and children
      */
     protected void buildConceptIndex() {

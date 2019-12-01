@@ -2,7 +2,6 @@ package com.ingbyr.hwsc.webui.model;
 
 import com.ingbyr.hwsc.dataset.AbstractDataSetReader;
 import com.ingbyr.hwsc.dataset.DataSetReader;
-import com.ingbyr.hwsc.dataset.Dataset;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
@@ -25,8 +24,4 @@ public final class MemoryDatasetReader extends AbstractDataSetReader {
         goalSet = new HashSet<>(dataSetReader.getGoalSet());
     }
 
-    @Override
-    public void setDataset(Dataset dataset) {
-        throw new IllegalArgumentException("Can not use this method");
-    }
 }

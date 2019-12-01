@@ -76,7 +76,7 @@ public class Individual implements Comparable {
     @ToString.Exclude
     double fitness = 0.0;
 
-    Individual() {
+    public Individual() {
         this.id = globalId++;
         this.lastReachedStateIndex = 0;
         this.isFeasible = false;

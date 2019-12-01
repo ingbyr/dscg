@@ -37,6 +37,10 @@ public class SurvivalSelectorIndicator implements SurvivalSelector {
         List<Individual> bestIndividuals = null;
         if (feasibleIndividuals.size() >= survivalSize) {
             // Choose survival individual from feasible individuals directly if it has enough individuals
+            List<Individual> tmp = feasibleIndividuals.stream().sorted().collect(Collectors.toList());
+            for (Individual individual : tmp) {
+                log.debug("{} {}", individual.getFitness(), individual.getQos());
+            }
             bestIndividuals = feasibleIndividuals.stream().sorted().limit(survivalSize).collect(Collectors.toList());
         } else {
             Queue<Individual> individuals = new PriorityQueue<>(pop.size() + offSpring.size());

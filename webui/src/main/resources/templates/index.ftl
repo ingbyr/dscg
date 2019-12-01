@@ -3,11 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>HWSC UI</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <script src="/webjars/jquery/jquery.js"></script>
+
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+
+    <script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <script src="/webjars/echarts/echarts.js"></script>
+
     <link href="css/index.css" rel="stylesheet">
-    <script src="js/jquery-3.4.1.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/echarts.min.js"></script>
     <script src="js/index.js"></script>
 </head>
 <body>
@@ -21,7 +29,7 @@
             </div>
             <div class="card-body">
                 <div class="form-row">
-                    <form action="/planner/exec" method="post">
+                    <form id="form-planner-config">
                         <div class="row">
                             <div class="col">
                                 <label for="dataset">Dataset</label>
@@ -108,32 +116,46 @@
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="checkbox" id="enableConcurrentMode"
                                        name="enableConcurrentMode"
+                                       value="true"
                                         <#if (planner_config.enableConcurrentMode)?has_content
                                         && (planner_config.enableConcurrentMode) == true>
                                             checked
                                         </#if>
                                 >
-                                <label class="form-check-label" for="inlineCheckbox1">enableConcurrentMode</label>
+                                <label class="form-check-label" for="enableConcurrentMode">enableConcurrentMode</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="checkbox" id="enableAutoStop"
                                        name="enableAutoStop"
+                                       value="true"
                                         <#if (planner_config.enableAutoStop)?has_content
                                         && (planner_config.enableAutoStop) == true>
                                             checked
                                         </#if>
                                 >
-                                <label class="form-check-label" for="inlineCheckbox2">enableAutoStop</label>
+                                <label class="form-check-label" for="enableAutoStop">enableAutoStop</label>
                             </div>
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="saveToFile"
+                                       name="saveToFile"
+                                       value="true"
+                                        <#if (planner_config.saveToFile)?has_content
+                                        && (planner_config.saveToFile) == true>
+                                            checked
+                                        </#if>
+                                >
+                                <label class="form-check-label" for="saveToFile">saveToFile</label>
+                            </div>
+
                             <div class="col">
                                 <label for="autoStopStep">autoStopStep</label>
                                 <input type="text" class="form-control" id="autoStopStep" name="autoStopStep"
                                        value=${(planner_config.autoStopStep)! "10"} required>
                             </div>
                         </div>
-
-                        <button type="submit" class="btn btn-primary">Run planner</button>
                     </form>
+                    <button class="btn btn-primary" onclick="postPlannerConfig()">Run planner</button>
                 </div>
             </div>
         </div>
@@ -142,11 +164,10 @@
     <div class="row top-buffer">
         <div class="card">
             <div class="card-header font-weight-bold">
-                Display Qos
+                Result
             </div>
             <div class="card-body">
-                <button type="button" class="btn btn-primary" onclick="displayQos()">Display Qos Chart</button>
-                <div id="display-qos"></div>
+                <div id="result"></div>
             </div>
         </div>
     </div>

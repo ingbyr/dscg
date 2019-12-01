@@ -39,4 +39,6 @@ public class PlannerConfig {
     int maxGen;
 
     int autoStopStep;
+
+    boolean saveToFile;
 }

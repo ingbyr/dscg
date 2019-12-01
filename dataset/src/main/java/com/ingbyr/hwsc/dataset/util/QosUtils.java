@@ -22,6 +22,14 @@ public class QosUtils {
         return newQos;
     }
 
+    public static Qos flip(int offset, Qos qos) {
+        Qos newQos = QosUtils.copy(qos);
+        for (int type : FLIP_QOS_TYPES) {
+            newQos.set(type, -qos.get(type));
+        }
+        return newQos;
+    }
+
     public static double toSimpleCost(Qos qos) {
         return Arrays.stream(qos.getValues()).sum();
     }

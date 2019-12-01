@@ -1,6 +1,6 @@
 package com.ingbyr.hwsc.planner;
 
-import com.ingbyr.hwsc.common.util.FileUtils;
+import com.ingbyr.hwsc.common.util.WorkDir;
 import com.ingbyr.hwsc.dataset.Dataset;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration2.Configuration;
@@ -17,7 +17,7 @@ import java.io.File;
 @Slf4j
 public final class PlannerLocalConfig extends PlannerConfig {
 
-    private static final File CONFIG_FILE = FileUtils.WORK_DIR.resolve("planner.properties").toFile();
+    private static final File CONFIG_FILE = WorkDir.WORK_DIR.resolve("planner.properties").toFile();
 
     private static final String DATASET = "dataset";
 
@@ -47,6 +47,8 @@ public final class PlannerLocalConfig extends PlannerConfig {
 
     private static final String STOP_STEP = "stop_step";
 
+    private static final String SAVE_TO_FILE = "save_to_file";
+
     /**
      * Load planner config from planner.properties file
      *
@@ -72,5 +74,6 @@ public final class PlannerLocalConfig extends PlannerConfig {
         enableAutoStop = config.getBoolean(ENABLE_AUTO_STOP);
         maxGen = config.getInt(MAX_GEN);
         autoStopStep = config.getInt(STOP_STEP);
+        saveToFile = config.getBoolean(SAVE_TO_FILE);
     }
 }
