@@ -21,19 +21,19 @@ public class CrossoverSwapState implements Crossover {
 
         if (earliestTimeB > earliestTimeA) {
             for (int i = 0; i <= stateAIndex; i++)
-                newInd.addState(indA.getState(i));
+                newInd.addState(indA.getState(i).copy());
             for (int i = stateBIndex; i < indB.getStateSize(); i++)
-                newInd.addState(indB.getState(i));
+                newInd.addState(indB.getState(i).copy());
         } else if (earliestTimeA == earliestTimeB){  // Avoid to add same time state
             for (int i = 0; i <= stateBIndex; i++)
-                newInd.addState(indB.getState(i));
+                newInd.addState(indB.getState(i).copy());
             for (int i = stateAIndex + 1; i < indA.getStateSize(); i++)
-                newInd.addState(indA.getState(i));
+                newInd.addState(indA.getState(i).copy());
         } else {
             for (int i = 0; i <= stateBIndex; i++)
-                newInd.addState(indB.getState(i));
+                newInd.addState(indB.getState(i).copy());
             for (int i = stateAIndex; i < indA.getStateSize(); i++)
-                newInd.addState(indA.getState(i));
+                newInd.addState(indA.getState(i).copy());
         }
         log.trace("Crossover parent A at {}: {}", stateAIndex, indA);
         log.trace("Crossover parent B at {}: {}", stateBIndex, indB);

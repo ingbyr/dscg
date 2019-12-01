@@ -155,12 +155,15 @@
                             </div>
                         </div>
                     </form>
+                </div>
+                <div class="row">
                     <button class="btn btn-primary" onclick="postPlannerConfig()">Run planner</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <#-- Result area -->
     <div class="row top-buffer">
         <div class="card">
             <div class="card-header font-weight-bold">

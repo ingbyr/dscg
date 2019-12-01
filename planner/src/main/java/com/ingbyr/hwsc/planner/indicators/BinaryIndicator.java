@@ -29,9 +29,6 @@ public class BinaryIndicator implements Indicator {
     private double calculateIndividualFitness(Individual ind, List<Individual> population) {
         double fitness = 0.0;
         for (Individual otherInd : population) {
-            // Skip itself
-            if (otherInd.equals(ind))
-                continue;
             log.trace("Ind {}, other ind {}", ind.getId(), otherInd.getId());
             fitness += toPartFitness(indicatorValue(otherInd, ind));
         }
@@ -40,7 +37,8 @@ public class BinaryIndicator implements Indicator {
     }
 
     private double toPartFitness(double indicatorValue) {
-        double fitness = Math.exp(-indicatorValue / k);
+//        double fitness = Math.exp(-indicatorValue / k);
+        double fitness = -indicatorValue / k;
         log.trace("Part fitness {}", fitness);
         return fitness;
     }
@@ -55,9 +53,10 @@ public class BinaryIndicator implements Indicator {
         double minDistance = Double.MAX_VALUE;
         double maxDistance = Double.MIN_EXPONENT;
         boolean isPositive = false;
+
         for (int type : Qos.TYPES) {
             double distance = qos1.get(type) - qos2.get(type);
-            if (distance >= 0) {
+            if (distance > 0) {
                 isPositive = true;
                 minDistance = Math.min(minDistance, distance);
             }

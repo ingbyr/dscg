@@ -1,9 +1,9 @@
 package com.ingbyr.hwsc.planner;
 
+import com.ingbyr.hwsc.planner.utils.UniformUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -26,16 +26,9 @@ public class Mutations {
         }
     }
 
-    /**
-     * TODO Must do one mutation
-     * @param individual Individual
-     */
     public void mutate(Individual individual) {
-        Collections.shuffle(ops);
-        log.trace("Mutate {}", individual);
-        for (Mutation mutation : ops) {
-            if (mutation.mutate(individual))
-                break;
-        }
+        Mutation mutation = UniformUtils.oneFromList(ops);
+        log.trace("[{}] Apply mutation {} to {}", individual.getId(), mutation.getClass().getSimpleName(), individual);
+        mutation.mutate(individual);
     }
 }

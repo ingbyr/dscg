@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -83,9 +84,13 @@ public class Individual implements Comparable {
     }
 
     public Individual copy() {
-        Individual ind = new Individual();
-        ind.states = Lists.newArrayList(this.states);
-        return ind;
+        Individual newInd = new Individual();
+        List<State> newStates = new ArrayList<>(this.states.size());
+        for (State state : this.states) {
+            newStates.add(state.copy());
+        }
+        newInd.states = newStates;
+        return newInd;
     }
 
     void addState(State state) {

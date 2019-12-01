@@ -76,12 +76,12 @@ public class Planner {
 
             // Create new individual
             for (int i = 0; i < config.getOffspringSize(); i++) {
-                Individual individual1 = UniformUtils.oneFromList(population);
+                Individual individual = UniformUtils.oneFromList(population);
                 Individual newIndividual = null;
                 // Crossover
                 if (UniformUtils.p() < config.getCrossoverPossibility()) {
                     Individual individual2 = UniformUtils.oneFromList(population);
-                    newIndividual = crossover.doCrossover(individual1, individual2);
+                    newIndividual = crossover.doCrossover(individual, individual2);
 
                     if (newIndividual == null) {
                         log.error("Crossover new individual is null");
@@ -89,14 +89,18 @@ public class Planner {
                     }
 
                     // New individual is same to the parents, mutate it
-                    if (newIndividual.equals(individual1) || newIndividual.equals(individual2)) {
+                    while (newIndividual.equals(individual) || newIndividual.equals(individual2)) {
                         mutations.mutate(newIndividual);
                     }
 
                 } else {
                     // If no crossover, then mutate it
-                    newIndividual = individual1.copy();
-                    mutations.mutate(newIndividual);
+                    newIndividual = individual.copy();
+
+                    // Must do once mutation
+                    while (individual.equals(newIndividual)) {
+                        mutations.mutate(newIndividual);
+                    }
 
                     if (newIndividual == null) {
                         log.error("Mutation new individual is null");
