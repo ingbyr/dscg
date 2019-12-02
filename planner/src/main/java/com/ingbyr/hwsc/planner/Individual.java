@@ -28,7 +28,7 @@ import java.util.Set;
 @Slf4j
 public class Individual implements Comparable {
 
-    private static int globalId = 0;
+    static int globalId = 0;
 
     @EqualsAndHashCode.Exclude
     private int id;
@@ -79,8 +79,6 @@ public class Individual implements Comparable {
 
     public Individual() {
         this.id = globalId++;
-        this.lastReachedStateIndex = 0;
-        this.isFeasible = false;
     }
 
     public Individual copy() {

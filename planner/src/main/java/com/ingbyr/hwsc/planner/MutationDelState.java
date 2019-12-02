@@ -14,7 +14,7 @@ public class MutationDelState implements Mutation {
     @Override
     public boolean mutate(Individual individual) {
         if (individual.getStateSize() <= 3) {
-            log.error("No available state to remove {}", individual);
+            log.warn("No available state to remove {}", individual);
             return false;
         }
         int selectedStateIndex = UniformUtils.rangeII(1, Math.min(individual.getStateSize() - 2, individual.lastReachedStateIndex + 1));

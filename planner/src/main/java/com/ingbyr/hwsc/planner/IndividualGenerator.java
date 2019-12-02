@@ -14,8 +14,6 @@ import java.util.Set;
 /**
  * @author ingbyr
  */
-
-
 @Slf4j
 @Setter
 public final class IndividualGenerator {
@@ -30,7 +28,6 @@ public final class IndividualGenerator {
         this.conceptTime = conceptTime;
         this.inputState = new State(dataSetReader.getInputSet(), 0);
         this.goalState = new State(dataSetReader.getGoalSet(), conceptTime.time + 1);
-
         log.debug("Input state: {}", inputState);
         log.debug("Goal state: {}", goalState);
     }

@@ -7,7 +7,7 @@ class PlannerConfigTest {
 
     @Test
     void loadConfig() throws ConfigurationException {
-        PlannerLocalConfig config = new PlannerLocalConfig();
+        PlannerConfigFile config = new PlannerConfigFile();
         System.out.println(config);
     }
 

@@ -15,7 +15,7 @@ import java.io.File;
  * @author ingbyr
  */
 @Slf4j
-public final class PlannerLocalConfig extends PlannerConfig {
+public final class PlannerConfigFile extends PlannerConfig {
 
     private static final File CONFIG_FILE = WorkDir.WORK_DIR.resolve("planner.properties").toFile();
 
@@ -31,13 +31,13 @@ public final class PlannerLocalConfig extends PlannerConfig {
 
     private static final String P_MUT = "p_mut";
 
-    private static final String MUTATION_ADD_STATE_WEIGHT = "mutation_add_goal_weight";
+    private static final String MUTATION_ADD_STATE_WEIGHT = "mutation_add_state_weight";
 
-    private static final String MUTATION_ADD_CONCEPT_WEIGHT = "mutation_add_atom_weight";
+    private static final String MUTATION_ADD_CONCEPT_WEIGHT = "mutation_add_concept_weight";
 
-    private static final String MUTATION_DEL_STATE_WEIGHT = "mutation_del_goal_weight";
+    private static final String MUTATION_DEL_STATE_WEIGHT = "mutation_del_state_weight";
 
-    private static final String MUTATION_DEL_CONCEPT_WEIGHT = "mutation_del_atom_weight";
+    private static final String MUTATION_DEL_CONCEPT_WEIGHT = "mutation_del_concept_weight";
 
     private static final String ENABLE_AUTO_STOP = "enable_auto_stop";
 
@@ -66,7 +66,7 @@ public final class PlannerLocalConfig extends PlannerConfig {
      *
      * @throws ConfigurationException
      */
-    public PlannerLocalConfig() throws ConfigurationException {
+    public PlannerConfigFile() throws ConfigurationException {
 
         Configurations configHelp = new Configurations();
         log.info("Config file {}", CONFIG_FILE.getAbsolutePath());

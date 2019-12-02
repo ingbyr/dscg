@@ -43,7 +43,7 @@ class IndicatorBinaryTest {
         pop.add(i3);
         pop.add(i4);
 
-        Indicator indicator =new IndicatorBinary(1);
+        Indicator indicator =new IndicatorBinary();
         indicator.calculatePopulationFitness(pop);
         for (Individual individual : pop) {
             System.out.println(individual.getFitness() +" " + Arrays.toString(individual.getQos().getValues()));

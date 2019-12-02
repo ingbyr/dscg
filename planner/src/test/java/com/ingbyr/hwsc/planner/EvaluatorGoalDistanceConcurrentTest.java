@@ -21,7 +21,9 @@ class EvaluatorGoalDistanceConcurrentTest {
 
         InnerPlanner innerPlanner = new InnerPlannerYashp2(dataSetReader.getServiceMap(), dataSetReader.getConceptMap(), 1);
 
-        Evaluator evaluator = EvaluatorGoalDistance.builder().lMax(10).bMax(10).build();
+        Evaluator evaluator = new EvaluatorGoalDistanceConcurrent();
+        evaluator.setMaxStateSize(10);
+        evaluator.setInnerPlannerMaxStep(10);
 
         ConceptTime conceptTime = new ConceptTime();
         conceptTime.build(dataSetReader);

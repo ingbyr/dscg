@@ -1,15 +1,10 @@
 package com.ingbyr.hwsc.planner;
 
 import com.ingbyr.hwsc.dataset.Dataset;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
-@ToString
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
+@NoArgsConstructor
 public class PlannerConfig {
 
     public static final String EVALUATOR_CLASS_PREFIX = "com.ingbyr.hwsc.planner.";

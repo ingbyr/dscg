@@ -174,6 +174,9 @@ public class Planner {
     }
 
     public void setup(PlannerConfig plannerConfig, DataSetReader reader) throws DAEXConfigException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        //Reset global id for individual
+        Individual.globalId = 0;
+
         // If already setup then skip
         if (plannerConfig != null && plannerConfig.equals(this.config))
             return;
@@ -198,9 +201,11 @@ public class Planner {
         crossover = new CrossoverSwapState();
 
         mutations = new Mutations();
-        mutations.addMutation(new MutationAddState(conceptTime, config.getMutationAddStateRadius()),
+        mutations.addMutation(
+                new MutationAddState(conceptTime, config.getMutationAddStateRadius()),
                 config.getMutationAddStateWeight());
-        mutations.addMutation(new MutationAddConcept(conceptTime,
+        mutations.addMutation(
+                new MutationAddConcept(conceptTime,
                         config.getMutationAddConceptChangePossibility(),
                         config.getMutationAddConceptAddPossibility()),
                 config.getMutationAddConceptWeight());
@@ -216,7 +221,7 @@ public class Planner {
     }
 
     public static void main(String[] args) throws ConfigurationException, DAEXConfigException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        PlannerConfig config = new PlannerLocalConfig();
+        PlannerConfig config = new PlannerConfigFile();
         log.debug("{}", config);
         Planner planner = new Planner();
         planner.setup(config, new XMLDataSetReader());

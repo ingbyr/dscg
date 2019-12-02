@@ -30,6 +30,7 @@
             <div class="card-body">
                 <div class="form-row">
                     <form id="form-planner-config">
+
                         <div class="row">
                             <div class="col">
                                 <label for="dataset">Dataset</label>
@@ -113,17 +114,21 @@
                         </div>
 
                         <div class="row">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="enableConcurrentMode"
-                                       name="enableConcurrentMode"
-                                       value="true"
-                                        <#if (planner_config.enableConcurrentMode)?has_content
-                                        && (planner_config.enableConcurrentMode) == true>
-                                            checked
-                                        </#if>
-                                >
-                                <label class="form-check-label" for="enableConcurrentMode">enableConcurrentMode</label>
+                            <div class="col">
+                                <label for="mutationAddConceptAddPossibility">mutationAddConceptAddPossibility</label>
+                                <input type="text" class="form-control" id="mutationAddConceptAddPossibility"
+                                       name="mutationAddConceptAddPossibility"
+                                       value=${(planner_config.mutationAddConceptAddPossibility)!"0.5"} required>
                             </div>
+                            <div class="col">
+                                <label for="mutationAddConceptChangePossibility">mutationAddConceptChangePossibility</label>
+                                <input type="text" class="form-control" id="mutationAddConceptChangePossibility"
+                                       name="mutationAddConceptChangePossibility"
+                                       value=${(planner_config.mutationAddConceptChangePossibility)!"0.5"} required>
+                            </div>
+                        </div>
+
+                        <div class="row">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="checkbox" id="enableAutoStop"
                                        name="enableAutoStop"
@@ -154,6 +159,45 @@
                                        value=${(planner_config.autoStopStep)! "10"} required>
                             </div>
                         </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <label for="evaluator">evaluator</label>
+                                <select id="evaluator" name="evaluator" class="form-control">
+                                    <#list evaluators as evaluator>
+                                        <option <#if (planner_config.evaluator)?has_content && evaluator == planner_config.evaluator>selected</#if> >
+                                            ${evaluator}
+                                        </option>
+                                    </#list>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label for="indicator">indicator</label>
+                                <select id="indicator" name="indicator" class="form-control">
+                                    <#list indicators as indicator>
+                                        <option <#if (planner_config.evaluator)?has_content && indicator == planner_config.indicator>selected</#if> >
+                                            ${indicator}
+                                        </option>
+                                    </#list>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <label for="innerPlanMaxStep">innerPlanMaxStep</label>
+                                <input type="text" class="form-control" id="innerPlanMaxStep" name="innerPlanMaxStep"
+                                       value=${(planner_config.innerPlanMaxStep)!"10"}
+                                       required>
+                            </div>
+                            <div class="col">
+                                <label for="maxStateSize">maxStateSize</label>
+                                <input type="text" class="form-control" id="maxStateSize" name="maxStateSize"
+                                       value=${(planner_config.maxStateSize)!"10"}
+                                       required>
+                            </div>
+                        </div>
+
                     </form>
                 </div>
                 <div class="row">

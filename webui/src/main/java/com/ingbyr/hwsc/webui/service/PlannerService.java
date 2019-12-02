@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.InvocationTargetException;
+
 @Slf4j
 @Service
 public class PlannerService {
@@ -17,7 +19,6 @@ public class PlannerService {
     private final PlannerDao plannerDao;
 
     private final MemoryDatasetReader memoryDatasetReader;
-
 
     @Autowired
     public PlannerService(PlannerDao plannerDao, MemoryDatasetReader memoryDatasetReader) {
@@ -33,7 +34,7 @@ public class PlannerService {
         return plannerDao.loadConfig();
     }
 
-    public PlannerAnalyzer exec(PlannerConfig config) throws DAEXConfigException {
+    public PlannerAnalyzer exec(PlannerConfig config) throws DAEXConfigException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Planner planner = new Planner();
         planner.setup(config, memoryDatasetReader);
         planner.exec();

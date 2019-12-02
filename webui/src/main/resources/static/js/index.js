@@ -1,5 +1,5 @@
 // Connect to websocket
-    const socket = new SockJS('/gs-guide-websocket');
+const socket = new SockJS('/gs-guide-websocket');
 stompClient = Stomp.over(socket);
 stompClient.connect({}, function (frame) {
     console.log('Connected: ' + frame);
@@ -137,16 +137,12 @@ function displayQosLog(qosLog) {
 }
 
 function postPlannerConfig() {
+
+    $("#result").empty();
+
     const formData = $("#form-planner-config").serializeArray();
 
     const data = JSON.stringify(formData.reduce((acc, f) => {
-        // if (f.value === "on" ) {
-        //     acc[f.name] = true;
-        // } else if(f.value === "off") {
-        //     acc[f.name] = false;
-        // } else {
-        //     acc[f.name] = f.value;
-        // }
         acc[f.name] = f.value;
         return acc
     }, {}));

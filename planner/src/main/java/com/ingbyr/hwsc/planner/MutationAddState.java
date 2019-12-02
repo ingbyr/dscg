@@ -20,13 +20,13 @@ public class MutationAddState implements Mutation {
     @Override
     public boolean mutate(Individual individual) {
 
-        int selectedStateIndex = UniformUtils.rangeII(1, Math.min(individual.getStateSize() - 1, individual.lastReachedStateIndex + 1));
+        int selectedStateIndex = UniformUtils.rangeII(0, Math.min(individual.getStateSize() - 1, individual.lastReachedStateIndex + 1));
         int t1 = individual.getState(selectedStateIndex).earliestTime;
         int t2 = individual.getState(selectedStateIndex + 1).earliestTime;
         log.trace("Mutate at {} of {}", selectedStateIndex, individual);
 
         if (t2 == t1 + 1) {
-            log.error("Mutation is aborted because of state[{}] is next to state[{}]", t1, t2);
+            log.warn("Mutation is aborted because of state[{}] is next to state[{}]", t1, t2);
             return false;
         }
 
@@ -47,7 +47,7 @@ public class MutationAddState implements Mutation {
         log.trace("Mutate selected time is {} , and select concepts in time [{}, {}]", t, l, r);
 
         if (l == r) {
-            log.error("Mutation is aborted because of no available concepts");
+            log.warn("Mutation is aborted because of no available concepts");
             return null;
         }
 

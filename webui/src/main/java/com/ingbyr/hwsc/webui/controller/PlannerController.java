@@ -3,7 +3,6 @@ package com.ingbyr.hwsc.webui.controller;
 import com.ingbyr.hwsc.dataset.Dataset;
 import com.ingbyr.hwsc.planner.PlannerAnalyzer;
 import com.ingbyr.hwsc.planner.PlannerConfig;
-import com.ingbyr.hwsc.planner.exception.DAEXConfigException;
 import com.ingbyr.hwsc.webui.service.DatasetService;
 import com.ingbyr.hwsc.webui.service.PlannerService;
 import io.swagger.annotations.ApiOperation;
@@ -15,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -37,7 +35,7 @@ public class PlannerController {
     @ApiOperation("Exec planner")
     @MessageMapping("/exec")
     @SendTo("/topic/result")
-    public PlannerAnalyzer exec(@ApiParam(value = "Planner config") PlannerConfig plannerConfig) throws DAEXConfigException {
+    public PlannerAnalyzer exec(@ApiParam(value = "Planner config") PlannerConfig plannerConfig) throws Exception {
         log.debug("Load {}", plannerConfig);
         Dataset dataset = plannerConfig.getDataset();
         if (datasetService.needLoadDataset(dataset)) {
