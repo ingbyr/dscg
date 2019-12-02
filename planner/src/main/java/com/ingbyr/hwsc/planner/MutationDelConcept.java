@@ -1,7 +1,6 @@
 package com.ingbyr.hwsc.planner;
 
 import com.ingbyr.hwsc.common.models.Concept;
-import com.ingbyr.hwsc.planner.model.State;
 import com.ingbyr.hwsc.planner.utils.UniformUtils;
 import lombok.extern.slf4j.Slf4j;
 

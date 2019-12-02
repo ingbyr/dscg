@@ -4,7 +4,7 @@ import com.ingbyr.hwsc.common.models.Concept;
 import com.ingbyr.hwsc.common.models.Delta;
 import com.ingbyr.hwsc.common.models.Param;
 import com.ingbyr.hwsc.common.models.Service;
-import com.ingbyr.hwsc.planner.model.PlanningGraph;
+import com.ingbyr.hwsc.planner.innerplanner.cpg.models.PlanningGraph;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 

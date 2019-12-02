@@ -1,4 +1,4 @@
-package com.ingbyr.hwsc.planner.model;
+package com.ingbyr.hwsc.planner.innerplanner.cpg.models;
 
 import com.ingbyr.hwsc.common.models.Concept;
 import com.ingbyr.hwsc.common.models.Delta;
@@ -39,6 +39,8 @@ public class PlanningGraph {
     public LinkedList<LinkedHashSet<Service>> actionLevels = new LinkedList<>();
     public LinkedHashSet<LinkedHashSet<Concept>> propLevels = new LinkedHashSet<>();
 
+    private Service startService;
+    private Service targetService;
     public List<Service> target;
     public List<Service> start;
 
@@ -48,8 +50,10 @@ public class PlanningGraph {
     public PlanningGraph(Map<String, Concept> conceptMap) {
         PLevels = new Vector<>();
         ALevels = new Vector<>();
-        target = Collections.singletonList(new Service("target"));
-        start = Collections.singletonList(new Service("start"));
+        targetService = new Service("target");
+        target = Collections.singletonList(targetService);
+        startService = new Service("start");
+        start = Collections.singletonList(startService);
         this.conceptMap = conceptMap;
     }
 
@@ -81,4 +85,11 @@ public class PlanningGraph {
         this.ALevels.add(level);
     }
 
+    public void initCache() {
+        // Init dataset cache
+        DatasetCache.serviceMap = new HashMap<>(serviceMap);
+        DatasetCache.conceptMap = new HashMap<>(conceptMap);
+        DatasetCache.serviceMap.put("start", startService);
+        DatasetCache.serviceMap.put("target", targetService);
+    }
 }

@@ -28,16 +28,16 @@ public class DWGNode {
 
     @Getter
     @EqualsAndHashCode.Exclude
-    public Set<Concept> inputConcepts;
+    public Set<String> inputConcepts;
 
     @Getter
     @Setter
     @EqualsAndHashCode.Exclude
-    public Set<Concept> aStarConcepts;
+    public Set<String> aStarConcepts;
 
     @Getter
     @EqualsAndHashCode.Exclude
-    public Set<Concept> outputConcepts;
+    public Set<String> outputConcepts;
 
     @EqualsAndHashCode.Exclude
     private int uuid;
@@ -45,8 +45,8 @@ public class DWGNode {
     private static int globalID = 0;
 
     public static DWGNode from(Set<LeveledService> leveledServices) {
-        Set<Concept> inputConceptSet = Sets.newHashSet();
-        Set<Concept> outputConceptSet = Sets.newHashSet();
+        Set<String> inputConceptSet = Sets.newHashSet();
+        Set<String> outputConceptSet = Sets.newHashSet();
         Set<LeveledService> services = Sets.newHashSet(leveledServices);
 
         for (LeveledService leveledService : leveledServices) {

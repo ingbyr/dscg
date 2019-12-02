@@ -5,19 +5,17 @@ import com.ingbyr.hwsc.common.models.Concept;
 import com.ingbyr.hwsc.common.models.Service;
 import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
 import com.ingbyr.hwsc.planner.Solution;
-import com.ingbyr.hwsc.planner.model.PlanningGraph;
+import com.ingbyr.hwsc.planner.innerplanner.cpg.models.*;
+import com.ingbyr.hwsc.planner.innerplanner.cpg.models.PlanningGraph;
 import com.ingbyr.hwsc.planner.pg.searching.ForwardPlanningGraphSearcher;
 import com.ingbyr.hwsc.planner.pg.searching.PlanningGraphSearcher;
 import com.ingbyr.hwsc.planner.innerplanner.AbstractInnerPlanner;
 import com.ingbyr.hwsc.planner.innerplanner.cpg.extractors.PlanExtractor;
-import com.ingbyr.hwsc.planner.innerplanner.cpg.models.CompletePlaningGraph;
-import com.ingbyr.hwsc.planner.innerplanner.cpg.models.DWGEdge;
-import com.ingbyr.hwsc.planner.innerplanner.cpg.models.DWGNode;
-import com.ingbyr.hwsc.planner.innerplanner.cpg.models.LeveledService;
 import lombok.extern.slf4j.Slf4j;
 import org.jgrapht.GraphPath;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author ingbyr
@@ -65,17 +63,18 @@ public class InnerPlannerCPG extends AbstractInnerPlanner implements InnerPlanne
     }
 
     private Solution createSolution(List<GraphPath<DWGNode, DWGEdge>> paths, int bDone) {
-        List<Service> services = new LinkedList<>();
+        List<String> services = new LinkedList<>();
         double cost = 0.0;
         for (GraphPath<DWGNode, DWGEdge> path : paths) {
             for (DWGEdge dwgEdge : path.getEdgeList()) {
                 for (LeveledService leveledService : dwgEdge.getServices()) {
                     services.add(leveledService.getService());
-                    cost += leveledService.getService().getCost();
+                    cost += leveledService.getCost();
                 }
             }
         }
-        Solution solution = new Solution(services, cost);
+        List<Service> s = services.stream().map(DatasetCache::getService).collect(Collectors.toList());
+        Solution solution = new Solution(s, cost);
         log.debug("Find {}", solution);
         return solution;
     }

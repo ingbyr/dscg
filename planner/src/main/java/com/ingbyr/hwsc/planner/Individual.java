@@ -4,8 +4,6 @@ import com.google.common.collect.Lists;
 import com.ingbyr.hwsc.common.models.Concept;
 import com.ingbyr.hwsc.common.models.Qos;
 import com.ingbyr.hwsc.common.models.Service;
-import com.ingbyr.hwsc.dataset.util.QosUtils;
-import com.ingbyr.hwsc.planner.model.State;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

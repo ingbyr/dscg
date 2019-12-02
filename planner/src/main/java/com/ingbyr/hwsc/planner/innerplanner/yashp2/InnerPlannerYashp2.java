@@ -8,7 +8,7 @@ import com.ingbyr.hwsc.common.models.Service;
 import com.ingbyr.hwsc.planner.innerplanner.AbstractInnerPlanner;
 import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
 import com.ingbyr.hwsc.planner.Solution;
-import com.ingbyr.hwsc.planner.model.State;
+import com.ingbyr.hwsc.planner.State;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;

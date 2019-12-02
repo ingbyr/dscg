@@ -6,7 +6,7 @@ import com.ingbyr.hwsc.dataset.Dataset;
 import com.ingbyr.hwsc.dataset.DataSetReader;
 import com.ingbyr.hwsc.dataset.WSDLDataSetReader;
 import com.ingbyr.hwsc.dataset.XMLDataSetReader;
-import com.ingbyr.hwsc.planner.model.PlanningGraph;
+import com.ingbyr.hwsc.planner.innerplanner.cpg.models.PlanningGraph;
 import com.ingbyr.hwsc.planner.pg.searching.ForwardPlanningGraphSearcher;
 import com.ingbyr.hwsc.planner.pg.searching.PlanningGraphSearcher;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +49,7 @@ public class GeneratePlanningGraph {
         pg.setGoalSet(dataSetReader.getGoalSet());
         pg.setServiceMap(dataSetReader.getServiceMap());
         pg.addALevel(new HashSet<>());
+        pg.initCache();
 
         PlanningGraphSearcher searcher = new ForwardPlanningGraphSearcher(pg, dataSetReader.getConceptMap(), dataSetReader.getServiceMap());
         searcher.search();

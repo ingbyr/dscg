@@ -1,9 +1,8 @@
 package com.ingbyr.hwsc.planner.innerplanner.cpg.models;
 
-import com.ingbyr.hwsc.common.models.Concept;
-import com.ingbyr.hwsc.common.models.Service;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Set;
 
@@ -14,50 +13,38 @@ import java.util.Set;
  */
 @EqualsAndHashCode
 public class LeveledService {
+
     @Getter
-    Service service;
+    private String service;
 
-    public int level;
+    @Getter
+    private int level;
 
-    @EqualsAndHashCode.Exclude
-    private Set<Concept> inputConceptSet;
+    @Setter
+    private Set<String> inputConceptSet;
 
-    @EqualsAndHashCode.Exclude
-    private Set<Concept> outputConceptSet;
+    @Setter
+    private Set<String> outputConceptSet;
 
-    public LeveledService(Service service, int level) {
+    public LeveledService(String service, int level) {
         this.service = service;
         this.level = level;
     }
 
     @Override
     public String toString() {
-        return service + "@L" + level + "@C" + service.getCost();
+        return service + "@L" + level + "@C" + DatasetCache.getCost(service);
     }
 
     public double getCost() {
-        return service.getCost();
+        return DatasetCache.getCost(service);
     }
 
-    public Set<Concept> getInputConceptSet() {
-        if (inputConceptSet == null)
-            return service.getInputConceptSet();
-        else
-            return inputConceptSet;
+    public Set<String> getInputConceptSet() {
+        return inputConceptSet == null ? DatasetCache.getInputSetOfService(service) : inputConceptSet;
     }
 
-    public void setInputConceptSet(Set<Concept> inputConceptSet) {
-        this.inputConceptSet = inputConceptSet;
-    }
-
-    public Set<Concept> getOutputConceptSet() {
-        if (outputConceptSet == null) {
-            return service.getOutputConceptSet();
-        } else
-            return outputConceptSet;
-    }
-
-    public void setOutputConceptSet(Set<Concept> outputConceptSet) {
-        this.outputConceptSet = outputConceptSet;
+    public Set<String> getOutputConceptSet() {
+        return outputConceptSet == null ? DatasetCache.getOutputSetOfService(service) : outputConceptSet;
     }
 }

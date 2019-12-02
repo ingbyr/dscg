@@ -1,7 +1,7 @@
 package com.ingbyr.hwsc.planner.pg;
 
 import com.ingbyr.hwsc.dataset.Dataset;
-import com.ingbyr.hwsc.planner.model.PlanningGraph;
+import com.ingbyr.hwsc.planner.innerplanner.cpg.models.PlanningGraph;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

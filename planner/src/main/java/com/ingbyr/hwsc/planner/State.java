@@ -1,4 +1,4 @@
-package com.ingbyr.hwsc.planner.model;
+package com.ingbyr.hwsc.planner;
 
 import com.google.common.collect.Sets;
 import com.ingbyr.hwsc.common.models.Concept;

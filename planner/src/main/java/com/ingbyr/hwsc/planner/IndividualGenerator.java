@@ -2,7 +2,6 @@ package com.ingbyr.hwsc.planner;
 
 import com.ingbyr.hwsc.common.models.Concept;
 import com.ingbyr.hwsc.dataset.DataSetReader;
-import com.ingbyr.hwsc.planner.model.State;
 import com.ingbyr.hwsc.planner.utils.UniformUtils;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;

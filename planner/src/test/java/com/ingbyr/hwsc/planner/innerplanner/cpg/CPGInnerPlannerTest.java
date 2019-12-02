@@ -3,7 +3,8 @@ package com.ingbyr.hwsc.planner.innerplanner.cpg;
 import com.ingbyr.hwsc.dataset.Dataset;
 import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
 import com.ingbyr.hwsc.planner.Solution;
-import com.ingbyr.hwsc.planner.model.PlanningGraph;
+import com.ingbyr.hwsc.planner.innerplanner.cpg.models.DatasetCache;
+import com.ingbyr.hwsc.planner.innerplanner.cpg.models.PlanningGraph;
 import com.ingbyr.hwsc.planner.pg.GeneratePlanningGraph;
 import com.ingbyr.hwsc.planner.innerplanner.cpg.extractors.*;
 import com.ingbyr.hwsc.planner.innerplanner.cpg.models.CompletePlaningGraph;
@@ -19,7 +20,7 @@ import static com.ingbyr.hwsc.planner.innerplanner.cpg.extractors.PlanExtractors
 
 class CPGInnerPlannerTest {
 
-    private PlanningGraph pg = GeneratePlanningGraph.fromXML(Dataset.wsc2009_01);
+    private PlanningGraph pg = GeneratePlanningGraph.fromXML(Dataset.wsc2008_01);
 
     @Test
     void solveByAllPath() {

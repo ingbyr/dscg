@@ -17,7 +17,7 @@ public final class PlanExtractors {
         log.debug("Validating paths ...");
         for (GraphPath<DWGNode, DWGEdge> path : paths) {
 
-            Set<Concept> output = path.getStartVertex().getOutputConcepts();
+            Set<String> output = path.getStartVertex().getOutputConcepts();
 //            log.debug("services: {}#{}", path.getStartVertex().getServices(), 0.0);
 
             for (DWGEdge edge : path.getEdgeList()) {
