@@ -118,7 +118,7 @@ public class WSDLDataSetReader extends LocalDatasetSetReader {
                             service.addInputConcept(conceptMap.get(thing.getType()));
                         } else {
                             service.addOutputParam(param);
-                            for (Concept c : conceptMap.get(thing.getType()).getParentConceptsIndex()) {
+                            for (Concept c : conceptMap.get(thing.getType()).getParentConcepts()) {
                                 service.addOutputConcept(c);//outputs indexing
                             }
                         }
@@ -166,7 +166,7 @@ public class WSDLDataSetReader extends LocalDatasetSetReader {
                         param.setThing(thing);
                         paramMap.put(param.getName(), param);
                         if (isRequestParam) {
-                            inputSet.addAll(conceptMap.get(thing.getType()).getParentConceptsIndex());
+                            inputSet.addAll(conceptMap.get(thing.getType()).getParentConcepts());
                         } else {
                             goalSet.add(conceptMap.get(thing.getType()));
                         }

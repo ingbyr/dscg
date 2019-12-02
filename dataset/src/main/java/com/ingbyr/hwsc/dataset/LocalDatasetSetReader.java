@@ -53,19 +53,18 @@ public abstract class LocalDatasetSetReader extends AbstractDataSetReader {
      * Set concept's parents and children
      */
     protected void buildConceptIndex() {
-        for (String key : conceptMap.keySet()) {
-            Concept concept = conceptMap.get(key);
-            Concept varConcept = conceptMap.get(key);
-            do {
-                concept.addConceptToParentIndex(varConcept);//ancestor classes
-                varConcept.addConceptToChildrenIndex(concept);//descendant classes
-                if (varConcept.isRoot()) {
-                    varConcept = null;
-                } else {
-                    varConcept = conceptMap.get(varConcept.getDirectParentName());
-                }
+        for (Map.Entry<String, Concept> entry : conceptMap.entrySet()) {
 
-            } while (varConcept != null);
+            Concept concept = entry.getValue();
+            if (concept.isRoot()) {
+                continue;
+            }
+
+            // Add parent concepts
+            for (Concept c = concept; c != null; c = conceptMap.get(c.getDirectParentName())) {
+                concept.addParentConcept(c);
+            }
+
         }
     }
 

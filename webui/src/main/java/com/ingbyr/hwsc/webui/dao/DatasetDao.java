@@ -1,12 +1,9 @@
 package com.ingbyr.hwsc.webui.dao;
 
 import com.ingbyr.hwsc.common.models.Concept;
-import com.ingbyr.hwsc.common.models.Param;
-import com.ingbyr.hwsc.common.models.Qos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -57,7 +54,7 @@ public class DatasetDao {
             Map<String, String> conceptData = new HashMap<>();
             conceptData.put(CONCEPT_DIRECT_PARENT, concept.getDirectParentName());
             conceptData.put(CONCEPT_PARENTS,
-                    concept.getParentConceptsIndex().stream().map(Concept::toString).collect(Collectors.joining(split)));
+                    concept.getParentConcepts().stream().map(Concept::toString).collect(Collectors.joining(split)));
             conceptData.put(CONCEPT_CHILDREN,
                     concept.getChildrenConceptsIndex().stream().map(Concept::toString).collect(Collectors.joining(split)));
             hashOp.putAll(conceptName, conceptData);
