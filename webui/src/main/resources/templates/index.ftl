@@ -201,7 +201,7 @@
                     </form>
                 </div>
                 <div class="row">
-                    <button class="btn btn-primary" onclick="postPlannerConfig()">Run planner</button>
+                    <button class="btn btn-primary left-buffer top-buffer" onclick="postPlannerConfig()">Run planner</button>
                 </div>
             </div>
         </div>
