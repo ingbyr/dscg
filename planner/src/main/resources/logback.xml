@@ -27,7 +27,7 @@
     <logger name="com.ingbyr.hwsc.planner.EvaluatorGoalDistanceConcurrent" level="OFF"/>
     <logger name="com.ingbyr.hwsc.planner.IndividualGenerator" level="OFF"/>
     <logger name="com.ingbyr.hwsc.planner.SurvivalSelectorIndicator" level="ON"/>
-    <logger name="com.ingbyr.hwsc.planner.indicators.BinaryIndicator" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.planner.IndicatorBinary" level="OFF"/>
 
     <root level="debug">
         <appender-ref ref="STDOUT"/>

@@ -14,4 +14,8 @@ public interface Evaluator {
      * @param innerPlanner Planner
      */
     void evaluate(List<Individual> individuals, InnerPlanner innerPlanner);
+
+    void setInnerPlannerMaxStep(int innerPlannerMaxStep);
+
+    void setMaxStateSize(int maxStateSize);
 }

@@ -1,8 +1,8 @@
-package com.ingbyr.hwsc.planner.indicators;
+package com.ingbyr.hwsc.planner;
 
 import com.ingbyr.hwsc.common.models.Qos;
-import com.ingbyr.hwsc.planner.Individual;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -13,11 +13,11 @@ import java.util.List;
  * @author ingbyr
  */
 
-@AllArgsConstructor
+@NoArgsConstructor
 @Slf4j
-public class BinaryIndicator implements Indicator {
+public class IndicatorBinary implements Indicator {
 
-    private double k;
+    private final double k = 1;
 
     @Override
     public void calculatePopulationFitness(List<Individual> population) {

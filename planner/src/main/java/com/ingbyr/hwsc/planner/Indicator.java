@@ -1,4 +1,4 @@
-package com.ingbyr.hwsc.planner.indicators;
+package com.ingbyr.hwsc.planner;
 
 import com.ingbyr.hwsc.planner.Individual;
 

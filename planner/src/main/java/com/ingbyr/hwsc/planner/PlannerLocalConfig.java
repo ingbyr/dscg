@@ -39,8 +39,6 @@ public final class PlannerLocalConfig extends PlannerConfig {
 
     private static final String MUTATION_DEL_CONCEPT_WEIGHT = "mutation_del_atom_weight";
 
-    private static final String ENABLE_CONCURRENT = "enable_concurrent";
-
     private static final String ENABLE_AUTO_STOP = "enable_auto_stop";
 
     private static final String MAX_GEN = "max_gen";
@@ -48,6 +46,20 @@ public final class PlannerLocalConfig extends PlannerConfig {
     private static final String STOP_STEP = "stop_step";
 
     private static final String SAVE_TO_FILE = "save_to_file";
+
+    private static final String MUTATION_ADD_STATE_RADIUS = "mutation_add_state_radius";
+
+    public static final String MUTATION_ADD_CONCEPT_ADD_POSSIBILITY = "mutation_add_concept_add_possibility";
+
+    public static final String MUTATION_ADD_CONCEPT_CHANGE_POSSIBILITY = "mutation_add_concept_change_possibility";
+
+    public static final String EVALUATOR = "evaluator";
+
+    public static final String INDICATOR = "indicator";
+
+    public static final String INNER_PLAN_MAX_STEP = "inner_plan_max_step";
+
+    public static final String MAX_STATE_SIZE = "max_state_size";
 
     /**
      * Load planner config from planner.properties file
@@ -70,10 +82,16 @@ public final class PlannerLocalConfig extends PlannerConfig {
         mutationAddConceptWeight = config.getInt(MUTATION_ADD_CONCEPT_WEIGHT);
         mutationDelStateWeight = config.getInt(MUTATION_DEL_STATE_WEIGHT);
         mutationDelConceptWeight = config.getInt(MUTATION_DEL_CONCEPT_WEIGHT);
-        enableConcurrentMode = config.getBoolean(ENABLE_CONCURRENT);
         enableAutoStop = config.getBoolean(ENABLE_AUTO_STOP);
         maxGen = config.getInt(MAX_GEN);
         autoStopStep = config.getInt(STOP_STEP);
         saveToFile = config.getBoolean(SAVE_TO_FILE);
+        mutationAddStateRadius = config.getInt(MUTATION_ADD_STATE_RADIUS);
+        mutationAddConceptAddPossibility = config.getDouble(MUTATION_ADD_CONCEPT_ADD_POSSIBILITY);
+        mutationAddConceptChangePossibility = config.getDouble(MUTATION_ADD_CONCEPT_CHANGE_POSSIBILITY);
+        evaluator = config.getString(EVALUATOR);
+        indicator = config.getString(INDICATOR);
+        innerPlanMaxStep = config.getInt(INNER_PLAN_MAX_STEP);
+        maxStateSize = config.getInt(MAX_STATE_SIZE);
     }
 }

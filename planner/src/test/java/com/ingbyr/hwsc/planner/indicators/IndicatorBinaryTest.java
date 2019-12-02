@@ -1,18 +1,19 @@
 package com.ingbyr.hwsc.planner.indicators;
 
 import com.ingbyr.hwsc.common.models.Qos;
+import com.ingbyr.hwsc.planner.IndicatorBinary;
+import com.ingbyr.hwsc.planner.Indicator;
 import com.ingbyr.hwsc.planner.Individual;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
  * @author ingbyr
  */
-class BinaryIndicatorTest {
+class IndicatorBinaryTest {
 
     @Test
     void calculateBinaryIndicator() {
@@ -42,7 +43,7 @@ class BinaryIndicatorTest {
         pop.add(i3);
         pop.add(i4);
 
-        Indicator indicator =new BinaryIndicator(1);
+        Indicator indicator =new IndicatorBinary(1);
         indicator.calculatePopulationFitness(pop);
         for (Individual individual : pop) {
             System.out.println(individual.getFitness() +" " + Arrays.toString(individual.getQos().getValues()));

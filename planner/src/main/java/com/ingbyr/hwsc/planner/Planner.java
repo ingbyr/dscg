@@ -4,8 +4,6 @@ import com.ingbyr.hwsc.common.models.Qos;
 import com.ingbyr.hwsc.dataset.DataSetReader;
 import com.ingbyr.hwsc.dataset.XMLDataSetReader;
 import com.ingbyr.hwsc.planner.exception.DAEXConfigException;
-import com.ingbyr.hwsc.planner.indicators.BinaryIndicator;
-import com.ingbyr.hwsc.planner.indicators.SumIndicator;
 import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
 import com.ingbyr.hwsc.planner.innerplanner.yashp2.InnerPlannerYashp2;
 import com.ingbyr.hwsc.planner.utils.UniformUtils;
@@ -15,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,12 +56,17 @@ public class Planner {
         log.info("Create initial population");
         // Generate population
         List<Individual> population = new ArrayList<>(config.getPopulationSize());
+
+        // Get max state size
         int candidateStartTimesSize = conceptTime.candidateStartTimes.length;
+        int stateSize = Math.min(candidateStartTimesSize, config.getMaxStateSize());
+
         for (int i = 0; i < config.getPopulationSize(); i++) {
             // At least select 1
-            int randomTimeSize = UniformUtils.rangeII(1, candidateStartTimesSize);
+            int randomTimeSize = UniformUtils.rangeII(1, stateSize);
             population.add(individualGenerator.generate(randomTimeSize));
         }
+
         // Evaluate initial population
         evaluator.evaluate(population, innerPlanner);
 
@@ -169,7 +173,7 @@ public class Planner {
             throw new DAEXConfigException("populationSize + offspringSize < survivalSize");
     }
 
-    public void setup(PlannerConfig plannerConfig, DataSetReader reader) throws DAEXConfigException {
+    public void setup(PlannerConfig plannerConfig, DataSetReader reader) throws DAEXConfigException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         // If already setup then skip
         if (plannerConfig != null && plannerConfig.equals(this.config))
             return;
@@ -181,10 +185,10 @@ public class Planner {
 
         innerPlanner = new InnerPlannerYashp2(this.dataSetReader.getServiceMap(), this.dataSetReader.getConceptMap(), 1);
 
-        if (config.isEnableConcurrentMode())
-            evaluator = EvaluatorGoalDistanceConcurrent.builder().bMax(10).lMax(10).build();
-        else
-            evaluator = EvaluatorGoalDistance.builder().bMax(10).lMax(10).build();
+        evaluator = (Evaluator) Class.forName(PlannerConfig.EVALUATOR_CLASS_PREFIX + config.getEvaluator())
+                .getDeclaredConstructor().newInstance();
+        evaluator.setInnerPlannerMaxStep(config.getInnerPlanMaxStep());
+        evaluator.setMaxStateSize(config.getMaxStateSize());
 
         conceptTime = new ConceptTime();
         conceptTime.build(this.dataSetReader);
@@ -193,21 +197,25 @@ public class Planner {
 
         crossover = new CrossoverSwapState();
 
-        // TODO Move config
         mutations = new Mutations();
-        mutations.addMutation(new MutationAddState(conceptTime, 0), config.getMutationAddStateWeight());
-        mutations.addMutation(new MutationAddConcept(conceptTime, 0.5, 0.5), config.getMutationAddConceptWeight());
+        mutations.addMutation(new MutationAddState(conceptTime, config.getMutationAddStateRadius()),
+                config.getMutationAddStateWeight());
+        mutations.addMutation(new MutationAddConcept(conceptTime,
+                        config.getMutationAddConceptChangePossibility(),
+                        config.getMutationAddConceptAddPossibility()),
+                config.getMutationAddConceptWeight());
         mutations.addMutation(new MutationDelState(), config.getMutationDelStateWeight());
         mutations.addMutation(new MutationDelConcept(), config.getMutationDelConceptWeight());
 
-        survivalSelector = new SurvivalSelectorIndicator(config.getSurvivalSize(), new BinaryIndicator(1));
-//        survivalSelector = new SurvivalSelectorIndicator(config.getSurvivalSize(), new SumIndicator());
+        Indicator indicator = (Indicator) Class.forName(PlannerConfig.INDICATOR_CLASS_PREFIX + config.getIndicator())
+                .getDeclaredConstructor().newInstance();
+        survivalSelector = new SurvivalSelectorIndicator(config.getSurvivalSize(), indicator);
 
         analyzer = new PlannerAnalyzer();
         analyzer.setDataset(config.getDataset());
     }
 
-    public static void main(String[] args) throws ConfigurationException, DAEXConfigException {
+    public static void main(String[] args) throws ConfigurationException, DAEXConfigException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         PlannerConfig config = new PlannerLocalConfig();
         log.debug("{}", config);
         Planner planner = new Planner();

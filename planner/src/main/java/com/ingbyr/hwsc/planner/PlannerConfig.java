@@ -12,33 +12,53 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class PlannerConfig {
 
-    Dataset dataset;
+    public static final String EVALUATOR_CLASS_PREFIX = "com.ingbyr.hwsc.planner.";
 
-    int populationSize;
+    public static final String INDICATOR_CLASS_PREFIX = "com.ingbyr.hwsc.planner.";
 
-    int offspringSize;
+    protected Dataset dataset;
 
-    int survivalSize;
+    protected int populationSize;
 
-    double crossoverPossibility;
+    protected int offspringSize;
 
-    double mutationPossibility;
+    protected int survivalSize;
 
-    int mutationAddStateWeight;
+    protected double crossoverPossibility;
 
-    int mutationAddConceptWeight;
+    protected double mutationPossibility;
 
-    int mutationDelStateWeight;
+    protected int mutationAddStateWeight;
 
-    int mutationDelConceptWeight;
+    protected int mutationAddConceptWeight;
 
-    boolean enableConcurrentMode;
+    protected int mutationDelStateWeight;
 
-    boolean enableAutoStop;
+    protected int mutationDelConceptWeight;
 
-    int maxGen;
+    protected boolean enableAutoStop;
 
-    int autoStopStep;
+    protected int maxGen;
 
-    boolean saveToFile;
+    protected int autoStopStep;
+
+    protected boolean saveToFile;
+
+    // Mutation config
+    protected int mutationAddStateRadius;
+
+    protected double mutationAddConceptAddPossibility;
+
+    protected double mutationAddConceptChangePossibility;
+
+    // Evaluator config
+    protected String evaluator;
+
+    // Indicator config
+    protected String indicator;
+
+    protected int innerPlanMaxStep;
+
+    protected int maxStateSize;
+
 }

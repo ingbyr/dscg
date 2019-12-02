@@ -1,6 +1,5 @@
 package com.ingbyr.hwsc.planner;
 
-import com.ingbyr.hwsc.planner.indicators.Indicator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

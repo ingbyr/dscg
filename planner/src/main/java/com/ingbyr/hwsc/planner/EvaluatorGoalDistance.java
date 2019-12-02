@@ -4,7 +4,8 @@ import com.ingbyr.hwsc.common.models.Concept;
 import com.ingbyr.hwsc.common.models.Service;
 import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
 import com.ingbyr.hwsc.planner.model.State;
-import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashSet;
@@ -17,14 +18,14 @@ import java.util.Set;
  *
  * @author ingbyr
  */
-@Builder
+@NoArgsConstructor
+@Setter
 @Slf4j
 public class EvaluatorGoalDistance implements Evaluator {
 
-    private int bMax;
+    private int innerPlannerMaxStep;
 
-    // TODO lMax not work
-    private int lMax;
+    private int maxStateSize;
 
     @Override
     public void evaluate(List<Individual> individuals, InnerPlanner innerPlanner) {
@@ -54,7 +55,7 @@ public class EvaluatorGoalDistance implements Evaluator {
             log.trace("Evaluate the state {}", currentState);
             middleGoalSet = currentState.concepts;
 
-            Solution solution = innerPlanner.solve(middleInputSet, middleGoalSet, bMax);
+            Solution solution = innerPlanner.solve(middleInputSet, middleGoalSet, innerPlannerMaxStep);
 
             if (solution == null || solution.services == null) {
                 Solution noSolution = new Solution(
@@ -79,7 +80,7 @@ public class EvaluatorGoalDistance implements Evaluator {
         Solution solution = compressSolution(solutions);
         solution.searchCost = solution.searchCost
                 + (double) (individual.getStateSize() - u + 1) / solution.searchCost
-                + b / (double) (lMax * bMax);
+                + b / (double) (maxStateSize * innerPlannerMaxStep);
 
         individual.lastReachedStateIndex = reachedStateIndex;
         individual.isFeasible = true;

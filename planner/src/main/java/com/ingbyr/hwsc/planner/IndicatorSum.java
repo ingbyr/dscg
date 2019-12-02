@@ -1,6 +1,4 @@
-package com.ingbyr.hwsc.planner.indicators;
-
-import com.ingbyr.hwsc.planner.Individual;
+package com.ingbyr.hwsc.planner;
 
 import java.util.Arrays;
 import java.util.List;
@@ -8,7 +6,7 @@ import java.util.List;
 /**
  * @author ingbyr
  */
-public class SumIndicator implements Indicator {
+public class IndicatorSum implements Indicator {
 
     @Override
     public void calculatePopulationFitness(List<Individual> population) {

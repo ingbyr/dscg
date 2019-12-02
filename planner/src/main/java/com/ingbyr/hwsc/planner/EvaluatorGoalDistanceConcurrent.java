@@ -5,6 +5,8 @@ import com.ingbyr.hwsc.common.models.Service;
 import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
 import com.ingbyr.hwsc.planner.model.State;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashSet;
@@ -20,15 +22,15 @@ import java.util.concurrent.RecursiveAction;
  * @author ingbyr
  */
 @Slf4j
-@Builder
+@NoArgsConstructor
+@Setter
 public class EvaluatorGoalDistanceConcurrent implements Evaluator {
 
     private final ForkJoinPool commonPool = ForkJoinPool.commonPool();
 
-    private int bMax;
+    private int innerPlannerMaxStep;
 
-    // TODO lMax not work
-    private int lMax;
+    private int maxStateSize;
 
     /**
      * Use fork join framework to solve problem
@@ -36,12 +38,10 @@ public class EvaluatorGoalDistanceConcurrent implements Evaluator {
     @Builder
     public static class EvaluatorTask extends RecursiveAction {
 
-        // TODO config
         private static final int THRESHOLD = 20;
 
         private int bMax;
 
-        // TODO lMax not work
         private int lMax;
 
         private List<Individual> individuals;
@@ -186,7 +186,7 @@ public class EvaluatorGoalDistanceConcurrent implements Evaluator {
     public void evaluate(List<Individual> individuals, InnerPlanner innerPlanner) {
         log.debug("Start evaluating");
         RecursiveAction action = EvaluatorTask.builder()
-                .bMax(bMax).lMax(lMax)
+                .bMax(innerPlannerMaxStep).lMax(maxStateSize)
                 .individuals(individuals)
                 .start(0)
                 .end(individuals.size())
