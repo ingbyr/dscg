@@ -93,7 +93,7 @@ public class CompletePlaningGraph {
     private void initData() {
         debug(LINE_INIT);
 
-        debug("create start node");
+        info("create start node");
         String startService = planningGraph.start.get(0).getName();
         LeveledService startLeveledService = new LeveledService(startService, level);
         Set<Concept> inputConcepts = new ArrayList<>(planningGraph.propLevels).get(0);
@@ -104,18 +104,18 @@ public class CompletePlaningGraph {
                 .inputConcepts(Sets.newHashSet())
                 .outputConcepts(startLeveledService.getOutputConceptSet())
                 .build();
-        debug("input concepts: {}", startNode.outputConcepts);
+        info("input concepts: {}", startNode.outputConcepts);
         // add node estimated distance
         startNode.setDistance(0.0);
 
-        debug("create input concept cache");
+        info("create input concept cache");
         Map<String, Set<LeveledService>> startLevelCache = new HashMap<>();
         inputConcepts.forEach(concept -> {
             cacheConcept(startLevelCache, concept.getName(), startLeveledService);
         });
         levelCache.add(startLevelCache);
 
-        debug("create action levels concept cache");
+        info("create action levels concept cache");
         for (LinkedHashSet<Service> action : planningGraph.actionLevels) {
             level++;
             // get pre level cache
@@ -130,7 +130,7 @@ public class CompletePlaningGraph {
             levelCache.add(levelTmpCache);
         }
 
-        debug("create target node");
+        info("create target node");
         int targetLevel = level + 1;
         Service targetService = planningGraph.target.get(0);
         LeveledService targetLeveledService = new LeveledService(targetService.getName(), targetLevel);
@@ -142,7 +142,7 @@ public class CompletePlaningGraph {
                 .inputConcepts(targetLeveledService.getInputConceptSet())
                 .outputConcepts(Sets.newHashSet())
                 .build();
-        debug("target concepts: {}", targetNode.inputConcepts);
+        info("target concepts: {}", targetNode.inputConcepts);
 
         if (reverseGraph) {
             targetNode.setAStarConcepts(Sets.newHashSet(targetNode.getInputConcepts()));
@@ -154,7 +154,7 @@ public class CompletePlaningGraph {
             targetNode.setDistance(distance);
         }
 
-        debug("add target node to node queue");
+        info("add target node to node queue");
         nodeQueue.offer(targetNode);
         dwGraph.addVertex(targetNode);
 
@@ -190,7 +190,7 @@ public class CompletePlaningGraph {
         for (; level >= 0; level--) {
             info(LINE_LEVEL, level);
             newPreNodes = new LinkedHashSet<>();
-            info("concept cache: {}", levelCache.get(level));
+            debug("concept cache: {}", levelCache.get(level));
             while (!nodeQueue.isEmpty()) {
                 DWGNode node = nodeQueue.poll();
                 createPreNodesForNode(node);
