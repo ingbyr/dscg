@@ -211,7 +211,6 @@ public class Planner {
 
     protected void afterExec() {
         analyzer.recordEndTime();
-        analyzer.buildEchartData();
         analyzer.displayLogOnConsole();
 
         if (config.saveToFile) {

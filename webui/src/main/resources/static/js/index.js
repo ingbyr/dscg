@@ -12,10 +12,36 @@ stompClient.connect({}, function (frame) {
 
 function displayResult(result) {
     $("#result").empty();
-    displayQosLog(result.echartQosLog);
+    displayQosLog(result.echartQosLog, result.bestQos, result.realQosLog.length);
 }
 
-function displayQosLog(qosLog) {
+function bestQosLine(qos, len) {
+    var q = parseFloat(qos).toFixed(2);
+    var l = len + 5;
+    return {
+        animation: false,
+        label: {
+            formatter: 'Best=' + q,
+            position: 'end',
+        },
+        lineStyle: {
+            type: 'solid',
+            width: 2
+        },
+        tooltip: {
+            formatter: 'Best=' + qos
+        },
+        data: [[{
+            coord: [0, q],
+            symbol: 'none'
+        }, {
+            coord: [len, q],
+            symbol: 'none'
+        }]]
+    };
+}
+
+function displayQosLog(qosLog, bestQos, qosSize) {
 
     $("#result").append("<div id='echartQosLogChart' style='width: 100%;height:800px;'>");
 
@@ -73,7 +99,8 @@ function displayQosLog(qosLog) {
                     x: "Step",
                     y: "Res",
                     tooltip: [0, 1, 2, 3, 4]
-                }
+                },
+                markLine: bestQosLine(bestQos.Res, qosSize)
             },
             {
                 type: "line",
@@ -84,7 +111,8 @@ function displayQosLog(qosLog) {
                     x: "Step",
                     y: "Ava",
                     tooltip: [0, 1, 2, 3, 4]
-                }
+                },
+                markLine: bestQosLine(bestQos.Ava, qosSize)
             },
             {
                 type: "line",
@@ -95,7 +123,8 @@ function displayQosLog(qosLog) {
                     x: "Step",
                     y: "Suc",
                     tooltip: [0, 1, 2, 3, 4]
-                }
+                },
+                markLine: bestQosLine(bestQos.Suc, qosSize)
             },
             {
                 type: "line",
@@ -106,7 +135,8 @@ function displayQosLog(qosLog) {
                     x: "Step",
                     y: "Rel",
                     tooltip: [0, 1, 2, 3, 4]
-                }
+                },
+                markLine: bestQosLine(bestQos.Rel, qosSize)
             },
             {
                 type: "line",
@@ -117,7 +147,8 @@ function displayQosLog(qosLog) {
                     x: "Step",
                     y: "Lat",
                     tooltip: [0, 1, 2, 3, 4]
-                }
+                },
+                markLine: bestQosLine(bestQos.Lat, qosSize)
             },
             {
                 type: "line",
@@ -128,7 +159,8 @@ function displayQosLog(qosLog) {
                     x: "Step",
                     y: "Pri",
                     tooltip: [0, 1, 2, 3, 4]
-                }
+                },
+                markLine: bestQosLine(bestQos.Pri, qosSize)
             }
         ]
     };

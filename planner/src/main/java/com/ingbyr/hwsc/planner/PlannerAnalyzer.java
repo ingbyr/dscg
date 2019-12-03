@@ -3,6 +3,7 @@ package com.ingbyr.hwsc.planner;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.ingbyr.hwsc.common.BestQos;
 import com.ingbyr.hwsc.common.models.Concept;
 import com.ingbyr.hwsc.common.models.Qos;
 import com.ingbyr.hwsc.common.models.Service;
@@ -34,6 +35,7 @@ public class PlannerAnalyzer {
     private final List<Double> fitnessLog = new LinkedList<>();
 
     // Qos log
+    @Getter
     private final List<Qos> realQosLog = new LinkedList<>();
 
     @Getter
@@ -48,14 +50,36 @@ public class PlannerAnalyzer {
     @Getter
     private double runtime;
 
-    @Setter
+    @Getter
     private Dataset dataset;
+
+    @Getter
+    private BestQos bestQos;
+
+    public PlannerAnalyzer() {
+        echartQosLog = new ArrayList<>();
+        String[] qosTypes = new String[Qos.NAMES.length + 1];
+        System.arraycopy(Qos.NAMES, 0, qosTypes, 1, Qos.NAMES.length);
+        qosTypes[0] = "Step";
+        echartQosLog.add(qosTypes);
+    }
+
+    public void setDataset(Dataset dataset) {
+        this.dataset = dataset;
+        this.bestQos = dataset.getBestQos();
+    }
 
     public void addLog(Individual individual) {
         fitnessLog.add(individual.getFitness());
+
         Qos realQos = QosUtils.flip(individual.getServices().size(), individual.getQos());
         log.debug("Fitness {}, Real {}", individual.getFitness(), realQos);
         realQosLog.add(realQos);
+
+        double[] qosWithStep = new double[Qos.NAMES.length + 1];
+        System.arraycopy(realQos.getValues(), 0, qosWithStep, 1, Qos.NAMES.length);
+        qosWithStep[0] = realQosLog.size();
+        echartQosLog.add(qosWithStep);
     }
 
     void recordStartTime() {
@@ -80,23 +104,6 @@ public class PlannerAnalyzer {
         while (fitnessItr.hasNext() && qosLogItr.hasNext()) {
             log.debug("[{}] Fitness {}, Qos {}", step, fitnessItr.next(), qosLogItr.next());
             step++;
-        }
-    }
-
-    void buildEchartData() {
-        echartQosLog = new ArrayList<>(realQosLog.size() + 1);
-        String[] qosTypes = new String[Qos.NAMES.length + 1];
-        System.arraycopy(Qos.NAMES, 0, qosTypes, 1, Qos.NAMES.length);
-        qosTypes[0] = "Step";
-        echartQosLog.add(qosTypes);
-
-        int qosNum = Qos.NAMES.length;
-        // Add step to qos log
-        for (int i = 0; i < realQosLog.size(); i++) {
-            double[] qosWithStep = new double[qosNum + 1];
-            System.arraycopy(realQosLog.get(i).getValues(), 0, qosWithStep, 1, qosNum);
-            qosWithStep[0] = i;
-            echartQosLog.add(qosWithStep);
         }
     }
 
