@@ -22,40 +22,46 @@ public class SurvivalSelectorIndicator implements SurvivalSelector {
     private Indicator indicator;
 
     @Override
-    public List<Individual> filter(List<Individual> pop, List<Individual> offSpring) {
+    public List<Individual> filter(List<Individual> population, List<Individual> offSpring) {
 
-        List<Individual> feasibleIndividuals = Stream.concat(pop.stream(), offSpring.stream())
+        List<Individual> pop = Stream.concat(population.stream(), offSpring.stream()).collect(Collectors.toList());
+        List<Individual> feasiblePop = pop.stream()
                 .filter(ind -> ind.isFeasible)
                 .collect(Collectors.toList());
-        log.trace("Feasible individuals size {}", feasibleIndividuals.size());
-        feasibleIndividuals.forEach(ind -> log.trace("{}", ind));
+        log.trace("Feasible individuals size {}", feasiblePop.size());
+        feasiblePop.forEach(ind -> log.trace("{}", ind));
 
         // Recalculate the fitness because individual has feasible solution
-        indicator.calculatePopulationFitness(feasibleIndividuals);
+        indicator.calculatePopulationFitness(feasiblePop);
 
-        List<Individual> bestIndividuals = null;
-        if (feasibleIndividuals.size() >= survivalSize) {
+        List<Individual> survivalPop = null;
+        if (feasiblePop.size() >= survivalSize) {
 
-            // TODO for debug=========
-            List<Individual> tmp = feasibleIndividuals.stream().sorted().collect(Collectors.toList());
-            for (Individual individual : tmp) {
-                log.debug("{} {}", individual.getFitness(), individual.getQos());
-            }
-            // end debug==============
+//            // TODO for debug=========
+//            List<Individual> tmp = feasibleIndividuals.stream().sorted().collect(Collectors.toList());
+//            for (Individual individual : tmp) {
+//                log.debug("{} {}", individual.getFitness(), individual.getQos());
+//            }
+//            // end debug==============
 
             // Choose survival individual from feasible individuals directly if it has enough individuals
-            bestIndividuals = feasibleIndividuals.stream().sorted().limit(survivalSize).collect(Collectors.toList());
+            survivalPop = feasiblePop.stream().sorted().limit(survivalSize).collect(Collectors.toList());
         } else {
             Queue<Individual> individuals = new PriorityQueue<>(pop.size() + offSpring.size());
             individuals.addAll(pop);
             individuals.addAll(offSpring);
 
-            bestIndividuals = new ArrayList<>(survivalSize);
-            for (int i = 0; i < survivalSize; i++) {
+            survivalPop = new ArrayList<>(survivalSize);
+            for (int i = 0; i < survivalSize && individuals.peek() != null; i++) {
                 Individual bestInd = individuals.poll();
-                bestIndividuals.add(bestInd);
+                survivalPop.add(bestInd);
             }
         }
-        return bestIndividuals;
+
+        // Add protected individuals to survival population
+        List<Individual> protectedPop = pop.stream().filter(Individual::isAlive).collect(Collectors.toList());
+        survivalPop.addAll(protectedPop);
+
+        return survivalPop;
     }
 }

@@ -32,6 +32,10 @@ public final class IndividualGenerator {
     }
 
     public Individual generate(int timeSize) {
+        return generate(timeSize, -1);
+    }
+
+    public Individual generate(int timeSize, int ttl) {
         if (timeSize <= 0) {
             Individual noMiddleStateInd = new Individual();
             noMiddleStateInd.addState(inputState);

@@ -19,13 +19,17 @@ public class ConceptTime {
 
     public int[] candidateStartTimes;
 
-    public Map<Integer, Set<Concept>> conceptsAtTime = new HashMap<>();
+    public Map<Integer, Set<Concept>> conceptsAtTime;
 
-    Map<Concept, Integer> earliestTimeOfConcept = new HashMap<>();
+    Map<Concept, Integer> earliestTimeOfConcept;
 
     int time = 0;
 
     void build(DataSetReader dataSetReader) {
+
+        conceptsAtTime = new HashMap<>();
+        earliestTimeOfConcept = new HashMap<>();
+
         // Input set
         conceptsAtTime.put(time, Sets.newHashSet(dataSetReader.getInputSet()));
         for (Concept concept : dataSetReader.getInputSet()) {

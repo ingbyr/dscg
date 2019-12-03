@@ -8,27 +8,44 @@ import com.hwsc.baseline.cpg.models.DWGNode;
 import com.hwsc.baseline.cpg.models.PlanningGraph;
 import com.ingbyr.hwsc.common.models.Qos;
 import com.ingbyr.hwsc.common.models.Service;
+import com.ingbyr.hwsc.common.util.WorkDir;
 import com.ingbyr.hwsc.dataset.DataSetReader;
 import com.ingbyr.hwsc.dataset.Dataset;
 import com.ingbyr.hwsc.dataset.XMLDataSetReader;
 import com.ingbyr.hwsc.dataset.util.QosUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.interfaces.AStarAdmissibleHeuristic;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
 public class CPGMain {
 
-    public static void main(String[] args) {
-        Dataset dataset;
-        if (args.length > 0)
-            dataset = Dataset.valueOf(args[0]);
-        else
-            dataset = Dataset.wsc2009_01;
+    public static int MAX_NEW_PRE_NODE_SIZE = 256;
 
-        log.info("load dataset {}", dataset);
+    public static void main(String[] args) throws IOException {
+        Dataset dataset;
+
+        switch (args.length) {
+            case 0:
+                dataset = Dataset.wsc2009_01;
+                break;
+            case 1:
+                dataset = Dataset.valueOf(args[0]);
+                break;
+            case 2:
+                dataset = Dataset.valueOf(args[0]);
+                MAX_NEW_PRE_NODE_SIZE = Integer.parseInt(args[1]);
+            default:
+                throw new RuntimeException("Error args " + Arrays.toString(args));
+        }
+
         DataSetReader reader = new XMLDataSetReader();
         reader.setDataset(dataset);
 
@@ -36,19 +53,32 @@ public class CPGMain {
 
         CompletePlaningGraph cpg = new CompletePlaningGraph(pg);
         cpg.trans();
+
         log.info("search shortest path by dijkstra...");
         PlanExtractor dijkstraExtractor = new DijkstraExtractor(cpg);
+
         cpgSearchBatch("dijksta", dijkstraExtractor);
-        dijkstraExtractor.getPaths().forEach(path -> {
+
+        StringBuilder result = new StringBuilder();
+        for (GraphPath<DWGNode, DWGEdge> path : dijkstraExtractor.getPaths()) {
             log.info("shortest path: {}", path);
-            log.info("cost: {}", PlanExtractors.calcCost(path));
+            double cost = PlanExtractors.calcCost(path);
+            log.info("cost: {}", cost);
             List<Service> services = PlanExtractors.getServices(path);
             log.info("services: {}", services);
             log.info("valid: {}", PlanExtractors.validServices(services, reader.getInputSet(), reader.getGoalSet()));
             Qos qos = Qos.getTotalQos(PlanExtractors.getServices(path));
             qos = QosUtils.flip(qos);
             log.info("qos: {}", qos);
-        });
+
+            result.append("services: " + services);
+            result.append('\n');
+            result.append("cost: " + cost);
+            result.append('\n');
+            result.append("qos: " + qos);
+            File logFile = WorkDir.WORK_DIR.resolve("best-qos").resolve(dataset + ".txt").toFile();
+            FileUtils.write(logFile, result.toString(), Charset.defaultCharset());
+        }
     }
 
 

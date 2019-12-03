@@ -2,6 +2,7 @@ package com.hwsc.baseline.cpg.models;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.hwsc.baseline.cpg.CPGMain;
 import com.ingbyr.hwsc.common.models.Concept;
 import com.ingbyr.hwsc.common.models.Service;
 import lombok.AllArgsConstructor;
@@ -193,8 +194,8 @@ public class CompletePlaningGraph {
             int nodeSize = nodeQueue.size();
             int nodeIndex = 0;
             while (!nodeQueue.isEmpty()) {
-                info("node {}/{}", nodeIndex++, nodeSize);
                 DWGNode node = nodeQueue.poll();
+                info("node {}/{} {}", nodeIndex++, nodeSize, node);
                 createPreNodesForNode(node);
             }
             info("add {} new pre nodes", newPreNodes.size());
@@ -229,28 +230,32 @@ public class CompletePlaningGraph {
             availableServices.add(Lists.newArrayList(levelCache.get(level).get(concept)));
         });
 
-        // TODO service combination limit
-        int limit = 128;
+        int preNodeAboutSize = 1;
+        for (List<LeveledService> availableService : availableServices) {
+            preNodeAboutSize *= availableService.size();
+        }
+
+        if (preNodeAboutSize > CPGMain.MAX_NEW_PRE_NODE_SIZE) {
+            warn("may drop some node because of size is too big: (about){} (>{})",
+                    preNodeAboutSize, CPGMain.MAX_NEW_PRE_NODE_SIZE);
+        }
+
         // find service combinations
         Set<Set<LeveledService>> serviceCombinations = combineService(availableServices);
-        if (serviceCombinations.size() > limit) {
-            warn("drop node {}", node);
-            warn("because service combinations size too big: {}", serviceCombinations.size());
-        } else {
-            debug("service combinations size: {}", serviceCombinations.size());
-        }
+
+        info("service combinations size: {}", serviceCombinations.size());
+
         double cost = calcCost(nodeServiceHolder.selected);
 
-        int current = 0;
+        int currentPreNodeSize = 0;
         for (Set<LeveledService> serviceCombination : serviceCombinations) {
-
-            if (current++ >= limit)
-                break;
-
             Set<LeveledService> services = Sets.union(serviceCombination, nodeServiceHolder.remaining);
             DWGNode preNode = DWGNode.from(services);
-            addPreNode(node, preNode, cost, nodeServiceHolder.selected);
+            boolean hasNewNode = addPreNode(node, preNode, cost, nodeServiceHolder.selected);
+            if (hasNewNode)
+                currentPreNodeSize++;
         }
+        info("add {} new pre node", currentPreNodeSize);
     }
 
     /**
@@ -261,7 +266,7 @@ public class CompletePlaningGraph {
      * @param cost     cost
      * @param services selected services
      */
-    private void addPreNode(DWGNode node, DWGNode preNode, double cost, Set<LeveledService> services) {
+    private boolean addPreNode(DWGNode node, DWGNode preNode, double cost, Set<LeveledService> services) {
 
         // record distance for a* alg
         updateEstimatedDistance(preNode, node);
@@ -284,6 +289,8 @@ public class CompletePlaningGraph {
             newPreNodes.add(preNode);
             debug("add node: {}", preNode);
         }
+
+        return edge!=null;
     }
 
     private void updateEstimatedDistance(DWGNode preNode, DWGNode node) {
@@ -344,7 +351,9 @@ public class CompletePlaningGraph {
                                       Set<Set<LeveledService>> serviceCombinationResult,
                                       List<LeveledService> serviceCombinationStepResult) {
 
-        if (services.size() == 0) return;
+        // FIXME auto stop combine service when size too big
+        if (services.size() == 0 || serviceCombinationResult.size() > CPGMain.MAX_NEW_PRE_NODE_SIZE)
+            return;
 
         for (int i = 0; i < services.get(depth).size(); i++) {
             LeveledService leveledService = services.get(depth).get(i);

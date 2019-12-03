@@ -76,13 +76,6 @@ public class Planner {
         // Evaluate initial population
         evaluator.evaluate(population, innerPlanner);
 
-        // Create reserved population
-        // TODO config this
-        int reservedPopulationSize = 10;
-        boolean serviceRemoved = false;
-        boolean serviceAdded = false;
-        List<Individual> reservedPopulation = new ArrayList<>();
-
         log.info("Start processing ...");
         // Start process
         int stopStepCount = 0;
@@ -90,18 +83,8 @@ public class Planner {
 
             log.info("Progress ({}/{})", gen, config.getMaxGen());
 
-            // Handle with changed services
-            while (serviceToRemoveQueue != null && !serviceToRemoveQueue.isEmpty()) {
-                serviceRemoved = true;
-                Service serviceToAdd = serviceToRemoveQueue.poll();
-                dataSetReader.getServiceMap().remove(serviceToAdd.getName());
-            }
-
-            while (serviceToAddQueue != null && !serviceToAddQueue.isEmpty()) {
-                serviceAdded = true;
-                Service serviceToRemove = serviceToAddQueue.poll();
-                dataSetReader.getServiceMap().put(serviceToRemove.getName(), serviceToRemove);
-            }
+            // Monitor service add or remove operation
+            monitorServiceStatus(population);
 
             // Create offspring
             List<Individual> offspring = new ArrayList<>(config.getOffspringSize());
@@ -109,35 +92,11 @@ public class Planner {
             // Create new individual
             for (int i = 0; i < config.getOffspringSize(); i++) {
                 Individual individual = UniformUtils.oneFromList(population);
-                Individual newIndividual = null;
-                // Crossover
-                if (UniformUtils.p() < config.getCrossoverPossibility()) {
-                    Individual individual2 = UniformUtils.oneFromList(population);
-                    newIndividual = crossover.doCrossover(individual, individual2);
-
-                    if (newIndividual == null) {
-                        log.error("Crossover new individual is null");
-                        return;
-                    }
-
-                    // New individual is same to the parents, mutate it
-                    while (newIndividual.equals(individual) || newIndividual.equals(individual2)) {
-                        mutations.mutate(newIndividual);
-                    }
-
-                } else {
-                    // If no crossover, then mutate it
-                    newIndividual = individual.copy();
-
-                    // Must do once mutation
-                    while (individual.equals(newIndividual)) {
-                        mutations.mutate(newIndividual);
-                    }
-
-                    if (newIndividual == null) {
-                        log.error("Mutation new individual is null");
-                        return;
-                    }
+                Individual newIndividual;
+                if (UniformUtils.p() < config.getCrossoverPossibility()) { // Crossover
+                    newIndividual = doCrossover(individual, UniformUtils.oneFromList(population));
+                } else { // Mutation
+                    newIndividual = doMutation(individual);
                 }
                 offspring.add(newIndividual);
             }
@@ -170,16 +129,81 @@ public class Planner {
 
             // Record best individual log
             analyzer.addLog(population.get(0));
-
-            serviceAdded = false;
-            serviceRemoved = false;
         }
 
         log.info("Process is finished");
         afterExec();
 
     }
-    // TODO changed service handler
+
+    private void monitorServiceStatus(List<Individual> population) {
+        if (serviceToRemoveQueue != null && !serviceToRemoveQueue.isEmpty()) {
+            List<Service> servicesToRemove = new ArrayList<>(serviceToRemoveQueue.size());
+            while (!serviceToRemoveQueue.isEmpty()) {
+                servicesToRemove.add(serviceToRemoveQueue.poll());
+            }
+            removeServices(servicesToRemove);
+            filterDeadIndividuals(population);
+            supplementPopulation(population, config.getSurvivalSize());
+        }
+
+        if (serviceToAddQueue != null && !serviceToAddQueue.isEmpty()) {
+            List<Service> servicesToAdd = new ArrayList<>(serviceToAddQueue.size());
+            while (!serviceToAddQueue.isEmpty()) {
+                servicesToAdd.add(serviceToAddQueue.poll());
+            }
+            addServices(servicesToAdd);
+            replacePopulation(population, config.getSurvivalSize() >> 1);
+        }
+    }
+
+    private void addServices(List<Service> servicesToAdd) {
+
+    }
+
+    private void removeServices(List<Service> servicesToRemove) {
+
+    }
+
+    private void replacePopulation(List<Individual> population, int replaceSize) {
+    }
+
+    private void refreshPlannerContext() {
+
+    }
+
+    private void supplementPopulation(List<Individual> population, int survivalSize) {
+
+    }
+
+    private void filterDeadIndividuals(List<Individual> population) {
+
+    }
+
+    private Individual doCrossover(Individual individual1, Individual individual2) {
+
+        Individual newIndividual = crossover.doCrossover(individual1, individual2);
+
+        if (newIndividual == null) {
+            log.error("Crossover new individual is null");
+            return null;
+        }
+
+        // New individual is same to the parents, mutate it
+        while (newIndividual.equals(individual1) || newIndividual.equals(individual2)) {
+            mutations.mutate(newIndividual);
+        }
+        return newIndividual;
+    }
+
+    private Individual doMutation(Individual individual) {
+        Individual newIndividual = individual.copy();
+        // Must do once mutation
+        while (individual.equals(newIndividual)) {
+            mutations.mutate(newIndividual);
+        }
+        return newIndividual;
+    }
 
     protected void beforeExec() {
         analyzer.recordStartTime();

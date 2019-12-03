@@ -24,17 +24,27 @@ import java.util.Set;
 @Getter
 @Setter
 @Slf4j
-public class Individual implements Comparable {
+public class Individual implements Comparable<Individual> {
 
     static int globalId = 0;
-
-    @EqualsAndHashCode.Exclude
-    private int id;
 
     /**
      * State list
      */
     List<State> states = Lists.newArrayList();
+
+    /**
+     * Id
+     */
+    @EqualsAndHashCode.Exclude
+    private int id;
+
+    /**
+     * Time to live in plan step.
+     * TTL equals -1 means immortal
+     */
+    @EqualsAndHashCode.Exclude
+    private int ttl;
 
     /**
      * Services that can be executed in this states
@@ -65,11 +75,9 @@ public class Individual implements Comparable {
     boolean isFeasible = false;
 
     /**
-     * 1) isFeasible = false
-     * Fitness is search cost from internal planner
-     * 2) isFeasible = true:
-     * Fitness is a measure for the "loss in quality" if this individual
-     * is removed from the current population
+     * When isFeasible equals false, it is search cost from internal planner;
+     * When isFeasible equals true, it is a measure for the "loss in quality"
+     * if this individual is removed from the current population;
      */
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
@@ -77,6 +85,12 @@ public class Individual implements Comparable {
 
     public Individual() {
         this.id = globalId++;
+        this.ttl = -1;
+    }
+
+    public Individual(int ttl) {
+        this.id = globalId++;
+        this.ttl = ttl;
     }
 
     public Individual copy() {
@@ -117,6 +131,10 @@ public class Individual implements Comparable {
         return states.get(states.size() - 1).concepts;
     }
 
+    public boolean isAlive() {
+        return ttl > 0;
+    }
+
     /**
      * Set services and qos of services
      *
@@ -142,12 +160,11 @@ public class Individual implements Comparable {
      * that a feasible individual is always preferred to an infeasible
      * one, regardless of any fitness value. Otherwise use fitness to compare.
      *
-     * @param o Another individual
+     * @param another Another individual
      * @return Compare result
      */
     @Override
-    public int compareTo(Object o) {
-        Individual another = (Individual) o;
+    public int compareTo(Individual another) {
         if (this.isFeasible && (!another.isFeasible)) return 1;
         else if ((!this.isFeasible) && another.isFeasible) return -1;
         else return Double.compare(this.fitness, another.fitness);
