@@ -1,4 +1,4 @@
-package com.ingbyr.hwsc.planner.innerplanner.cpg.models;
+package com.hwsc.baseline.cpg.models;
 
 import lombok.Getter;
 import lombok.Setter;

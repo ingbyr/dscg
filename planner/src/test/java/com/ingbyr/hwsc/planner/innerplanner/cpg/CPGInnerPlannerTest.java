@@ -8,7 +8,6 @@ import com.ingbyr.hwsc.planner.innerplanner.cpg.models.CompletePlaningGraph;
 import com.ingbyr.hwsc.planner.innerplanner.cpg.models.DWGEdge;
 import com.ingbyr.hwsc.planner.innerplanner.cpg.models.DWGNode;
 import com.ingbyr.hwsc.planner.innerplanner.cpg.models.PlanningGraph;
-import com.ingbyr.hwsc.planner.pg.GeneratePlanningGraph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.interfaces.AStarAdmissibleHeuristic;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,7 @@ import static com.ingbyr.hwsc.planner.innerplanner.cpg.extractors.PlanExtractors
 
 class CPGInnerPlannerTest {
 
-    private PlanningGraph pg = GeneratePlanningGraph.fromXML(Dataset.wsc2008_01);
+    private PlanningGraph pg = GeneratePlanningGraph.fromXML(Dataset.wsc2009_01);
 
     @Test
     void solveByAllPath() {

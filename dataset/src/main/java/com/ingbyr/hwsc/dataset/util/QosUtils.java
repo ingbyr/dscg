@@ -30,7 +30,7 @@ public class QosUtils {
         return newQos;
     }
 
-    public static double toSimpleCost(Qos qos) {
+    public static double sumQosToCost(Qos qos) {
         return Arrays.stream(qos.getValues()).sum();
     }
 

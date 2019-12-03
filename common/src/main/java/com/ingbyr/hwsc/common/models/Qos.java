@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author ingbyr
@@ -60,5 +61,21 @@ public class Qos {
 
     public double get(int type) {
         return values[type];
+    }
+
+    /**
+     * Calculate the total qos
+     * @param services
+     * @return
+     */
+    public static Qos getTotalQos(List<Service> services) {
+        Qos totalQos = new Qos();
+        for (Service service : services) {
+            Qos qos = service.getQos();
+            for (int type : TYPES) {
+                totalQos.set(type, totalQos.get(type) + qos.get(type));
+            }
+        }
+        return totalQos;
     }
 }

@@ -1,9 +1,9 @@
-package com.ingbyr.hwsc.planner.innerplanner.cpg.extractors;
+package com.hwsc.baseline.cpg.extractors;
 
-import com.ingbyr.hwsc.planner.innerplanner.cpg.models.DWGNode;
 import lombok.extern.slf4j.Slf4j;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.AStarAdmissibleHeuristic;
+import com.hwsc.baseline.cpg.models.DWGNode;
 
 @Slf4j
 public class HSPRHeuristic<V extends DWGNode> implements AStarAdmissibleHeuristic<V> {

@@ -1,21 +1,18 @@
-package com.ingbyr.hwsc.planner.pg.searching;
+package com.hwsc.baseline.cpg.searching;
 
+import com.hwsc.baseline.cpg.models.Delta;
 import com.ingbyr.hwsc.common.models.Concept;
-import com.ingbyr.hwsc.common.models.Delta;
 import com.ingbyr.hwsc.common.models.Param;
 import com.ingbyr.hwsc.common.models.Service;
-import com.ingbyr.hwsc.planner.innerplanner.cpg.models.PlanningGraph;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+import com.hwsc.baseline.cpg.models.PlanningGraph;
 
 import java.util.*;
 import java.util.Map.Entry;
 
-@Slf4j
 public class ForwardPlanningGraphSearcher implements PlanningGraphSearcher {
     private List<String> servicesConsumed;
     private Set<Concept> goalSet;
-    @Getter
     private PlanningGraph planningGraph;
     private Delta delta;
     private Map<String, Concept> conceptMap;
@@ -34,11 +31,12 @@ public class ForwardPlanningGraphSearcher implements PlanningGraphSearcher {
     }
 
     @Override
-    public boolean search() {
-        return doForWardSearch();
+    public PlanningGraph search() {
+        doForWardSearch();
+        return planningGraph;
     }
 
-    private boolean doForWardSearch() {
+    private void doForWardSearch() {
         // init
         Vector<Set<Concept>> inputLevels = planningGraph.getPLevels();
         Set<Concept> inputSet = inputLevels.get(0);
@@ -51,13 +49,11 @@ public class ForwardPlanningGraphSearcher implements PlanningGraphSearcher {
         long start = System.currentTimeMillis();
 
         // compose
-        boolean isSuccessful = compose(inputSet, tempServices, goalSet);
+        compose(inputSet, tempServices, goalSet);
 
         // result
         planningGraph.delta = delta;
         composeTime = System.currentTimeMillis() - start;
-
-        return isSuccessful;
     }
 
     /**

@@ -43,7 +43,7 @@ public class InnerPlannerYashp2 extends AbstractInnerPlanner implements InnerPla
 
     @Builder
     @EqualsAndHashCode
-    public static class YNode implements Comparable {
+    public static class YNode implements Comparable<YNode> {
 
         State state;
 
@@ -70,9 +70,8 @@ public class InnerPlannerYashp2 extends AbstractInnerPlanner implements InnerPla
         }
 
         @Override
-        public int compareTo(Object o) {
-            YNode another = (YNode) o;
-            return Integer.compare(this.heuristic, another.heuristic);
+        public int compareTo(YNode node) {
+            return Integer.compare(this.heuristic, node.heuristic);
         }
     }
 

@@ -1,7 +1,7 @@
-package com.ingbyr.hwsc.planner.innerplanner.cpg;
+package com.hwsc.baseline.cpg;
 
-import com.ingbyr.hwsc.planner.innerplanner.cpg.models.DWGEdge;
-import com.ingbyr.hwsc.planner.innerplanner.cpg.models.DWGNode;
+import com.hwsc.baseline.cpg.models.DWGEdge;
+import com.hwsc.baseline.cpg.models.DWGNode;
 import lombok.extern.slf4j.Slf4j;
 import org.jgrapht.Graph;
 import org.jgrapht.io.ComponentNameProvider;

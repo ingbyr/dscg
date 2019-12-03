@@ -107,8 +107,7 @@ public class XMLDataSetReader extends LocalDatasetSetReader {
         log.trace("{} origin {}", service, service.getOriginQos());
         log.trace("{} flipped {}", service, service.getQos());
 
-        // Single cost that not used in plan process
-        service.setCost(QosUtils.toSimpleCost(service.getQos()));
+        service.setCost(QosUtils.sumQosToCost(service.getQos()));
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.ingbyr.hwsc.planner.innerplanner.cpg.models;
+package com.hwsc.baseline.cpg.models;
 
 import com.google.common.collect.Sets;
 import com.ingbyr.hwsc.common.models.Concept;
@@ -28,16 +28,16 @@ public class DWGNode {
 
     @Getter
     @EqualsAndHashCode.Exclude
-    public Set<String> inputConcepts;
+    public Set<Concept> inputConcepts;
 
     @Getter
     @Setter
     @EqualsAndHashCode.Exclude
-    public Set<String> aStarConcepts;
+    public Set<Concept> aStarConcepts;
 
     @Getter
     @EqualsAndHashCode.Exclude
-    public Set<String> outputConcepts;
+    public Set<Concept> outputConcepts;
 
     @EqualsAndHashCode.Exclude
     private int uuid;
@@ -45,8 +45,8 @@ public class DWGNode {
     private static int globalID = 0;
 
     public static DWGNode from(Set<LeveledService> leveledServices) {
-        Set<String> inputConceptSet = Sets.newHashSet();
-        Set<String> outputConceptSet = Sets.newHashSet();
+        Set<Concept> inputConceptSet = Sets.newHashSet();
+        Set<Concept> outputConceptSet = Sets.newHashSet();
         Set<LeveledService> services = Sets.newHashSet(leveledServices);
 
         for (LeveledService leveledService : leveledServices) {
@@ -73,7 +73,7 @@ public class DWGNode {
 
     @Override
     public String toString() {
-        return services.toString();
+        return "d[" + distance + "] " + services.toString();
     }
 
     public int uuid() {

@@ -1,6 +1,7 @@
 package com.ingbyr.hwsc.planner;
 
 import com.ingbyr.hwsc.common.models.Qos;
+import com.ingbyr.hwsc.common.models.Service;
 import com.ingbyr.hwsc.dataset.DataSetReader;
 import com.ingbyr.hwsc.dataset.XMLDataSetReader;
 import com.ingbyr.hwsc.planner.exception.DAEXConfigException;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * TODO support changeable services
@@ -49,6 +51,10 @@ public class Planner {
 
     private Qos preQos;
 
+    private BlockingQueue<Service> serviceToAddQueue;
+
+    private BlockingQueue<Service> serviceToRemoveQueue;
+
     public void exec() {
 
         beforeExec();
@@ -70,11 +76,33 @@ public class Planner {
         // Evaluate initial population
         evaluator.evaluate(population, innerPlanner);
 
+        // Create reserved population
+        // TODO config this
+        int reservedPopulationSize = 10;
+        boolean serviceRemoved = false;
+        boolean serviceAdded = false;
+        List<Individual> reservedPopulation = new ArrayList<>();
+
         log.info("Start processing ...");
         // Start process
         int stopStepCount = 0;
         for (int gen = 0; gen < config.getMaxGen(); gen++) {
+
             log.info("Progress ({}/{})", gen, config.getMaxGen());
+
+            // Handle with changed services
+            while (serviceToRemoveQueue != null && !serviceToRemoveQueue.isEmpty()) {
+                serviceRemoved = true;
+                Service serviceToAdd = serviceToRemoveQueue.poll();
+                dataSetReader.getServiceMap().remove(serviceToAdd.getName());
+            }
+
+            while (serviceToAddQueue != null && !serviceToAddQueue.isEmpty()) {
+                serviceAdded = true;
+                Service serviceToRemove = serviceToAddQueue.poll();
+                dataSetReader.getServiceMap().put(serviceToRemove.getName(), serviceToRemove);
+            }
+
             // Create offspring
             List<Individual> offspring = new ArrayList<>(config.getOffspringSize());
 
@@ -142,12 +170,16 @@ public class Planner {
 
             // Record best individual log
             analyzer.addLog(population.get(0));
+
+            serviceAdded = false;
+            serviceRemoved = false;
         }
 
         log.info("Process is finished");
         afterExec();
 
     }
+    // TODO changed service handler
 
     protected void beforeExec() {
         analyzer.recordStartTime();

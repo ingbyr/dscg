@@ -1,10 +1,7 @@
-package com.ingbyr.hwsc.planner.innerplanner.cpg.models;
+package com.hwsc.baseline.cpg.models;
 
 import com.ingbyr.hwsc.common.models.Concept;
-import com.ingbyr.hwsc.common.models.Delta;
 import com.ingbyr.hwsc.common.models.Service;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 import java.util.*;
@@ -17,32 +14,13 @@ public class PlanningGraph {
 
     private Vector<Set<Concept>> PLevels;
     private Vector<Set<Service>> ALevels;
-
-    @Getter
-    @Setter
-    // Immutable list
     private Set<Concept> goalSet;
-
-    @Getter
-    @Setter
-    // Immutable list
-    private Set<Concept> inputSet;
-
-    @Getter
-    @Setter
-    private Map<String, Service> serviceMap;
-
-    @Getter
-    @Setter
-    private Map<String, Concept> conceptMap;
-
+    private Set<Concept> givenConceptSet;
     public LinkedList<LinkedHashSet<Service>> actionLevels = new LinkedList<>();
     public LinkedHashSet<LinkedHashSet<Concept>> propLevels = new LinkedHashSet<>();
-
-    private Service startService;
-    private Service targetService;
     public List<Service> target;
     public List<Service> start;
+    public Map<String, Concept> conceptMap;
 
     // for heuristic searching
     public Delta delta;
@@ -50,10 +28,10 @@ public class PlanningGraph {
     public PlanningGraph(Map<String, Concept> conceptMap) {
         PLevels = new Vector<>();
         ALevels = new Vector<>();
-        targetService = new Service("target");
-        target = Collections.singletonList(targetService);
-        startService = new Service("start");
-        start = Collections.singletonList(startService);
+        goalSet = new HashSet<>();
+        givenConceptSet = new HashSet<>();
+        target = Collections.singletonList(new Service("target"));
+        start = Collections.singletonList(new Service("start"));
         this.conceptMap = conceptMap;
     }
 
@@ -85,11 +63,20 @@ public class PlanningGraph {
         this.ALevels.add(level);
     }
 
-    public void initCache() {
-        // Init dataset cache
-        DatasetCache.serviceMap = new HashMap<>(serviceMap);
-        DatasetCache.conceptMap = new HashMap<>(conceptMap);
-        DatasetCache.serviceMap.put("start", startService);
-        DatasetCache.serviceMap.put("target", targetService);
+    public Set<Concept> getGoalSet() {
+        return goalSet;
     }
+
+    public void setGoalSet(Set<Concept> goalSet) {
+        this.goalSet = goalSet;
+    }
+
+    public Set<Concept> getGivenConceptSet() {
+        return givenConceptSet;
+    }
+
+    public void setGivenConceptSet(Set<Concept> givenConceptSet) {
+        this.givenConceptSet = givenConceptSet;
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.ingbyr.hwsc.planner.innerplanner.cpg.models;
+package com.hwsc.baseline.cpg.models;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CompletePlaningGraph {
 
-    @Setter
     private PlanningGraph planningGraph;
 
     @Getter
@@ -29,7 +28,7 @@ public class CompletePlaningGraph {
 
     private Queue<DWGNode> nodeQueue;
 
-    private List<Map<String, Set<LeveledService>>> levelCache;
+    private List<Map<Concept, Set<LeveledService>>> levelCache;
 
     private DWGNode startNode;
 
@@ -44,7 +43,7 @@ public class CompletePlaningGraph {
     private boolean reverseGraph;
 
     @Setter
-    private Map<String, Double> conceptDistance;
+    private Map<Concept, Double> conceptDistance;
 
     // debug msg header
     private static final String LINE_INIT = "========================== init ==========================";
@@ -62,7 +61,8 @@ public class CompletePlaningGraph {
 
     }
 
-    public CompletePlaningGraph() {
+    public CompletePlaningGraph(PlanningGraph planningGraph) {
+        this.planningGraph = planningGraph;
         this.dwGraph = new SimpleDirectedWeightedGraph<>(DWGEdge.class);
         this.nodeQueue = Lists.newLinkedList();
         this.levelCache = Lists.newLinkedList();
@@ -83,8 +83,7 @@ public class CompletePlaningGraph {
             return targetNode;
     }
 
-    public Graph<DWGNode, DWGEdge> build(PlanningGraph pg) {
-        this.planningGraph = pg;
+    public Graph<DWGNode, DWGEdge> trans() {
         initData();
         expandGraph();
         return dwGraph;
@@ -93,68 +92,68 @@ public class CompletePlaningGraph {
     private void initData() {
         debug(LINE_INIT);
 
-        info("create start node");
-        String startService = planningGraph.start.get(0).getName();
+        debug("create start node");
+        Service startService = planningGraph.start.get(0);
         LeveledService startLeveledService = new LeveledService(startService, level);
         Set<Concept> inputConcepts = new ArrayList<>(planningGraph.propLevels).get(0);
-        startLeveledService.setOutputConceptSet(DatasetCache.toStrSet(inputConcepts));
+        startLeveledService.setOutputConceptSet(inputConcepts);
 
         startNode = DWGNode.builder()
                 .services(Collections.singleton(startLeveledService))
                 .inputConcepts(Sets.newHashSet())
-                .outputConcepts(startLeveledService.getOutputConceptSet())
+                .outputConcepts(Sets.newHashSet(inputConcepts))
                 .build();
-        info("input concepts: {}", startNode.outputConcepts);
+        debug("input concepts: {}", startNode.outputConcepts);
         // add node estimated distance
         startNode.setDistance(0.0);
 
-        info("create input concept cache");
-        Map<String, Set<LeveledService>> startLevelCache = new HashMap<>();
+        debug("create input concept cache");
+        Map<Concept, Set<LeveledService>> startLevelCache = new HashMap<>();
         inputConcepts.forEach(concept -> {
-            cacheConcept(startLevelCache, concept.getName(), startLeveledService);
+            cacheConcept(startLevelCache, concept, startLeveledService);
         });
         levelCache.add(startLevelCache);
 
-        info("create action levels concept cache");
+        debug("create action levels concept cache");
         for (LinkedHashSet<Service> action : planningGraph.actionLevels) {
             level++;
             // get pre level cache
-            Map<String, Set<LeveledService>> levelTmpCache = copyCache(level - 1);
+            Map<Concept, Set<LeveledService>> levelTmpCache = copyCache(level - 1);
             action.forEach(service -> {
                 Set<Concept> outputConcepts = service.getOutputConceptSet();
                 // cache service output concept
                 for (Concept concept : outputConcepts) {
-                    cacheConcept(levelTmpCache, concept.getName(), new LeveledService(service.getName(), level));
+                    cacheConcept(levelTmpCache, concept, new LeveledService(service, level));
                 }
             });
             levelCache.add(levelTmpCache);
         }
 
-        info("create target node");
+        debug("create target node");
         int targetLevel = level + 1;
         Service targetService = planningGraph.target.get(0);
-        LeveledService targetLeveledService = new LeveledService(targetService.getName(), targetLevel);
-        Set<Concept> requiredConcepts = new HashSet<>(planningGraph.getGoalSet());
-        targetLeveledService.setInputConceptSet(DatasetCache.toStrSet(requiredConcepts));
+        LeveledService targetLeveledService = new LeveledService(targetService, targetLevel);
+        Set<Concept> requiredConcepts = planningGraph.getGoalSet();
+        targetLeveledService.setInputConceptSet(requiredConcepts);
 
         targetNode = DWGNode.builder()
                 .services(Collections.singleton(targetLeveledService))
-                .inputConcepts(targetLeveledService.getInputConceptSet())
+                .inputConcepts(Sets.newHashSet(requiredConcepts))
                 .outputConcepts(Sets.newHashSet())
                 .build();
-        info("target concepts: {}", targetNode.inputConcepts);
+        debug("target concepts: {}", targetNode.inputConcepts);
 
         if (reverseGraph) {
             targetNode.setAStarConcepts(Sets.newHashSet(targetNode.getInputConcepts()));
 
             double distance = 0;
-            for (String concept : targetNode.getAStarConcepts()) {
+            for (Concept concept : targetNode.getAStarConcepts()) {
                 distance = Math.max(conceptDistance.get(concept), distance);
             }
             targetNode.setDistance(distance);
         }
 
-        info("add target node to node queue");
+        debug("add target node to node queue");
         nodeQueue.offer(targetNode);
         dwGraph.addVertex(targetNode);
 
@@ -164,15 +163,15 @@ public class CompletePlaningGraph {
         }
     }
 
-    private Map<String, Set<LeveledService>> copyCache(int selectedLevel) {
-        Map<String, Set<LeveledService>> cacheDeepCopy = new HashMap<>();
+    private Map<Concept, Set<LeveledService>> copyCache(int selectedLevel) {
+        Map<Concept, Set<LeveledService>> cacheDeepCopy = new HashMap<>();
         if (selectedLevel >= 0) {
             levelCache.get(selectedLevel).forEach((k, v) -> cacheDeepCopy.put(k, Sets.newHashSet(v)));
         }
         return cacheDeepCopy;
     }
 
-    private void cacheConcept(Map<String, Set<LeveledService>> cache, String concept, LeveledService leveledService) {
+    private void cacheConcept(Map<Concept, Set<LeveledService>> cache, Concept concept, LeveledService leveledService) {
         if (cache.containsKey(concept)) {
             cache.get(concept).add(leveledService);
         } else {
@@ -191,7 +190,10 @@ public class CompletePlaningGraph {
             info(LINE_LEVEL, level);
             newPreNodes = new LinkedHashSet<>();
             debug("concept cache: {}", levelCache.get(level));
+            int nodeSize = nodeQueue.size();
+            int nodeIndex = 0;
             while (!nodeQueue.isEmpty()) {
+                info("node {}/{}", nodeIndex++, nodeSize);
                 DWGNode node = nodeQueue.poll();
                 createPreNodesForNode(node);
             }
@@ -218,33 +220,37 @@ public class CompletePlaningGraph {
 
         debug("selected services: {}", nodeServiceHolder.selected);
 
-        Set<String> conceptsOfSelectedServices = mergeInputConcepts(nodeServiceHolder.selected);
+        Set<Concept> conceptsOfSelectedServices = mergeInputConcepts(nodeServiceHolder.selected);
 
         // find all available services that removed services required
         List<List<LeveledService>> availableServices = new LinkedList<>();
-        int combinationSize = 1;
-        for (String concept : conceptsOfSelectedServices) {
+        conceptsOfSelectedServices.forEach(concept -> {
             debug("{}: {}", concept, levelCache.get(level).get(concept));
             availableServices.add(Lists.newArrayList(levelCache.get(level).get(concept)));
-            combinationSize *= availableServices.size();
-            if (combinationSize <= 0) {
-                throw new RuntimeException("Too big size of service combination");
-            }
-        }
+        });
 
+        // TODO service combination limit
+        int limit = 128;
         // find service combinations
-        debug("require services size {}", availableServices.size());
-
         Set<Set<LeveledService>> serviceCombinations = combineService(availableServices);
-
-        debug("service combinations size: {}", serviceCombinations.size());
-
+        if (serviceCombinations.size() > limit) {
+            warn("drop node {}", node);
+            warn("because service combinations size too big: {}", serviceCombinations.size());
+        } else {
+            debug("service combinations size: {}", serviceCombinations.size());
+        }
         double cost = calcCost(nodeServiceHolder.selected);
-        serviceCombinations.forEach(serviceCombination -> {
+
+        int current = 0;
+        for (Set<LeveledService> serviceCombination : serviceCombinations) {
+
+            if (current++ >= limit)
+                break;
+
             Set<LeveledService> services = Sets.union(serviceCombination, nodeServiceHolder.remaining);
             DWGNode preNode = DWGNode.from(services);
             addPreNode(node, preNode, cost, nodeServiceHolder.selected);
-        });
+        }
     }
 
     /**
@@ -284,16 +290,16 @@ public class CompletePlaningGraph {
 
         if (reverseGraph) {
 
-            Set<String> preNodeInputConcepts = preNode.getInputConcepts();
-            Set<String> preNodeOutputConcepts = preNode.getOutputConcepts();
+            Set<Concept> preNodeInputConcepts = preNode.getInputConcepts();
+            Set<Concept> preNodeOutputConcepts = preNode.getOutputConcepts();
 
-            Set<String> additionalAStarConcepts = Sets.difference(node.getAStarConcepts(), Sets.intersection(node.getAStarConcepts(), preNodeOutputConcepts));
+            Set<Concept> additionalAStarConcepts = Sets.difference(node.getAStarConcepts(), Sets.intersection(node.getAStarConcepts(), preNodeOutputConcepts));
 
-            Set<String> aStarConcepts = Sets.union(preNodeInputConcepts, additionalAStarConcepts);
+            Set<Concept> aStarConcepts = Sets.union(preNodeInputConcepts, additionalAStarConcepts);
             preNode.setAStarConcepts(aStarConcepts);
 
             double distance = 0;
-            for (String concept : aStarConcepts) {
+            for (Concept concept : aStarConcepts) {
                 double d = conceptDistance.get(concept);
                 distance = Math.max(d, distance);
             }
@@ -304,14 +310,14 @@ public class CompletePlaningGraph {
     }
 
 
-    public static Set<String> mergeInputConcepts(Set<LeveledService> services) {
+    public static Set<Concept> mergeInputConcepts(Set<LeveledService> services) {
         return services.stream()
                 .map(LeveledService::getInputConceptSet)
                 .flatMap(Set::stream)
                 .collect(Collectors.toSet());
     }
 
-    public static Set<String> mergeOutputConcepts(Set<LeveledService> services) {
+    public static Set<Concept> mergeOutputConcepts(Set<LeveledService> services) {
         return services.stream()
                 .map(LeveledService::getOutputConceptSet)
                 .flatMap(Set::stream)
@@ -363,7 +369,7 @@ public class CompletePlaningGraph {
         Set<LeveledService> remainingServices = Sets.newLinkedHashSet();
 
         for (LeveledService leveledService : nodeLeveledService) {
-            if (leveledService.getLevel() > level) {
+            if (leveledService.level > level) {
                 removedServices.add(leveledService);
             } else {
                 remainingServices.add(leveledService);
@@ -389,5 +395,8 @@ public class CompletePlaningGraph {
         log.info("[level-" + level + "] " + fmt, objs);
     }
 
+    private void warn(String fmt, Object... objs) {
+        log.warn("[level-" + level + "] " + fmt, objs);
+    }
 }
 

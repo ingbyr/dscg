@@ -1,15 +1,15 @@
-package com.ingbyr.hwsc.planner.pg;
+package com.hwsc.baseline.cpg;
 
+import com.hwsc.baseline.cpg.searching.ForwardPlanningGraphSearcher;
+import com.hwsc.baseline.cpg.searching.PlanningGraphSearcher;
 import com.ingbyr.hwsc.common.models.Concept;
 import com.ingbyr.hwsc.common.models.Service;
-import com.ingbyr.hwsc.dataset.Dataset;
 import com.ingbyr.hwsc.dataset.DataSetReader;
+import com.ingbyr.hwsc.dataset.Dataset;
 import com.ingbyr.hwsc.dataset.WSDLDataSetReader;
 import com.ingbyr.hwsc.dataset.XMLDataSetReader;
-import com.ingbyr.hwsc.planner.innerplanner.cpg.models.PlanningGraph;
-import com.ingbyr.hwsc.planner.pg.searching.ForwardPlanningGraphSearcher;
-import com.ingbyr.hwsc.planner.pg.searching.PlanningGraphSearcher;
 import lombok.extern.slf4j.Slf4j;
+import com.hwsc.baseline.cpg.models.PlanningGraph;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -17,48 +17,19 @@ import java.util.LinkedList;
 
 @Slf4j
 public class GeneratePlanningGraph {
-    /**
-     * Generate planning graph from wsdl file which has no QOS
-     *
-     * @param dataset Dataset
-     * @return PlanningGraph
-     */
-    public static PlanningGraph fromWSDL(Dataset dataset) {
-        DataSetReader dataSetReader = initDataSetReader(new WSDLDataSetReader(dataset));
-        return generatePlanningGraph(dataSetReader);
-    }
 
-    /**
-     * Generate planning graph from xml file
-     */
-    public static PlanningGraph fromXML(Dataset dataset) {
-        DataSetReader dataSetReader = initDataSetReader(new XMLDataSetReader(dataset));
-        return generatePlanningGraph(dataSetReader);
-    }
-
-    private static DataSetReader initDataSetReader(DataSetReader dataSetReader) {
-        log.debug("Parsing Successfully Completed");
-        return dataSetReader;
-    }
-
-    private static PlanningGraph generatePlanningGraph(DataSetReader dataSetReader) {
+    public static PlanningGraph generatePlanningGraph(DataSetReader dataSetReader) {
         PlanningGraph pg = new PlanningGraph(dataSetReader.getConceptMap());
-
-        pg.addPLevel(new HashSet<>(dataSetReader.getInputSet()));
-        pg.setInputSet(dataSetReader.getInputSet());
+        pg.addPLevel(dataSetReader.getInputSet());
         pg.setGoalSet(dataSetReader.getGoalSet());
-        pg.setServiceMap(dataSetReader.getServiceMap());
         pg.addALevel(new HashSet<>());
-        pg.initCache();
-
         PlanningGraphSearcher searcher = new ForwardPlanningGraphSearcher(pg, dataSetReader.getConceptMap(), dataSetReader.getServiceMap());
         searcher.search();
-
         displayPlanningGraph(pg, searcher);
         return pg;
     }
 
-    public static void displayPlanningGraph(PlanningGraph planningGraph, PlanningGraphSearcher search) {
+    private static void displayPlanningGraph(PlanningGraph planningGraph, PlanningGraphSearcher search) {
         int levelCount = 0;
         LinkedList<LinkedHashSet<Concept>> propLevels = new LinkedList<>(planningGraph.propLevels);
         log.debug("Input Parameters : {}", propLevels.get(0));
@@ -79,5 +50,4 @@ public class GeneratePlanningGraph {
         log.debug("Back Tracking time : {} ms.", search.getBackTrackingTime());
         log.debug("====================================================================");
     }
-
 }
