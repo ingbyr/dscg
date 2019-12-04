@@ -20,10 +20,13 @@ public class PlannerService {
 
     private final MemoryDatasetReader memoryDatasetReader;
 
+    private final PlannerStepMsgHandlerService plannerStepMsgHandlerService;
+
     @Autowired
-    public PlannerService(PlannerDao plannerDao, MemoryDatasetReader memoryDatasetReader) {
+    public PlannerService(PlannerDao plannerDao, MemoryDatasetReader memoryDatasetReader, PlannerStepMsgHandlerService plannerStepMsgHandlerService) {
         this.plannerDao = plannerDao;
         this.memoryDatasetReader = memoryDatasetReader;
+        this.plannerStepMsgHandlerService = plannerStepMsgHandlerService;
     }
 
     public void saveConfig(PlannerConfig config) {
@@ -37,6 +40,7 @@ public class PlannerService {
     public PlannerAnalyzer exec(PlannerConfig config) throws DAEXConfigException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Planner planner = new Planner();
         planner.setup(config, memoryDatasetReader);
+        planner.setStepMsgHandler(plannerStepMsgHandlerService);
         planner.exec();
         return planner.getAnalyzer();
     }

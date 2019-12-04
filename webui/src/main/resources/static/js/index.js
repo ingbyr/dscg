@@ -1,17 +1,37 @@
 // Connect to websocket
 const socket = new SockJS('/gs-guide-websocket');
+
 stompClient = Stomp.over(socket);
-stompClient.connect({}, function (frame) {
-    console.log('Connected: ' + frame);
-    stompClient.subscribe('/topic/result', function (resultData) {
-        const result = JSON.parse(resultData.body);
-        console.log(result);
-        displayResult(result);
+
+stompClient.connect(
+    {},
+
+    function (frame) {
+        console.log('Connected: ' + frame);
+
+        stompClient.subscribe('/topic/result', function (resultData) {
+            const result = JSON.parse(resultData.body);
+            console.log(result);
+            displayResult(result);
+        });
+
+        stompClient.subscribe('/topic/stepResult', function (stepResult) {
+            console.log(stepResult.body);
+            $("#tipMsg").text(stepResult.body);
+        });
+
+    },
+
+    function (e) {
+        $("#staticBackdropLabel").text("错误");
+        $("#tipMsg").text("与服务器断开连接，请刷新网页重试");
+        $("#staticBackdrop").modal("show");
     });
-});
 
 function displayResult(result) {
-    $("#result").empty();
+    $("#staticBackdrop").modal("hide");
+    $("#tipMsg").text("");
+    $("#staticBackdropLabel").text("");
     displayQosLog(result.echartQosLog, result.bestQos, result.realQosLog.length);
 }
 
@@ -179,5 +199,8 @@ function postPlannerConfig() {
         return acc
     }, {}));
 
+    $("#staticBackdropLabel").text("正在执行");
+    $("#tipMsg").text("");
     stompClient.send("/ws/exec", {}, data)
+    $("#staticBackdrop").modal("show");
 }

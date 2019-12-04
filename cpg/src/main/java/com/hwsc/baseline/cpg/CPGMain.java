@@ -42,6 +42,7 @@ public class CPGMain {
             case 2:
                 dataset = Dataset.valueOf(args[0]);
                 MAX_NEW_PRE_NODE_SIZE = Integer.parseInt(args[1]);
+                break;
             default:
                 throw new RuntimeException("Error args " + Arrays.toString(args));
         }

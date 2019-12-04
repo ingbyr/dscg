@@ -10,6 +10,7 @@ import com.ingbyr.hwsc.planner.innerplanner.yashp2.InnerPlannerYashp2;
 import com.ingbyr.hwsc.planner.utils.UniformUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
@@ -55,6 +56,9 @@ public class Planner {
 
     private BlockingQueue<Service> serviceToRemoveQueue;
 
+    @Setter
+    private StepMsgHandler stepMsgHandler;
+
     public void exec() {
 
         beforeExec();
@@ -81,7 +85,15 @@ public class Planner {
         int stopStepCount = 0;
         for (int gen = 0; gen < config.getMaxGen(); gen++) {
 
-            log.info("Progress ({}/{})", gen, config.getMaxGen());
+            StringBuilder stepMsg = new StringBuilder();
+            stepMsg.append("Process (");
+            stepMsg.append(gen);
+            stepMsg.append("/");
+            stepMsg.append(config.getMaxGen());
+            stepMsg.append(")");
+
+            log.info("{}", stepMsg.toString());
+            stepMsgHandler.handle(stepMsg.toString());
 
             // Monitor service add or remove operation
             monitorServiceStatus(population);
@@ -207,6 +219,12 @@ public class Planner {
 
     protected void beforeExec() {
         analyzer.recordStartTime();
+
+        // Check components
+        if (stepMsgHandler == null) {
+            stepMsgHandler = new StepMsgHandlerDefault();
+            log.info("Not found step msg handler, so set to default");
+        }
     }
 
     protected void afterExec() {
@@ -222,7 +240,7 @@ public class Planner {
         }
     }
 
-    private void checkConfig(PlannerConfig config) throws DAEXConfigException {
+    private void checkPlannerConfig(PlannerConfig config) throws DAEXConfigException {
         log.info("Check the planner config {}", config);
         if (config.getPopulationSize() + config.getOffspringSize() < config.getSurvivalSize())
             throw new DAEXConfigException("populationSize + offspringSize < survivalSize");
@@ -236,7 +254,7 @@ public class Planner {
         if (plannerConfig != null && plannerConfig.equals(this.config))
             return;
 
-        checkConfig(plannerConfig);
+        checkPlannerConfig(plannerConfig);
         config = plannerConfig;
         dataSetReader = reader;
         dataSetReader.setDataset(config.getDataset());

@@ -12,7 +12,6 @@ import com.ingbyr.hwsc.dataset.Dataset;
 import com.ingbyr.hwsc.dataset.util.QosUtils;
 import com.ingbyr.hwsc.planner.exception.NotValidSolutionException;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
