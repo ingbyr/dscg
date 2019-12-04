@@ -1,7 +1,10 @@
-.card {
+#main {
     width: 100%;
 }
 
+.card {
+    width: 90%;
+}
 .top-buffer {
     margin-top: 20px;
 }

@@ -19,11 +19,11 @@
     <script src="js/index.js"></script>
 </head>
 <body>
-<div class="container" id="main">
+<div class="container-fluid" id="main">
 
     <#--Planner config area-->
     <div class="row top-buffer">
-        <div class="card">
+        <div class="card mx-auto">
             <div class="card-header font-weight-bold">
                 Planner Config
             </div>
@@ -210,7 +210,7 @@
 
     <#-- Result area -->
     <div class="row top-buffer">
-        <div class="card">
+        <div class="card mx-auto">
             <div class="card-header font-weight-bold">
                 Result
             </div>

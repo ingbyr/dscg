@@ -182,7 +182,16 @@ function displayQosLog(qosLog, bestQos, qosSize) {
                 },
                 markLine: bestQosLine(bestQos.Pri, qosSize)
             }
-        ]
+        ],
+        toolbox:{
+            show:true,
+            feature: {
+                saveAsImage:{
+                    show:true,
+                    pixelRatio: 4
+                }
+            }
+        }
     };
 
     myChart.setOption(option);
