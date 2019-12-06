@@ -154,8 +154,8 @@ public class Planner {
             while (!serviceToRemoveQueue.isEmpty()) {
                 servicesToRemove.add(serviceToRemoveQueue.poll());
             }
-            removeServices(servicesToRemove);
-            filterDeadIndividuals(population);
+            refreshPlannerContext();
+            filterDeadIndividuals(population,servicesToRemove);
             supplementPopulation(population, config.getSurvivalSize());
         }
 
@@ -164,17 +164,9 @@ public class Planner {
             while (!serviceToAddQueue.isEmpty()) {
                 servicesToAdd.add(serviceToAddQueue.poll());
             }
-            addServices(servicesToAdd);
+            refreshPlannerContext();
             replacePopulation(population, config.getSurvivalSize() >> 1);
         }
-    }
-
-    private void addServices(List<Service> servicesToAdd) {
-
-    }
-
-    private void removeServices(List<Service> servicesToRemove) {
-
     }
 
     private void replacePopulation(List<Individual> population, int replaceSize) {
@@ -188,7 +180,7 @@ public class Planner {
 
     }
 
-    private void filterDeadIndividuals(List<Individual> population) {
+    private void filterDeadIndividuals(List<Individual> population, List<Service> servicesToRemove) {
 
     }
 

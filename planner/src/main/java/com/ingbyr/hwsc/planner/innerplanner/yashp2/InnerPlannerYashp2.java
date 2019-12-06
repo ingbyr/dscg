@@ -118,11 +118,9 @@ public class InnerPlannerYashp2 extends AbstractInnerPlanner implements InnerPla
         YNode n1 = computeNode(n);
         log.debug("Create head node {}", n);
 
-        // Beyond b max
-        if (n1 == null && step > bMax)
+        if (step > bMax)
             return null;
-
-        if (n1 != null)
+        else if (n1 != null)
             return extractPlan(n1);
         else {
             while (open.size() != 0) {
