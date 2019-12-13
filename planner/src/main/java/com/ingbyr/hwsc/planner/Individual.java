@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.ingbyr.hwsc.common.models.Concept;
 import com.ingbyr.hwsc.common.models.Qos;
 import com.ingbyr.hwsc.common.models.Service;
+import com.ingbyr.hwsc.common.util.QosUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -145,13 +146,7 @@ public class Individual implements Comparable<Individual> {
             return;
 
         this.services = services;
-        this.qos = new Qos();
-        // Update qos
-        for (Service service : services) {
-            for (int type : Qos.TYPES) {
-                qos.set(type, qos.get(type) + service.getQos().get(type));
-            }
-        }
+        this.qos = QosUtils.mergeQos(services);
         log.trace("{} scaled {}", id, qos);
     }
 

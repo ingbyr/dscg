@@ -1,7 +1,7 @@
 package com.ingbyr.hwsc.dataset;
 
 import com.ingbyr.hwsc.common.models.*;
-import com.ingbyr.hwsc.dataset.util.QosUtils;
+import com.ingbyr.hwsc.common.util.QosUtils;
 import com.ingbyr.hwsc.dataset.util.XMLFileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.dom4j.DocumentException;
@@ -102,12 +102,7 @@ public class XMLDataSetReader extends LocalDatasetSetReader {
             originQos.set(type, Double.parseDouble(serviceElement.attribute(Qos.NAMES[type]).getText()));
         }
         service.setOriginQos(originQos);
-        // TODO Flip qos
-        service.setQos(QosUtils.flip(originQos));
         log.trace("{} origin {}", service, service.getOriginQos());
-        log.trace("{} flipped {}", service, service.getQos());
-
-        service.setCost(QosUtils.sumQosToCost(service.getQos()));
     }
 
     /**
@@ -121,7 +116,7 @@ public class XMLDataSetReader extends LocalDatasetSetReader {
 
         // Init min qos and max qos
         for (Map.Entry<String, Service> entry : serviceMap.entrySet()) {
-            Qos qos = entry.getValue().getQos();
+            Qos qos = entry.getValue().getOriginQos();
             for (int type : Qos.TYPES) {
                 if (minQos.get(type) > qos.get(type))
                     minQos.set(type, qos.get(type));
@@ -141,15 +136,17 @@ public class XMLDataSetReader extends LocalDatasetSetReader {
         // Rescale qos
         for (Map.Entry<String, Service> entry : serviceMap.entrySet()) {
             Service service = entry.getValue();
-            Qos qos = service.getQos();
+            Qos qos = new Qos();
             for (int type : Qos.TYPES) {
                 double distance = distanceQos.get(type);
                 // Avoid distance equals 0
                 if (distance == 0.0) {
                     distance = 1.0;
                 }
-                qos.set(type, (qos.get(type) - minQos.get(type)) / distance);
+                qos.set(type, (service.getOriginQos().get(type) - minQos.get(type)) / distance);
             }
+            service.setQos(qos);
+            service.setCost(QosUtils.sumQosToCost(qos));
             log.trace("{} origin {}", service, service.getOriginQos().getValues());
             log.trace("{} rescale {}", service, service.getQos().getValues());
         }

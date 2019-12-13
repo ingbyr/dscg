@@ -73,7 +73,7 @@ public class DWGNode {
 
     @Override
     public String toString() {
-        return "d[" + distance + "] " + services.toString();
+        return services.toString();
     }
 
     public int uuid() {

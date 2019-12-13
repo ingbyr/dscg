@@ -24,7 +24,7 @@ public class MutationAddState implements Mutation {
         int t2 = individual.getState(selectedStateIndex + 1).earliestTime;
         log.trace("Mutate at {} of {}", selectedStateIndex, individual);
 
-        if (t2 == t1 + 1) {
+        if (t2 == t1 + 1 || t2 <= t1) {
             log.warn("Mutation is aborted because of state[{}] is next to state[{}]", t1, t2);
             return false;
         }

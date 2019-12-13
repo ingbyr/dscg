@@ -9,7 +9,6 @@ import com.ingbyr.hwsc.common.models.Qos;
 import com.ingbyr.hwsc.common.models.Service;
 import com.ingbyr.hwsc.common.util.WorkDir;
 import com.ingbyr.hwsc.dataset.Dataset;
-import com.ingbyr.hwsc.dataset.util.QosUtils;
 import com.ingbyr.hwsc.planner.exception.NotValidSolutionException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -71,7 +70,7 @@ public class PlannerAnalyzer {
     public void addLog(Individual individual) {
         fitnessLog.add(individual.getFitness());
 
-        Qos realQos = QosUtils.flip(individual.getServices().size(), individual.getQos());
+        Qos realQos = individual.getQos();
         log.debug("Fitness {}, Real {}", individual.getFitness(), realQos);
         realQosLog.add(realQos);
 
@@ -104,6 +103,8 @@ public class PlannerAnalyzer {
             log.debug("[{}] Fitness {}, Qos {}", step, fitnessItr.next(), qosLogItr.next());
             step++;
         }
+
+        System.out.println(realQosLog);
     }
 
     public void saveQosLogToFile() throws IOException {
