@@ -28,6 +28,7 @@
     <logger name="com.ingbyr.hwsc.planner.IndividualGenerator" level="OFF"/>
     <logger name="com.ingbyr.hwsc.planner.SurvivalSelectorIndicator" level="OFF"/>
     <logger name="com.ingbyr.hwsc.planner.IndicatorBinary" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.planner.IndicatorFront" level="OFF"/>
 
     <root level="debug">
         <appender-ref ref="STDOUT"/>

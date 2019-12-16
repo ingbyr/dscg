@@ -2,6 +2,7 @@ package com.hwsc.baseline.cpg;
 
 
 import com.hwsc.baseline.cpg.extractors.AllPathsExtractor;
+import com.hwsc.baseline.cpg.extractors.DijkstraExtractor;
 import com.hwsc.baseline.cpg.extractors.PlanExtractor;
 import com.hwsc.baseline.cpg.extractors.PlanExtractors;
 import com.hwsc.baseline.cpg.models.CompletePlaningGraph;
@@ -22,38 +23,36 @@ import org.jgrapht.GraphPath;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class CPGMain {
 
-    public static int MAX_NEW_PRE_NODE_SIZE = 64;
+    public static int MAX_NEW_PRE_NODE_SIZE = Integer.MAX_VALUE;
 
     public static void main(String[] args) throws IOException {
 
-        Dataset[] datasets = new Dataset[]{
-                Dataset.wsc2008_01,
-//                Dataset.wsc2008_02,
-//                Dataset.wsc2008_03,
-//                Dataset.wsc2008_04,
-//                Dataset.wsc2008_05,
-//                Dataset.wsc2008_06,
-//                Dataset.wsc2009_01,
-//                Dataset.wsc2009_02,
-//                Dataset.wsc2009_03,
-//                Dataset.wsc2009_04
-        };
+        List<String> datasetNames = Files.readAllLines(Paths.get(System.getProperty("user.dir")).resolve("datasets.txt"));
+        List<Dataset> datasets = datasetNames.stream()
+                .filter(s -> !s.startsWith("/"))
+                .map(Dataset::valueOf)
+                .collect(Collectors.toList());
+        findPareto(datasets);
+    }
 
+    public static void findBestQoS(List<Dataset> datasets) throws IOException {
+        File logFile = WorkDir.WORK_DIR.resolve("best-qos").resolve("best_" + Arrays.toString(Qos.ACTIVE_TYPES) + ".txt").toFile();
         StringBuilder result = new StringBuilder();
-//        String prefix = "best_";
-        String prefix = "pareto_";
-        File logFile = WorkDir.WORK_DIR.resolve("best-qos").resolve(prefix + Arrays.toString(Qos.ACTIVE_TYPES) + ".txt").toFile();
 
         for (Dataset dataset : datasets) {
             DataSetReader reader = new XMLDataSetReader();
             reader.setDataset(dataset);
+            adjustCostOfServices(reader);
 
             PlanningGraph pg = GeneratePlanningGraph.generatePlanningGraph(reader);
 
@@ -61,57 +60,62 @@ public class CPGMain {
             cpg.trans();
 
             log.info("process {}", dataset);
+            PlanExtractor extractor = new DijkstraExtractor(cpg);
+            extractor.find();
+            for (GraphPath<DWGNode, DWGEdge> path : extractor.getPaths()) {
+                log.info("path: {}", path);
+                double cost = PlanExtractors.calcCost(path);
+                log.info("cost: {}", cost);
+                List<Service> services = PlanExtractors.getServices(path);
+                log.info("services: {}", services);
+                log.info("valid: {}", PlanExtractors.validServices(services, reader.getInputSet(), reader.getGoalSet()));
+                Qos scaledQos = QosUtils.mergeQos(services);
+                log.info("scaled qos: {}", scaledQos);
+                Qos originQos = QosUtils.mergeOriginQos(services);
+                log.info("origin qos: {}", originQos);
 
-//            process(new DijkstraExtractor(cpg), dataset, reader, result);
+                result.append("[" + dataset + "] services: " + services);
+                result.append("\n[" + dataset + "] cost: " + cost);
+                result.append("\n[" + dataset + "] scaled qos: " + scaledQos);
+                result.append("\n[" + dataset + "] origin qos: " + originQos);
 
-            adjustCostOfServices(reader);
-            findPareto(cpg, result);
+                result.append("\n\n");
+            }
+
         }
 
         FileUtils.write(logFile, result.toString(), Charset.defaultCharset());
     }
 
-    public static void process(PlanExtractor extractor, Dataset dataset, DataSetReader reader, StringBuilder result) {
-        extractor.find();
-        for (GraphPath<DWGNode, DWGEdge> path : extractor.getPaths()) {
-            log.info("path: {}", path);
-            double cost = PlanExtractors.calcCost(path);
-            log.info("cost: {}", cost);
-            List<Service> services = PlanExtractors.getServices(path);
-            log.info("services: {}", services);
-            log.info("valid: {}", PlanExtractors.validServices(services, reader.getInputSet(), reader.getGoalSet()));
-            Qos scaledQos = QosUtils.mergeQos(services);
-            log.info("scaled qos: {}", scaledQos);
-            Qos originQos = QosUtils.mergeOriginQos(services);
-            log.info("origin qos: {}", originQos);
-
-            result.append("[" + dataset + "] services: " + services);
-            result.append("\n[" + dataset + "] cost: " + cost);
-            result.append("\n[" + dataset + "] scaled qos: " + scaledQos);
-            result.append("\n[" + dataset + "] origin qos: " + originQos);
-
-            result.append("\n\n");
-        }
-    }
-
-    public static void findPareto(CompletePlaningGraph cpg, StringBuilder result) {
+    public static void findPareto(List<Dataset> datasets) throws IOException {
         log.info("find pareto");
-        PlanExtractor extractor = new AllPathsExtractor(cpg);
-        extractor.find();
-        Qos bQos = new Qos(Double.MAX_VALUE);
-        for (GraphPath<DWGNode, DWGEdge> path : extractor.getPaths()) {
-            List<Service> services = PlanExtractors.getServices(path);
-            log.debug("Service {}", services);
-            Qos qos = QosUtils.mergeQos(services);
-            log.debug("Qos {}", qos);
-            log.debug("bQos {}", bQos);
-            if (bQos.compareTo(qos) > 0) {
-                bQos = qos;
-                result.append(qos);
-                result.append(',');
+
+        for (Dataset dataset : datasets) {
+            File logFile = WorkDir.WORK_DIR.resolve("best-qos").resolve(dataset + "_pareto_" + Arrays.toString(Qos.ACTIVE_TYPES) + ".txt").toFile();
+            StringBuilder result = new StringBuilder();
+            DataSetReader reader = new XMLDataSetReader();
+            reader.setDataset(dataset);
+            PlanningGraph pg = GeneratePlanningGraph.generatePlanningGraph(reader);
+            CompletePlaningGraph cpg = new CompletePlaningGraph(pg);
+            cpg.trans();
+
+            log.info("process {}", dataset);
+            adjustCostOfServices(reader);
+
+            PlanExtractor extractor = new AllPathsExtractor(cpg);
+            extractor.find();
+
+            for (GraphPath<DWGNode, DWGEdge> path : extractor.getPaths()) {
+                List<Service> services = PlanExtractors.getServices(path);
+                log.debug("Service {}", services);
+                Qos qos = QosUtils.mergeQos(services);
+                log.debug("Qos {}", qos);
+                result.append(qos.toString());
+                result.append(",\n");
             }
+            FileUtils.write(logFile, result.toString(), Charset.defaultCharset());
+
         }
-        result.append('\n');
     }
 
     private static void adjustCostOfServices(DataSetReader reader) {

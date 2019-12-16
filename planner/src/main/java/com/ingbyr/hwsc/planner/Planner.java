@@ -19,6 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.stream.Collectors;
 
 /**
  * TODO support changeable services
@@ -140,12 +141,14 @@ public class Planner {
             }
 
             // Record best individual log
-            analyzer.addLog(population.get(0));
+            analyzer.recordStepInfo(population);
         }
 
         log.info("Process is finished");
-        afterExec();
+        log.info("Last pop:");
+        System.out.println(population.stream().map(Individual::getQos).collect(Collectors.toList()));
 
+        afterExec();
     }
 
     private void monitorServiceStatus(List<Individual> population) {
@@ -220,6 +223,7 @@ public class Planner {
     }
 
     protected void afterExec() {
+        log.info("================Analyzer================");
         analyzer.recordEndTime();
         analyzer.displayLogOnConsole();
 

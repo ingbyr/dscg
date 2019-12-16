@@ -3,7 +3,6 @@ package com.ingbyr.hwsc.common.models;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.util.Arrays;
 
@@ -12,7 +11,7 @@ import java.util.Arrays;
  */
 @Getter
 @EqualsAndHashCode
-public class Qos implements Comparable<Qos> {
+public class Qos {
 
     // QoS index
     public static final int RES = 0;
@@ -89,14 +88,5 @@ public class Qos implements Comparable<Qos> {
         qosStr.deleteCharAt(qosStr.length() - 1);
         qosStr.append(']');
         return qosStr.toString();
-    }
-
-    @Override
-    public int compareTo(Qos o) {
-        for (int type : TYPES) {
-            if (this.values[type] > o.getValues()[type])
-                return 1;
-        }
-        return -1;
     }
 }

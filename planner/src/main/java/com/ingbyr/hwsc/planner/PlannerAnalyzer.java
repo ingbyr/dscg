@@ -20,6 +20,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author ingbyr
@@ -29,15 +30,18 @@ public class PlannerAnalyzer {
 
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
-    // Fitness log
-    private final List<Double> fitnessLog = new LinkedList<>();
+    // Fitness
+    private final List<Double> fitness = new LinkedList<>();
 
-    // Qos log
+    // Best QoS
     @Getter
-    private final List<Qos> realQosLog = new LinkedList<>();
+    private final List<Qos> bestQoS = new LinkedList<>();
+
+    // All QoS
+    List<Qos> allQos = new LinkedList<>();
 
     @Getter
-    private List<Object> echartQosLog;
+    private List<Object> qosForEchart;
 
     @Getter
     private Instant startTime;
@@ -52,32 +56,31 @@ public class PlannerAnalyzer {
     private Dataset dataset;
 
     @Getter
-    private BestQos bestQos;
+    private BestQos bestStepQoS;
 
     public PlannerAnalyzer() {
-        echartQosLog = new ArrayList<>();
+        qosForEchart = new ArrayList<>();
         String[] qosTypes = new String[Qos.NAMES.length + 1];
         System.arraycopy(Qos.NAMES, 0, qosTypes, 1, Qos.NAMES.length);
         qosTypes[0] = "Step";
-        echartQosLog.add(qosTypes);
+        qosForEchart.add(qosTypes);
     }
 
     public void setDataset(Dataset dataset) {
         this.dataset = dataset;
-        this.bestQos = dataset.getBestQos();
+        this.bestStepQoS = dataset.getBestQos();
     }
 
-    public void addLog(Individual individual) {
-        fitnessLog.add(individual.getFitness());
-
-        Qos realQos = individual.getQos();
-        log.debug("Fitness {}, Real {}", individual.getFitness(), realQos);
-        realQosLog.add(realQos);
-
+    public void recordStepInfo(List<Individual> pop) {
+        allQos.addAll(pop.stream().map(Individual::getQos).collect(Collectors.toList()));
+        Individual bestInd = pop.get(0);
+        fitness.add(bestInd.getFitness());
+        Qos realQos = bestInd.getQos();
+        bestQoS.add(realQos);
         double[] qosWithStep = new double[Qos.NAMES.length + 1];
         System.arraycopy(realQos.getValues(), 0, qosWithStep, 1, Qos.NAMES.length);
-        qosWithStep[0] = realQosLog.size();
-        echartQosLog.add(qosWithStep);
+        qosWithStep[0] = bestQoS.size();
+        qosForEchart.add(qosWithStep);
     }
 
     void recordStartTime() {
@@ -91,21 +94,24 @@ public class PlannerAnalyzer {
 
     public void displayLogOnConsole() {
         log.info("Time used {} seconds", getRuntime());
-        displayLog();
+        log.info("Best QoS:");
+        System.out.println(bestQoS);
+        log.info("All QoS:");
+        System.out.println(allQos);
     }
 
-    private void displayLog() {
-        log.info("Process log:");
-        Iterator<Double> fitnessItr = fitnessLog.iterator();
-        Iterator<Qos> qosLogItr = realQosLog.iterator();
-        int step = 0;
-        while (fitnessItr.hasNext() && qosLogItr.hasNext()) {
-            log.debug("[{}] Fitness {}, Qos {}", step, fitnessItr.next(), qosLogItr.next());
-            step++;
-        }
-
-        System.out.println(realQosLog);
-    }
+//    private void displayLog() {
+//        log.info("Process log:");
+////        Iterator<Double> fitnessItr = fitnessLog.iterator();
+////        Iterator<Qos> qosLogItr = realQosLog.iterator();
+////        int step = 0;
+////        while (fitnessItr.hasNext() && qosLogItr.hasNext()) {
+////            log.debug("[{}] Fitness {}, Qos {}", step, fitnessItr.next(), qosLogItr.next());
+////            step++;
+////        }
+//        log.debug("Qos log: ");
+//        System.out.println(realQosLog);
+//    }
 
     public void saveQosLogToFile() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -114,7 +120,7 @@ public class PlannerAnalyzer {
                 + LocalDateTime.now().format(DATETIME_FORMATTER)
                 + ".json").toFile();
         log.info("Save qos log to {}", qosLogFile);
-        writer.writeValue(qosLogFile, getEchartQosLog());
+        writer.writeValue(qosLogFile, getQosForEchart());
     }
 
     public static void displayPopulation(List<Individual> individuals) {
