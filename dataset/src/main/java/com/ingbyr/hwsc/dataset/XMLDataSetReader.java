@@ -177,6 +177,9 @@ public class XMLDataSetReader extends LocalDatasetSetReader {
                 case OUTPUTS:
                     service.addOutputParam(param);
                     conceptMap.get(thing.getType()).getParentConcepts().stream().filter(Objects::nonNull).forEach(service::addOutputConcept);
+//                    Concept c = conceptMap.get(conceptMap.get(thing.getType()).getDirectParentName());
+//                    if (c !=null)
+//                        service.addOutputConcept(c);
                     break;
                 default:
                     log.error("Can not parse {}", paramElement);

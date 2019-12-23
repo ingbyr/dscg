@@ -39,10 +39,11 @@ public abstract class LocalDatasetSetReader extends AbstractDataSetReader {
             parseTaxonomyDocument();
             parseServicesDocument();
             parseProblemDocument();
-            log.debug("Input set: {}", getInputSet());
-            log.debug("Goal set: {}", getGoalSet());
-            log.debug("Service map: {}", getServiceMap().size());
-            log.debug("Concept map: {}", getConceptMap().size());
+            log.debug("Dataset {}", dataset);
+            log.debug("Input set size {}: {}",getInputSet().size(), getInputSet());
+            log.debug("Goal set size {}: {}", getGoalSet().size(), getGoalSet());
+            log.debug("Service size: {}", getServiceMap().size());
+            log.debug("Concept size: {}", getConceptMap().size());
         } catch (DocumentException e) {
             e.printStackTrace();
         }

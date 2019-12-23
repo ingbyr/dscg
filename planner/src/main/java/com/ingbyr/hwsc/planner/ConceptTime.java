@@ -40,6 +40,7 @@ public class ConceptTime {
 
         Set<Service> services = Sets.newHashSet(dataSetReader.getServiceMap().values());
 
+        // TODO better stop condition
         while (true) {
             boolean hasNewConcept = false;
             // Init

@@ -195,7 +195,7 @@ public class CompletePlaningGraph {
             int nodeIndex = 0;
             while (!nodeQueue.isEmpty()) {
                 DWGNode node = nodeQueue.poll();
-                info("node {}/{} {}", nodeIndex++, nodeSize, node);
+                info("node {}/{} node {}", nodeIndex++, nodeSize, node);
                 createPreNodesForNode(node);
             }
             info("add {} new pre nodes", newPreNodes.size());

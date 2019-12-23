@@ -18,6 +18,7 @@ import java.util.Set;
 @EqualsAndHashCode
 public class DWGNode {
     @Getter
+    @EqualsAndHashCode.Exclude
     public Set<LeveledService> services;
 
     @Getter
@@ -27,7 +28,7 @@ public class DWGNode {
     double distance = -1;
 
     @Getter
-    @EqualsAndHashCode.Exclude
+//    @EqualsAndHashCode.Exclude
     public Set<Concept> inputConcepts;
 
     @Getter
@@ -36,7 +37,7 @@ public class DWGNode {
     public Set<Concept> aStarConcepts;
 
     @Getter
-    @EqualsAndHashCode.Exclude
+//    @EqualsAndHashCode.Exclude
     public Set<Concept> outputConcepts;
 
     @EqualsAndHashCode.Exclude

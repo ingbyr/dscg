@@ -57,6 +57,7 @@ public class EvaluatorGoalDistance implements Evaluator {
             Solution solution = innerPlanner.solve(middleInputSet, middleGoalSet, innerPlannerMaxStep);
 
             if (solution == null || solution.services == null) {
+                // TODO set part service
                 Solution noSolution = new Solution(
                         null,
                         10 * k * dist(middleInputSet, goalSet) + individual.getStateSize() - u);

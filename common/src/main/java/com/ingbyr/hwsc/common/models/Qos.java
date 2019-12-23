@@ -30,17 +30,17 @@ public class Qos {
     };
 
     public static final int[] ACTIVE_TYPES = new int[]{
-            RES, LAT
+            RES, LAT, PRI, AVA, SUC, REL
     };
 
-    public static final int[] NO_FLIP_TYPES = new int[]{
-            RES, LAT, PRI
-    };
-
-    // Qos that need flip
-    public static final int[] FLIP_TYPES = new int[]{
-            AVA, SUC, REL
-    };
+//    public static final int[] NO_FLIP_TYPES = new int[]{
+//            RES, LAT, PRI
+//    };
+//
+//    // Qos that need flip
+//    public static final int[] FLIP_TYPES = new int[]{
+//            AVA, SUC, REL
+//    };
 
     // Qos name
     public static final String[] NAMES = new String[]{
@@ -55,13 +55,13 @@ public class Qos {
     private double[] values = new double[QOS_NUM];
 
     public Qos() {
-        for (int noFlipType : NO_FLIP_TYPES) {
-            values[noFlipType] = 0;
-        }
-
-        for (int flipType : FLIP_TYPES) {
-            values[flipType] = 1;
-        }
+//        for (int noFlipType : NO_FLIP_TYPES) {
+//            values[noFlipType] = 0;
+//        }
+//
+//        for (int flipType : FLIP_TYPES) {
+//            values[flipType] = 1;
+//        }
     }
 
     public Qos(Double initialValue) {
@@ -82,7 +82,7 @@ public class Qos {
         StringBuilder qosStr = new StringBuilder();
         qosStr.append('[');
         for (int type : ACTIVE_TYPES) {
-            qosStr.append(String.format("%.2f", values[type]));
+            qosStr.append(String.format("%.1f", values[type]));
             qosStr.append(',');
         }
         qosStr.deleteCharAt(qosStr.length() - 1);

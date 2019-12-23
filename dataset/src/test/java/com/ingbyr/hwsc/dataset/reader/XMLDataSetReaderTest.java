@@ -67,4 +67,12 @@ class XMLDataSetReaderTest {
     void process() {
         reader.process();
     }
+
+    @Test
+    void loadAllDataset() {
+        for (Dataset dataset : Dataset.values()) {
+            new XMLDataSetReader(dataset);
+            System.out.println();
+        }
+    }
 }

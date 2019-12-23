@@ -36,13 +36,16 @@ public class CPGMain {
     public static int MAX_NEW_PRE_NODE_SIZE = Integer.MAX_VALUE;
 
     public static void main(String[] args) throws IOException {
-
+        if (args.length == 1) {
+            MAX_NEW_PRE_NODE_SIZE = Integer.parseInt(args[0]);
+        }
+        log.info("max new node limit: {}", MAX_NEW_PRE_NODE_SIZE);
         List<String> datasetNames = Files.readAllLines(Paths.get(System.getProperty("user.dir")).resolve("datasets.txt"));
         List<Dataset> datasets = datasetNames.stream()
                 .filter(s -> !s.startsWith("/"))
                 .map(Dataset::valueOf)
                 .collect(Collectors.toList());
-        findPareto(datasets);
+        findSearchSpace(datasets);
     }
 
     public static void findBestQoS(List<Dataset> datasets) throws IOException {
@@ -87,10 +90,11 @@ public class CPGMain {
         FileUtils.write(logFile, result.toString(), Charset.defaultCharset());
     }
 
-    public static void findPareto(List<Dataset> datasets) throws IOException {
-        log.info("find pareto");
+    public static void findSearchSpace(List<Dataset> datasets) throws IOException {
+        log.info("try to find search space");
 
         for (Dataset dataset : datasets) {
+            log.info("process {}", dataset);
             File logFile = WorkDir.WORK_DIR.resolve("best-qos").resolve(dataset + "_pareto_" + Arrays.toString(Qos.ACTIVE_TYPES) + ".txt").toFile();
             StringBuilder result = new StringBuilder();
             DataSetReader reader = new XMLDataSetReader();
@@ -99,12 +103,12 @@ public class CPGMain {
             CompletePlaningGraph cpg = new CompletePlaningGraph(pg);
             cpg.trans();
 
-            log.info("process {}", dataset);
             adjustCostOfServices(reader);
-
+            log.info("find all path");
             PlanExtractor extractor = new AllPathsExtractor(cpg);
             extractor.find();
 
+            log.info("save all path to file");
             for (GraphPath<DWGNode, DWGEdge> path : extractor.getPaths()) {
                 List<Service> services = PlanExtractors.getServices(path);
                 log.debug("Service {}", services);
@@ -114,7 +118,6 @@ public class CPGMain {
                 result.append(",\n");
             }
             FileUtils.write(logFile, result.toString(), Charset.defaultCharset());
-
         }
     }
 
