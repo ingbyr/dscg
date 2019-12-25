@@ -2,6 +2,7 @@ package com.ingbyr.hwsc.common.models;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Arrays;
@@ -10,6 +11,7 @@ import java.util.Arrays;
  * @author ingbyr
  */
 @Getter
+@NoArgsConstructor
 @EqualsAndHashCode
 public class Qos {
 
@@ -33,15 +35,6 @@ public class Qos {
             RES, LAT, PRI, AVA, SUC, REL
     };
 
-//    public static final int[] NO_FLIP_TYPES = new int[]{
-//            RES, LAT, PRI
-//    };
-//
-//    // Qos that need flip
-//    public static final int[] FLIP_TYPES = new int[]{
-//            AVA, SUC, REL
-//    };
-
     // Qos name
     public static final String[] NAMES = new String[]{
             "Res", "Lat", "Pri", "Ava", "Suc", "Rel"
@@ -54,15 +47,6 @@ public class Qos {
     @Setter
     private double[] values = new double[QOS_NUM];
 
-    public Qos() {
-//        for (int noFlipType : NO_FLIP_TYPES) {
-//            values[noFlipType] = 0;
-//        }
-//
-//        for (int flipType : FLIP_TYPES) {
-//            values[flipType] = 1;
-//        }
-    }
 
     public Qos(Double initialValue) {
         Arrays.fill(values, initialValue);

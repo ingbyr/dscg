@@ -31,7 +31,7 @@ public class IndicatorFront implements Indicator {
                 fitness += 1;
             }
         }
-        log.debug("Ind {} front fitness {}", ind.getId(), fitness);
+        log.debug("Ind {} front fitness {}", ind.getQos(), fitness);
         return fitness;
     }
 
