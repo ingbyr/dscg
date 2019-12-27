@@ -42,11 +42,20 @@ public class CPGMain {
         Qos.ACTIVE_TYPES = new int[]{Qos.RES, Qos.LAT};
         log.info("max new node limit: {}", MAX_NEW_PRE_NODE_SIZE);
         List<String> datasetNames = Files.readAllLines(Paths.get(System.getProperty("user.dir")).resolve("datasets.txt"));
-        List<Dataset> datasets = datasetNames.stream()
+        Qos.ACTIVE_TYPES = Files.readAllLines(Paths.get(System.getProperty("user.dir")).resolve("activeQos.txt")).stream()
+                .mapToInt(Integer::parseInt).toArray();
+        StringBuilder activeQos = new StringBuilder();
+        for (int activeType : Qos.ACTIVE_TYPES) {
+            activeQos.append(Qos.NAMES[activeType]);
+            activeQos.append('_');
+        }
+        activeQos.deleteCharAt(activeQos.length()-1);
+        log.info("active qos: {}", activeQos);
+        List<Dataset> datasetList = datasetNames.stream()
                 .filter(s -> !s.startsWith("/"))
                 .map(Dataset::valueOf)
                 .collect(Collectors.toList());
-        findSearchSpace(datasets);
+        findSearchSpace(datasetList, activeQos.toString());
     }
 
     public static void findBestQoS(List<Dataset> datasets) throws IOException {
@@ -91,18 +100,12 @@ public class CPGMain {
         FileUtils.write(logFile, result.toString(), Charset.defaultCharset());
     }
 
-    public static void findSearchSpace(List<Dataset> datasets) throws IOException {
+    public static void findSearchSpace(List<Dataset> datasets, String activeQoS) throws IOException {
         log.info("try to find search space");
 
         for (Dataset dataset : datasets) {
             log.info("process {}", dataset);
-            StringBuilder qosNames = new StringBuilder();
-            for (int activeType : Qos.ACTIVE_TYPES) {
-                qosNames.append(Qos.NAMES[activeType]);
-                qosNames.append('_');
-            }
-            qosNames.deleteCharAt(qosNames.length() - 1);
-            File dataFile= WorkDir.WORK_DIR.resolve("best-qos").resolve(dataset + "_sp_" + qosNames + ".txt").toFile();
+            File dataFile= WorkDir.WORK_DIR.resolve("best-qos").resolve(dataset + "_sp_" + activeQoS + ".txt").toFile();
             StringBuilder data = new StringBuilder();
             DataSetReader reader = new XMLDataSetReader();
             reader.setDataset(dataset);

@@ -24,18 +24,17 @@ public class Qos {
     public static final int SUC = 4;
     public static final int REL = 5;
 
-    public static int FLIP_INDEX = 3;
-
-    // Qos type
+    // Qos types
     public static final int[] TYPES = new int[]{
             RES, LAT, PRI, AVA, SUC, REL
     };
 
+    // Active qos types
     public static int[] ACTIVE_TYPES = new int[]{
             RES, LAT, PRI, AVA, SUC, REL
     };
 
-    // Qos name
+    // Qos names
     public static final String[] NAMES = new String[]{
             "Res", "Lat", "Pri", "Ava", "Suc", "Rel"
     };
@@ -76,7 +75,7 @@ public class Qos {
     public String toNumpyData() {
         StringBuilder qosStr = new StringBuilder();
         for (int type : ACTIVE_TYPES) {
-            qosStr.append(String.format("%.1f", values[type]));
+            qosStr.append(String.format("%.2f", values[type]));
             qosStr.append(' ');
         }
         return qosStr.toString();

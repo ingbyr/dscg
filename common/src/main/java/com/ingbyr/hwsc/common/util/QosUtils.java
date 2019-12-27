@@ -28,35 +28,31 @@ public class QosUtils {
         // Update qos
         for (Service service : services) {
             for (int type : Qos.ACTIVE_TYPES) {
-                if (type < Qos.FLIP_INDEX) {
                     qos.set(type, qos.get(type) + service.getOriginQos().get(type));
-                } else {
-                    qos.set(type, qos.get(type) * (1 - service.getOriginQos().get(type)));
-                }
             }
         }
         return qos;
     }
 
-    public static Qos mergeOriginQos1(Collection<Service> services) {
-        Qos qos = new Qos();
-        // Update qos
-        for (Service service : services) {
-            for (int type : Qos.TYPES) {
-                qos.set(type, qos.get(type) + service.getOriginQos().get(type));
-            }
-        }
-        return qos;
-    }
+//    public static Qos mergeOriginQos1(Collection<Service> services) {
+//        Qos qos = new Qos();
+//        // Update qos
+//        for (Service service : services) {
+//            for (int type : Qos.TYPES) {
+//                qos.set(type, qos.get(type) + service.getOriginQos().get(type));
+//            }
+//        }
+//        return qos;
+//    }
 
-    public static Qos mergeOriginQos2(Collection<Service> services) {
-        Qos qos = new Qos(1.0);
-        // Update qos
-        for (Service service : services) {
-            for (int type : Qos.TYPES) {
-                qos.set(type, qos.get(type) * (1 - service.getOriginQos().get(type)));
-            }
-        }
-        return qos;
-    }
+//    public static Qos mergeOriginQos2(Collection<Service> services) {
+//        Qos qos = new Qos(1.0);
+//        // Update qos
+//        for (Service service : services) {
+//            for (int type : Qos.TYPES) {
+//                qos.set(type, qos.get(type) * (1 - service.getOriginQos().get(type)));
+//            }
+//        }
+//        return qos;
+//    }
 }

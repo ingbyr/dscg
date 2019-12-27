@@ -8,4 +8,5 @@ gradlew
 gradlew.bat
 planner.properties
 datasets.txt
+activeQos.txt
 best-qos/
