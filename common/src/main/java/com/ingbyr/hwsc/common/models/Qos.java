@@ -31,7 +31,7 @@ public class Qos {
             RES, LAT, PRI, AVA, SUC, REL
     };
 
-    public static final int[] ACTIVE_TYPES = new int[]{
+    public static int[] ACTIVE_TYPES = new int[]{
             RES, LAT, PRI, AVA, SUC, REL
     };
 
@@ -60,7 +60,6 @@ public class Qos {
         return values[type];
     }
 
-
     @Override
     public String toString() {
         StringBuilder qosStr = new StringBuilder();
@@ -73,4 +72,14 @@ public class Qos {
         qosStr.append(']');
         return qosStr.toString();
     }
+
+    public String toNumpyData() {
+        StringBuilder qosStr = new StringBuilder();
+        for (int type : ACTIVE_TYPES) {
+            qosStr.append(String.format("%.1f", values[type]));
+            qosStr.append(' ');
+        }
+        return qosStr.toString();
+    }
+
 }

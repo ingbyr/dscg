@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * @author ingbyr
  */
-public class IndicatorSum implements Indicator {
+public class FitnessLinearAggregation implements Fitness {
 
     @Override
     public void calculatePopulationFitness(List<Individual> population) {

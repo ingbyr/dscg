@@ -39,6 +39,7 @@ public class CPGMain {
         if (args.length == 1) {
             MAX_NEW_PRE_NODE_SIZE = Integer.parseInt(args[0]);
         }
+        Qos.ACTIVE_TYPES = new int[]{Qos.RES, Qos.LAT};
         log.info("max new node limit: {}", MAX_NEW_PRE_NODE_SIZE);
         List<String> datasetNames = Files.readAllLines(Paths.get(System.getProperty("user.dir")).resolve("datasets.txt"));
         List<Dataset> datasets = datasetNames.stream()
@@ -95,8 +96,14 @@ public class CPGMain {
 
         for (Dataset dataset : datasets) {
             log.info("process {}", dataset);
-            File logFile = WorkDir.WORK_DIR.resolve("best-qos").resolve(dataset + "_pareto_" + Arrays.toString(Qos.ACTIVE_TYPES) + ".txt").toFile();
-            StringBuilder result = new StringBuilder();
+            StringBuilder qosNames = new StringBuilder();
+            for (int activeType : Qos.ACTIVE_TYPES) {
+                qosNames.append(Qos.NAMES[activeType]);
+                qosNames.append('_');
+            }
+            qosNames.deleteCharAt(qosNames.length() - 1);
+            File dataFile= WorkDir.WORK_DIR.resolve("best-qos").resolve(dataset + "_sp_" + qosNames + ".txt").toFile();
+            StringBuilder data = new StringBuilder();
             DataSetReader reader = new XMLDataSetReader();
             reader.setDataset(dataset);
             PlanningGraph pg = GeneratePlanningGraph.generatePlanningGraph(reader);
@@ -114,10 +121,10 @@ public class CPGMain {
                 log.debug("Service {}", services);
                 Qos qos = QosUtils.mergeQos(services);
                 log.debug("Qos {}", qos);
-                result.append(qos.toString());
-                result.append(",\n");
+                data.append(qos.toNumpyData());
+                data.append("\n");
             }
-            FileUtils.write(logFile, result.toString(), Charset.defaultCharset());
+            FileUtils.write(dataFile, data.toString(), Charset.defaultCharset());
         }
     }
 

@@ -1,7 +1,6 @@
 package com.ingbyr.hwsc.planner;
 
 import com.ingbyr.hwsc.common.models.Qos;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,7 +14,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @Slf4j
-public class IndicatorBinary implements Indicator {
+public class FitnessBinaryIndicator implements Fitness {
 
     private final double k = 1;
 

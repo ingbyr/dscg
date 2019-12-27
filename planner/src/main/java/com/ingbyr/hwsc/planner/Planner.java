@@ -35,7 +35,7 @@ public class Planner {
 
     private PlannerConfig config;
 
-    private ConceptTime conceptTime;
+    private Context context;
 
     private IndividualGenerator individualGenerator;
 
@@ -69,7 +69,7 @@ public class Planner {
         List<Individual> population = new ArrayList<>(config.getPopulationSize());
 
         // Get max state size
-        int candidateStartTimesSize = conceptTime.candidateStartTimes.length;
+        int candidateStartTimesSize = context.candidateStartTimes.length;
         int stateSize = Math.min(candidateStartTimesSize, config.getMaxStateSize());
 
         for (int i = 0; i < config.getPopulationSize(); i++) {
@@ -262,28 +262,28 @@ public class Planner {
         evaluator.setInnerPlannerMaxStep(config.getInnerPlanMaxStep());
         evaluator.setMaxStateSize(config.getMaxStateSize());
 
-        conceptTime = new ConceptTime();
-        conceptTime.build(this.dataSetReader);
+        context = new Context();
+        context.setup(this.dataSetReader);
 
-        individualGenerator = new IndividualGenerator(this.dataSetReader, conceptTime);
+        individualGenerator = new IndividualGenerator(this.dataSetReader, context);
 
         crossover = new CrossoverSwapState();
 
         mutations = new Mutations();
         mutations.addMutation(
-                new MutationAddState(conceptTime, config.getMutationAddStateRadius()),
+                new MutationAddState(context, config.getMutationAddStateRadius()),
                 config.getMutationAddStateWeight());
         mutations.addMutation(
-                new MutationAddConcept(conceptTime,
+                new MutationAddConcept(context,
                         config.getMutationAddConceptChangePossibility(),
                         config.getMutationAddConceptAddPossibility()),
                 config.getMutationAddConceptWeight());
         mutations.addMutation(new MutationDelState(), config.getMutationDelStateWeight());
         mutations.addMutation(new MutationDelConcept(), config.getMutationDelConceptWeight());
 
-        Indicator indicator = (Indicator) Class.forName(PlannerConfig.INDICATOR_CLASS_PREFIX + config.getIndicator())
+        Fitness fitness = (Fitness) Class.forName(PlannerConfig.FITNESS_CLASS_PREFIX + config.getFitness())
                 .getDeclaredConstructor().newInstance();
-        survivalSelector = new SurvivalSelectorIndicator(config.getSurvivalSize(), indicator);
+        survivalSelector = new SurvivalSelectorIndicator(config.getSurvivalSize(), fitness);
 
         analyzer = new PlannerAnalyzer();
         analyzer.setDataset(config.getDataset());

@@ -172,11 +172,11 @@
                                 </select>
                             </div>
                             <div class="col">
-                                <label for="indicator">indicator</label>
-                                <select id="indicator" name="indicator" class="form-control">
-                                    <#list indicators as indicator>
-                                        <option <#if (planner_config.evaluator)?has_content && indicator == planner_config.indicator>selected</#if> >
-                                            ${indicator}
+                                <label for="fitness">fitness</label>
+                                <select id="fitness" name="fitness" class="form-control">
+                                    <#list indicators as fitness>
+                                        <option <#if (planner_config.evaluator)?has_content && fitness == planner_config.fitness>selected</#if> >
+                                            ${fitness}
                                         </option>
                                     </#list>
                                 </select>

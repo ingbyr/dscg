@@ -18,7 +18,7 @@
     <logger name="com.hwsc.baseline.cpg.models.CompletePlaningGraph" level="info"/>
     <logger name="com.hwsc.baseline.cpg.GeneratePlanningGraph" level="off"/>
 
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="STDOUT"/>
     </root>
 

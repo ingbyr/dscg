@@ -17,25 +17,21 @@ import java.util.Set;
 @Setter
 public final class IndividualGenerator {
 
-    private ConceptTime conceptTime;
+    private Context context;
 
     private State inputState;
 
     private State goalState;
 
-    public IndividualGenerator(DataSetReader dataSetReader, ConceptTime conceptTime) {
-        this.conceptTime = conceptTime;
+    public IndividualGenerator(DataSetReader dataSetReader, Context context) {
+        this.context = context;
         this.inputState = new State(dataSetReader.getInputSet(), 0);
-        this.goalState = new State(dataSetReader.getGoalSet(), conceptTime.time + 1);
+        this.goalState = new State(dataSetReader.getGoalSet(), context.time + 1);
         log.debug("Input state: {}", inputState);
         log.debug("Goal state: {}", goalState);
     }
 
     public Individual generate(int timeSize) {
-        return generate(timeSize, -1);
-    }
-
-    public Individual generate(int timeSize, int ttl) {
         if (timeSize <= 0) {
             Individual noMiddleStateInd = new Individual();
             noMiddleStateInd.addState(inputState);
@@ -45,7 +41,7 @@ public final class IndividualGenerator {
         }
 
         // Ordered list of timestamps
-        int[] timeIndexes = UniformUtils.indexArray(conceptTime.candidateStartTimes.length, timeSize);
+        int[] timeIndexes = UniformUtils.indexArray(context.candidateStartTimes.length, timeSize);
         Arrays.sort(timeIndexes);
 
         Individual individual = new Individual();
@@ -53,7 +49,7 @@ public final class IndividualGenerator {
         individual.addState(inputState);
         // Add middle goal set
         for (int timeIndex : timeIndexes) {
-            expandIndividual(individual, conceptTime.candidateStartTimes[timeIndex]);
+            expandIndividual(individual, context.candidateStartTimes[timeIndex]);
         }
         // Add goal set
         individual.addState(goalState);
@@ -62,7 +58,7 @@ public final class IndividualGenerator {
     }
 
     private void expandIndividual(Individual individual, int time) {
-        Set<Concept> currentConcepts = conceptTime.conceptsAtTime.get(time);
+        Set<Concept> currentConcepts = context.conceptsAtTime.get(time);
         int selectedConceptSize = UniformUtils.rangeII(1, currentConcepts.size());
         Set<Concept> selectedConcepts = UniformUtils.set(currentConcepts, selectedConceptSize);
         individual.addState(new State(new HashSet<>(selectedConcepts), time));

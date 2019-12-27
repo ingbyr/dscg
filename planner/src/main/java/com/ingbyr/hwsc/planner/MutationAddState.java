@@ -12,7 +12,7 @@ import java.util.Set;
 @Slf4j
 public class MutationAddState implements Mutation {
 
-    private ConceptTime conceptTime;
+    private Context context;
 
     private int radius;
 
@@ -42,7 +42,7 @@ public class MutationAddState implements Mutation {
 
     private State neighbourhoodState(int t) {
         int l = Math.max(1, t - (2 * radius + 1));
-        int r = Math.min(conceptTime.time, t + (2 * radius + 1));
+        int r = Math.min(context.time, t + (2 * radius + 1));
         log.trace("Mutate selected time is {} , and select concepts in time [{}, {}]", t, l, r);
 
         if (l == r) {
@@ -52,7 +52,7 @@ public class MutationAddState implements Mutation {
 
         Set<Concept> neighbourhoodConcepts = new HashSet<>();
         for (int i = l; i < r; i++) {
-            neighbourhoodConcepts.addAll(conceptTime.conceptsAtTime.get(i));
+            neighbourhoodConcepts.addAll(context.conceptsAtTime.get(i));
         }
 
         int stateSize = UniformUtils.rangeIE(1, neighbourhoodConcepts.size());
@@ -60,7 +60,7 @@ public class MutationAddState implements Mutation {
 
         int newTime = t;
         for (Concept concept : concepts) {
-            newTime = Math.max(conceptTime.earliestTimeOfConcept.get(concept), newTime);
+            newTime = Math.max(context.earliestTimeOfConcept.get(concept), newTime);
         }
 
         return new State(concepts, newTime);

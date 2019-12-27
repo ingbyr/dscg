@@ -14,10 +14,10 @@ class MutationDelStateTest {
     void mutate() {
         DataSetReader dataSetReader = new XMLDataSetReader(Dataset.wsc2009_01);
 
-        ConceptTime conceptTime = new ConceptTime();
-        conceptTime.build(dataSetReader);
+        Context context = new Context();
+        context.setup(dataSetReader);
 
-        IndividualGenerator individualGenerator = new IndividualGenerator(dataSetReader, conceptTime);
+        IndividualGenerator individualGenerator = new IndividualGenerator(dataSetReader, context);
         Individual individual = individualGenerator.generate(3);
         individual.lastReachedStateIndex = 2;
 

@@ -15,7 +15,7 @@ import java.util.Set;
  * @author ingbyr
  */
 @Slf4j
-public class ConceptTime {
+public class Context {
 
     public int[] candidateStartTimes;
 
@@ -25,7 +25,7 @@ public class ConceptTime {
 
     int time = 0;
 
-    void build(DataSetReader dataSetReader) {
+    void setup(DataSetReader dataSetReader) {
 
         conceptsAtTime = new HashMap<>();
         earliestTimeOfConcept = new HashMap<>();
@@ -83,4 +83,7 @@ public class ConceptTime {
         log.debug("Reachable concepts include goal set: {}", conceptsAtTime.get(time).containsAll(dataSetReader.getGoalSet()));
     }
 
+    void update() {
+        // TODO
+    }
 }

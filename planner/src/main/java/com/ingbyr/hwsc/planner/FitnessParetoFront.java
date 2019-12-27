@@ -14,7 +14,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @Slf4j
-public class IndicatorFront implements Indicator {
+public class FitnessParetoFront implements Fitness {
 
     @Override
     public void calculatePopulationFitness(List<Individual> population) {

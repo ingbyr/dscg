@@ -27,9 +27,9 @@
     <logger name="com.ingbyr.hwsc.planner.EvaluatorGoalDistanceConcurrent" level="OFF"/>
     <logger name="com.ingbyr.hwsc.planner.IndividualGenerator" level="OFF"/>
     <logger name="com.ingbyr.hwsc.planner.SurvivalSelectorIndicator" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.planner.IndicatorSum" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.planner.IndicatorBinary" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.planner.IndicatorFront" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.FitnessLinearAggregation" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.planner.FitnessBinaryIndicator" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.planner.FitnessParetoFront" level="off"/>
 
     <root level="debug">
         <appender-ref ref="STDOUT"/>

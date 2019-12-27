@@ -15,7 +15,7 @@ import java.util.Set;
 @Slf4j
 public class MutationAddConcept implements Mutation {
 
-    ConceptTime conceptTime;
+    Context context;
 
     double pChange;
 
@@ -59,7 +59,7 @@ public class MutationAddConcept implements Mutation {
     }
 
     private boolean addRandomConcepts(State state, int t) {
-        Set<Concept> remainingConcepts = Sets.difference(conceptTime.conceptsAtTime.get(t), state.concepts);
+        Set<Concept> remainingConcepts = Sets.difference(context.conceptsAtTime.get(t), state.concepts);
         if (remainingConcepts.size() == 0) {
             log.warn("Abort to mutation because that all concepts are included");
             return false;

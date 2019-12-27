@@ -19,7 +19,7 @@ public class SurvivalSelectorIndicator implements SurvivalSelector {
 
     private int survivalSize;
 
-    private Indicator indicator;
+    private Fitness fitness;
 
     @Override
     public List<Individual> filter(List<Individual> population, List<Individual> offSpring) {
@@ -32,7 +32,7 @@ public class SurvivalSelectorIndicator implements SurvivalSelector {
         feasiblePop.forEach(ind -> log.trace("{}", ind));
 
         // Recalculate the fitness because individual has feasible solution
-        indicator.calculatePopulationFitness(feasiblePop);
+        fitness.calculatePopulationFitness(feasiblePop);
 
         List<Individual> survivalPop = null;
         if (feasiblePop.size() >= survivalSize) {

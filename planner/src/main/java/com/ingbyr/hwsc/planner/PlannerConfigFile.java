@@ -55,7 +55,7 @@ public final class PlannerConfigFile extends PlannerConfig {
 
     public static final String EVALUATOR = "evaluator";
 
-    public static final String INDICATOR = "indicator";
+    public static final String FITNESS = "fitness";
 
     public static final String INNER_PLAN_MAX_STEP = "inner_plan_max_step";
 
@@ -90,7 +90,7 @@ public final class PlannerConfigFile extends PlannerConfig {
         mutationAddConceptAddPossibility = config.getDouble(MUTATION_ADD_CONCEPT_ADD_POSSIBILITY);
         mutationAddConceptChangePossibility = config.getDouble(MUTATION_ADD_CONCEPT_CHANGE_POSSIBILITY);
         evaluator = config.getString(EVALUATOR);
-        indicator = config.getString(INDICATOR);
+        fitness = config.getString(FITNESS);
         innerPlanMaxStep = config.getInt(INNER_PLAN_MAX_STEP);
         maxStateSize = config.getInt(MAX_STATE_SIZE);
     }

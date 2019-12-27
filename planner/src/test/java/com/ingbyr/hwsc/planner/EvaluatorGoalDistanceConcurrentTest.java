@@ -25,10 +25,10 @@ class EvaluatorGoalDistanceConcurrentTest {
         evaluator.setMaxStateSize(10);
         evaluator.setInnerPlannerMaxStep(10);
 
-        ConceptTime conceptTime = new ConceptTime();
-        conceptTime.build(dataSetReader);
+        Context context = new Context();
+        context.setup(dataSetReader);
 
-        IndividualGenerator individualGenerator = new IndividualGenerator(dataSetReader, conceptTime);
+        IndividualGenerator individualGenerator = new IndividualGenerator(dataSetReader, context);
 
         Individual individual = individualGenerator.generate(-1);
         List<Individual> individuals = new ArrayList<>();

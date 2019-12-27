@@ -412,7 +412,7 @@ public class InnerPlannerYashp2 extends AbstractInnerPlanner implements InnerPla
                     rPlan.add(service);
                     goals.addAll(service.getInputConceptSet());
                     satisfied.addAll(service.getOutputConceptSet());
-//                    log.debug("Add required goal {} : {}", service, service.getInputConceptSet());
+                    log.trace("Add required goal {} : {}", service, service.getInputConceptSet());
                 }
             }
         }

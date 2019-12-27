@@ -9,7 +9,7 @@ public class PlannerConfig {
 
     public static final String EVALUATOR_CLASS_PREFIX = "com.ingbyr.hwsc.planner.";
 
-    public static final String INDICATOR_CLASS_PREFIX = "com.ingbyr.hwsc.planner.";
+    public static final String FITNESS_CLASS_PREFIX = "com.ingbyr.hwsc.planner.";
 
     protected Dataset dataset;
 
@@ -50,7 +50,7 @@ public class PlannerConfig {
     protected String evaluator;
 
     // Indicator config
-    protected String indicator;
+    protected String fitness;
 
     protected int innerPlanMaxStep;
 
