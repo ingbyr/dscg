@@ -1,7 +1,7 @@
 package com.ingbyr.hwsc.dataset;
 
-import com.ingbyr.hwsc.common.models.Concept;
-import com.ingbyr.hwsc.common.models.Service;
+import com.ingbyr.hwsc.common.Concept;
+import com.ingbyr.hwsc.common.Service;
 import lombok.extern.slf4j.Slf4j;
 import org.dom4j.DocumentException;
 

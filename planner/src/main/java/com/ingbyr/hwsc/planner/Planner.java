@@ -1,7 +1,7 @@
 package com.ingbyr.hwsc.planner;
 
-import com.ingbyr.hwsc.common.models.Qos;
-import com.ingbyr.hwsc.common.models.Service;
+import com.ingbyr.hwsc.common.QoS;
+import com.ingbyr.hwsc.common.Service;
 import com.ingbyr.hwsc.dataset.DataSetReader;
 import com.ingbyr.hwsc.dataset.XMLDataSetReader;
 import com.ingbyr.hwsc.planner.exception.DAEXConfigException;
@@ -14,7 +14,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +50,7 @@ public class Planner {
 
     private PlannerAnalyzer analyzer;
 
-    private Qos preQos;
+    private QoS preQoS;
 
     private BlockingQueue<Service> serviceToAddQueue;
 
@@ -121,12 +120,12 @@ public class Planner {
             population = survivalSelector.filter(population, offspring);
 
             // Check the termination condition
-            Qos bestQos = population.get(0).getQos();
+            QoS bestQoS = population.get(0).getQos();
 
             // Auto stop the process when no improvements
             if (config.isEnableAutoStop()) {
-                log.debug("Current best {}", bestQos);
-                if (bestQos.equals(preQos)) {
+                log.debug("Current best {}", bestQoS);
+                if (bestQoS.equals(preQoS)) {
                     if (++stopStepCount >= config.getAutoStopStep()) {
                         log.info("Auto stop process because of no improvements");
                         break;
@@ -135,9 +134,9 @@ public class Planner {
                     // Reset stop step count
                     stopStepCount = 0;
                 }
-                preQos = bestQos;
+                preQoS = bestQoS;
             } else {
-                log.debug("Current best qos {}", bestQos);
+                log.debug("Current best qos {}", bestQoS);
             }
 
             // Record best individual log
@@ -145,9 +144,6 @@ public class Planner {
         }
 
         log.info("Process is finished");
-        log.info("Last pop:");
-        System.out.println(population.stream().map(Individual::getQos).collect(Collectors.toList()));
-
         afterExec();
     }
 
@@ -226,14 +222,6 @@ public class Planner {
         log.info("================Analyzer================");
         analyzer.recordEndTime();
         analyzer.displayLogOnConsole();
-
-        if (config.saveToFile) {
-            try {
-                analyzer.saveQosLogToFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private void checkPlannerConfig(PlannerConfig config) throws DAEXConfigException {
@@ -249,9 +237,10 @@ public class Planner {
         // If already setup then skip
         if (plannerConfig != null && plannerConfig.equals(this.config))
             return;
-
+        // Else check new config
         checkPlannerConfig(plannerConfig);
         config = plannerConfig;
+
         dataSetReader = reader;
         dataSetReader.setDataset(config.getDataset());
 
@@ -283,10 +272,11 @@ public class Planner {
 
         Fitness fitness = (Fitness) Class.forName(PlannerConfig.FITNESS_CLASS_PREFIX + config.getFitness())
                 .getDeclaredConstructor().newInstance();
-        survivalSelector = new SurvivalSelectorIndicator(config.getSurvivalSize(), fitness);
+        survivalSelector = new SurvivalSelector(config.getSurvivalSize(), fitness);
 
         analyzer = new PlannerAnalyzer();
         analyzer.setDataset(config.getDataset());
+        analyzer.setSave2file(config.saveToFile);
     }
 
     public static void main(String[] args) throws ConfigurationException, DAEXConfigException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {

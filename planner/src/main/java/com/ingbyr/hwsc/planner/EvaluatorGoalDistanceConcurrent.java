@@ -1,7 +1,7 @@
 package com.ingbyr.hwsc.planner;
 
-import com.ingbyr.hwsc.common.models.Concept;
-import com.ingbyr.hwsc.common.models.Service;
+import com.ingbyr.hwsc.common.Concept;
+import com.ingbyr.hwsc.common.Service;
 import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
 import lombok.Builder;
 import lombok.NoArgsConstructor;

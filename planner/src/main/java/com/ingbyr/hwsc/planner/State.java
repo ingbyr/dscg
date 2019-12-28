@@ -1,7 +1,7 @@
 package com.ingbyr.hwsc.planner;
 
 import com.google.common.collect.Sets;
-import com.ingbyr.hwsc.common.models.Concept;
+import com.ingbyr.hwsc.common.Concept;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

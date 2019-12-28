@@ -1,6 +1,6 @@
 package com.ingbyr.hwsc.planner.innerplanner;
 
-import com.ingbyr.hwsc.common.models.Concept;
+import com.ingbyr.hwsc.common.Concept;
 import com.ingbyr.hwsc.planner.Solution;
 
 import java.io.Serializable;

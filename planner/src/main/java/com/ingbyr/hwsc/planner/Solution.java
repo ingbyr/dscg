@@ -1,6 +1,6 @@
 package com.ingbyr.hwsc.planner;
 
-import com.ingbyr.hwsc.common.models.Service;
+import com.ingbyr.hwsc.common.Service;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 

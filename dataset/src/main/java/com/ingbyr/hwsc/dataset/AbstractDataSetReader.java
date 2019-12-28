@@ -1,6 +1,6 @@
 package com.ingbyr.hwsc.dataset;
 
-import com.ingbyr.hwsc.common.models.*;
+import com.ingbyr.hwsc.common.*;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +20,9 @@ public abstract class AbstractDataSetReader implements DataSetReader {
     protected Map<String, Concept> conceptMap;
     protected Set<Concept> inputSet;
     protected Set<Concept> goalSet;
-    protected Qos minQos;
-    protected Qos maxQos;
-    protected Qos distanceQos;
+    protected QoS minQoS;
+    protected QoS maxQoS;
+    protected QoS distanceQoS;
 
     @Override
     public void setDataset(Dataset dataset) {

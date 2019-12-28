@@ -1,7 +1,8 @@
 package com.ingbyr.hwsc.planner;
 
 import com.ingbyr.hwsc.dataset.Dataset;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor

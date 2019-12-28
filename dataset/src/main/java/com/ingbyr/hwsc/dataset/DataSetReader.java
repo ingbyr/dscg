@@ -1,6 +1,7 @@
 package com.ingbyr.hwsc.dataset;
 
-import com.ingbyr.hwsc.common.models.*;
+
+import com.ingbyr.hwsc.common.*;
 
 import java.util.Map;
 import java.util.Set;
@@ -11,11 +12,11 @@ public interface DataSetReader {
 
     Dataset getDataset();
 
-    Qos getMaxQos();
+    QoS getMaxQoS();
 
-    Qos getMinQos();
+    QoS getMinQoS();
 
-    Qos getDistanceQos();
+    QoS getDistanceQoS();
 
     /**
      * Get service map

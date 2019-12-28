@@ -1,7 +1,7 @@
 package com.ingbyr.hwsc.dataset.reader;
 
-import com.ingbyr.hwsc.common.models.Concept;
-import com.ingbyr.hwsc.common.models.Service;
+import com.ingbyr.hwsc.common.Concept;
+import com.ingbyr.hwsc.common.Service;
 import com.ingbyr.hwsc.dataset.Dataset;
 import com.ingbyr.hwsc.dataset.XMLDataSetReader;
 import org.apache.commons.collections4.SetUtils;

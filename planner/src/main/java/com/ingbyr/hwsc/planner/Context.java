@@ -1,8 +1,8 @@
 package com.ingbyr.hwsc.planner;
 
 import com.google.common.collect.Sets;
-import com.ingbyr.hwsc.common.models.Concept;
-import com.ingbyr.hwsc.common.models.Service;
+import com.ingbyr.hwsc.common.Concept;
+import com.ingbyr.hwsc.common.Service;
 import com.ingbyr.hwsc.dataset.DataSetReader;
 import lombok.extern.slf4j.Slf4j;
 

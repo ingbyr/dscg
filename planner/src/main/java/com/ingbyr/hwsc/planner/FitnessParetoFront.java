@@ -1,9 +1,10 @@
 package com.ingbyr.hwsc.planner;
 
-import com.ingbyr.hwsc.common.models.Qos;
+import com.ingbyr.hwsc.common.QoS;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -18,33 +19,47 @@ public class FitnessParetoFront implements Fitness {
 
     @Override
     public void calculatePopulationFitness(List<Individual> population) {
-        for (Individual ind : population) {
-            ind.setFitness(calculateIndividualFitness(ind, population));
-        }
-    }
 
-    private double calculateIndividualFitness(Individual ind, List<Individual> population) {
-        double fitness = 0;
-        for (Individual otherInd : population) {
-            log.trace("Ind {}, other ind {}", ind.getId(), otherInd.getId());
-            if (domain(otherInd, ind)) {
-                fitness += 1;
+        List<Individual> popCopy = new LinkedList<>(population);
+        popCopy.forEach(ind -> ind.setFitness(-1.0));
+        double level = 0;
+        int cur = popCopy.size();
+        int pre = cur + 1;
+
+        while (cur < pre) {
+            pre = popCopy.size();
+            for (Individual ind : popCopy) {
+                boolean next = false;
+                for (Individual anotherInd : popCopy) {
+                    if (domain(anotherInd, ind)) {
+                        next = true;
+                        break;
+                    }
+                }
+                if (next) continue;
+                ind.setFitness(level);
             }
+            popCopy.removeIf(ind -> ind.getFitness() >= 0);
+            cur = popCopy.size();
+            level++;
         }
-        log.debug("Ind {} front fitness {}", ind.getQos(), fitness);
-        return fitness;
-    }
+        for (Individual ind : popCopy) {
+            ind.setFitness(level);
+        }
 
+//        population.stream().sorted().forEach(ind -> log.debug("{} {}", ind.getQos().toNumpy(), ind.getFitness()));
+    }
 
     private boolean domain(Individual ind1, Individual ind2) {
-        Qos qos1 = ind1.getQos();
-        Qos qos2 = ind2.getQos();
-
-        for (int type : Qos.ACTIVE_TYPES) {
-            if (qos1.get(type) - qos2.get(type) >= 0)
+        QoS q1 = ind1.getQos();
+        QoS q2 = ind2.getQos();
+        boolean hasBetter = false;
+        for (int type : QoS.TYPES) {
+            if (q1.get(type) - q2.get(type) > 0) {
                 return false;
+            } else if (q1.get(type) - q2.get(type) < 0)
+                hasBetter = true;
         }
-
-        return true;
+        return hasBetter;
     }
 }

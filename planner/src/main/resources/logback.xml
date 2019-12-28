@@ -26,10 +26,10 @@
     <logger name="com.ingbyr.hwsc.planner.EvaluatorGoalDistance" level="OFF"/>
     <logger name="com.ingbyr.hwsc.planner.EvaluatorGoalDistanceConcurrent" level="OFF"/>
     <logger name="com.ingbyr.hwsc.planner.IndividualGenerator" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.planner.SurvivalSelectorIndicator" level="OFF"/>
+    <logger name="com.ingbyr.hwsc.planner.SurvivalSelector" level="OFF"/>
     <logger name="com.ingbyr.hwsc.planner.FitnessLinearAggregation" level="OFF"/>
     <logger name="com.ingbyr.hwsc.planner.FitnessBinaryIndicator" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.planner.FitnessParetoFront" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.FitnessParetoFront" level="debug"/>
 
     <root level="debug">
         <appender-ref ref="STDOUT"/>

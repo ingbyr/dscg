@@ -1,6 +1,6 @@
 package com.ingbyr.hwsc.planner;
 
-import com.ingbyr.hwsc.common.util.WorkDir;
+import com.ingbyr.hwsc.common.WorkDir;
 import com.ingbyr.hwsc.dataset.Dataset;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration2.Configuration;
@@ -8,6 +8,7 @@ import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
 import java.io.File;
+import java.util.Arrays;
 
 /**
  * File name daex.properties
@@ -67,7 +68,6 @@ public final class PlannerConfigFile extends PlannerConfig {
      * @throws ConfigurationException
      */
     public PlannerConfigFile() throws ConfigurationException {
-
         Configurations configHelp = new Configurations();
         log.info("Config file {}", CONFIG_FILE.getAbsolutePath());
         Configuration config = configHelp.properties(CONFIG_FILE);

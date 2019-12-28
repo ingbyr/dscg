@@ -1,14 +1,13 @@
 package com.ingbyr.hwsc.planner;
 
 import com.google.common.collect.Lists;
-import com.ingbyr.hwsc.common.models.Concept;
-import com.ingbyr.hwsc.common.models.Qos;
-import com.ingbyr.hwsc.common.models.Service;
-import com.ingbyr.hwsc.common.util.QosUtils;
+import com.ingbyr.hwsc.common.Concept;
+import com.ingbyr.hwsc.common.QoS;
+import com.ingbyr.hwsc.common.Service;
+import com.ingbyr.hwsc.common.QosUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -21,7 +20,6 @@ import java.util.Set;
  * @author ingbyr
  */
 @EqualsAndHashCode
-@ToString
 @Getter
 @Setter
 @Slf4j
@@ -41,38 +39,27 @@ public class Individual implements Comparable<Individual> {
     private int id;
 
     /**
-     * Time to live in plan step.
-     * TTL equals -1 means immortal
-     */
-    @EqualsAndHashCode.Exclude
-    private int ttl;
-
-    /**
      * Services that can be executed in this states
      */
     @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     private List<Service> services = null;
 
     /**
      * Qos from services
      */
     @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private Qos qos = null;
+    private QoS qos = null;
 
     /**
      * State index that can be reached by executing the services
      */
     @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     int lastReachedStateIndex = 0;
 
     /**
      * If can reach last state (goal set), feasible is true. Otherwise is false
      */
     @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     boolean isFeasible = false;
 
     /**
@@ -81,17 +68,10 @@ public class Individual implements Comparable<Individual> {
      * if this individual is removed from the current population;
      */
     @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     double fitness = 0.0;
 
     public Individual() {
         this.id = globalId++;
-        this.ttl = -1;
-    }
-
-    public Individual(int ttl) {
-        this.id = globalId++;
-        this.ttl = ttl;
     }
 
     public Individual copy() {
@@ -132,10 +112,6 @@ public class Individual implements Comparable<Individual> {
         return states.get(states.size() - 1).concepts;
     }
 
-    public boolean isAlive() {
-        return ttl > 0;
-    }
-
     /**
      * Set services and qos of services
      *
@@ -163,5 +139,26 @@ public class Individual implements Comparable<Individual> {
         if (this.isFeasible && (!another.isFeasible)) return 1;
         else if ((!this.isFeasible) && another.isFeasible) return -1;
         else return Double.compare(this.fitness, another.fitness);
+    }
+
+    @Override
+    public String toString() {
+        return "Ind{" +
+                "S=" + states +
+                ", id=" + id +
+                ", w=" + services +
+                ", q=" + qos +
+                ", sl=" + lastReachedStateIndex +
+                ", f=" + isFeasible +
+                ", F=" + fitness +
+                '}';
+    }
+
+    public String toSimpleInfo() {
+        return "Ind{id=" + id +
+                ", q=" + qos +
+                ", f=" + isFeasible +
+                ", F=" + fitness +
+                '}';
     }
 }

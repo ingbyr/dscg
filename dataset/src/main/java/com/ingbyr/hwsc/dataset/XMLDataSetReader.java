@@ -1,7 +1,6 @@
 package com.ingbyr.hwsc.dataset;
 
-import com.ingbyr.hwsc.common.models.*;
-import com.ingbyr.hwsc.common.util.QosUtils;
+import com.ingbyr.hwsc.common.*;
 import com.ingbyr.hwsc.dataset.util.XMLFileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.dom4j.DocumentException;
@@ -97,12 +96,12 @@ public class XMLDataSetReader extends LocalDatasetSetReader {
      * @param serviceElement
      */
     private void parseServiceQos(Service service, Element serviceElement) {
-        Qos originQos = new Qos();
-        for (int type : Qos.TYPES) {
-            originQos.set(type, Double.parseDouble(serviceElement.attribute(Qos.NAMES[type]).getText()));
+        QoS originQoS = new QoS();
+        for (int type : QoS.TYPES) {
+            originQoS.set(type, Double.parseDouble(serviceElement.attribute(QoS.NAMES[type]).getText()));
         }
-        service.setOriginQos(originQos);
-        log.trace("{} origin {}", service, service.getOriginQos());
+        service.setOriginQoS(originQoS);
+        log.trace("{} origin {}", service, service.getOriginQoS());
     }
 
     /**
@@ -110,44 +109,44 @@ public class XMLDataSetReader extends LocalDatasetSetReader {
      */
     private void rescaleQos() {
 
-        minQos = new Qos(Double.MAX_VALUE);
-        maxQos = new Qos(Double.MIN_VALUE);
-        distanceQos = new Qos();
+        minQoS = new QoS(Double.MAX_VALUE);
+        maxQoS = new QoS(Double.MIN_VALUE);
+        distanceQoS = new QoS();
 
         // Init min qos and max qos
         for (Map.Entry<String, Service> entry : serviceMap.entrySet()) {
-            Qos qos = entry.getValue().getOriginQos();
-            for (int type : Qos.TYPES) {
-                if (minQos.get(type) > qos.get(type))
-                    minQos.set(type, qos.get(type));
-                if (maxQos.get(type) < qos.get(type))
-                    maxQos.set(type, qos.get(type));
+            QoS qos = entry.getValue().getOriginQoS();
+            for (int type : QoS.TYPES) {
+                if (minQoS.get(type) > qos.get(type))
+                    minQoS.set(type, qos.get(type));
+                if (maxQoS.get(type) < qos.get(type))
+                    maxQoS.set(type, qos.get(type));
             }
         }
 
         // Calculate distance qos
-        for (int type : Qos.TYPES) {
-            distanceQos.set(type, maxQos.get(type) - minQos.get(type));
+        for (int type : QoS.TYPES) {
+            distanceQoS.set(type, maxQoS.get(type) - minQoS.get(type));
         }
-        log.debug("Min {}", minQos);
-        log.debug("Max {}", maxQos);
-        log.debug("Distance {}", distanceQos);
+        log.debug("Min {}", minQoS);
+        log.debug("Max {}", maxQoS);
+        log.debug("Distance {}", distanceQoS);
 
         // Rescale qos
         for (Map.Entry<String, Service> entry : serviceMap.entrySet()) {
             Service service = entry.getValue();
-            Qos qos = new Qos();
-            for (int type : Qos.TYPES) {
-                double distance = distanceQos.get(type);
+            QoS qos = new QoS();
+            for (int type : QoS.TYPES) {
+                double distance = distanceQoS.get(type);
                 // Avoid distance equals 0
                 if (distance == 0.0) {
                     distance = 1.0;
                 }
-                qos.set(type, (service.getOriginQos().get(type) - minQos.get(type)) / distance);
+                qos.set(type, (service.getOriginQoS().get(type) - minQoS.get(type)) / distance);
             }
             service.setQos(qos);
             service.setCost(QosUtils.sumQosToCost(qos));
-            log.trace("{} origin {}", service, service.getOriginQos().getValues());
+            log.trace("{} origin {}", service, service.getOriginQoS().getValues());
             log.trace("{} rescale {}", service, service.getQos().getValues());
         }
 
@@ -177,9 +176,6 @@ public class XMLDataSetReader extends LocalDatasetSetReader {
                 case OUTPUTS:
                     service.addOutputParam(param);
                     conceptMap.get(thing.getType()).getParentConcepts().stream().filter(Objects::nonNull).forEach(service::addOutputConcept);
-//                    Concept c = conceptMap.get(conceptMap.get(thing.getType()).getDirectParentName());
-//                    if (c !=null)
-//                        service.addOutputConcept(c);
                     break;
                 default:
                     log.error("Can not parse {}", paramElement);
