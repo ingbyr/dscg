@@ -321,30 +321,33 @@ public class InnerPlannerYashp2 extends AbstractInnerPlanner implements InnerPla
                 lookaheadState.concepts.addAll(service.getOutputConceptSet());
                 plan.add(service);
             } else {
-                log.error("No applicable service");
+                // FIXME This repair strategy can be removed in this project?
+                loop = false;
 
-                int i = 0;
-                int j = 0;
-                // If no one service was added to plan
-                // Use this repair strategy
-                while ((!loop) && (i < rPlan.size())) {
-                    while (!loop && (j < rPlan.size())) {
-                        Service ai = rPlan.get(i);
-                        Service aj = rPlan.get(j);
-
-                        if (i != j && !Collections.disjoint(ai.getOutputConceptSet(), aj.getInputConceptSet())) {
-                            List<Service> candidates = findCandidates(state, ai, aj);
-                            if (candidates.size() != 0) {
-                                // Exit repair strategy
-                                loop = true;
-                                Service a = popMinCandidates(candidates, cost);
-                                rPlan.add(i, a);
-                            }
-                        }
-                        j++;
-                    }
-                    i++;
-                }
+//                log.error("No applicable service");
+//
+//                int i = 0;
+//                int j = 0;
+//                // If no one service was added to plan
+//                // Use this repair strategy
+//                while ((!loop) && (i < rPlan.size())) {
+//                    while (!loop && (j < rPlan.size())) {
+//                        Service ai = rPlan.get(i);
+//                        Service aj = rPlan.get(j);
+//
+//                        if (i != j && !Collections.disjoint(ai.getOutputConceptSet(), aj.getInputConceptSet())) {
+//                            List<Service> candidates = findCandidates(state, ai, aj);
+//                            if (candidates.size() != 0) {
+//                                // Exit repair strategy
+//                                loop = true;
+//                                Service a = popMinCandidates(candidates, cost);
+//                                rPlan.add(i, a);
+//                            }
+//                        }
+//                        j++;
+//                    }
+//                    i++;
+//                }
             }
         }
 
@@ -373,7 +376,6 @@ public class InnerPlannerYashp2 extends AbstractInnerPlanner implements InnerPla
                 minCostService = service;
             }
         }
-
         return minCostService;
     }
 

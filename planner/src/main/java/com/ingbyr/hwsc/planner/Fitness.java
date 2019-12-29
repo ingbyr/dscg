@@ -1,16 +1,15 @@
 package com.ingbyr.hwsc.planner;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * @author ingbyr
  */
 public interface Fitness {
-
-    void calculatePopulationFitness(List<Individual> population);
-
-    static List<String> getAllNames() {
-        return Arrays.asList("LinearAggregation", "BinaryIndicator", "ParetoFront");
-    }
+    /**
+     * Calculate individual fitness and sort population
+     * @param pop Population
+     * @return The biggest fitness
+     */
+    double calc(List<Individual> pop);
 }

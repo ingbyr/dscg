@@ -9,9 +9,14 @@ import java.util.List;
 public class FitnessLinearAggregation implements Fitness {
 
     @Override
-    public void calculatePopulationFitness(List<Individual> population) {
-        population.forEach(individual -> {
-            individual.setFitness(Arrays.stream(individual.getQos().getValues()).sum());
-        });
+    public double calc(List<Individual> pop) {
+        double max = Double.MIN_VALUE;
+        for (Individual ind : pop) {
+            double f = Arrays.stream(ind.getQos().getData()).sum();
+            ind.setFitness(f);
+            max = Math.max(max, f);
+        }
+        return max;
     }
+
 }

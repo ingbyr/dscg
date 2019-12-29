@@ -1,7 +1,5 @@
-package com.ingbyr.hwsc.dataset;
+package com.ingbyr.hwsc.common;
 
-import com.ingbyr.hwsc.common.*;
-import com.ingbyr.hwsc.dataset.util.XMLFileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -96,12 +94,12 @@ public class XMLDataSetReader extends LocalDatasetSetReader {
      * @param serviceElement
      */
     private void parseServiceQos(Service service, Element serviceElement) {
-        QoS originQoS = new QoS();
-        for (int type : QoS.TYPES) {
-            originQoS.set(type, Double.parseDouble(serviceElement.attribute(QoS.NAMES[type]).getText()));
+        Qos originQos = new Qos();
+        for (int type : Qos.TYPES) {
+            originQos.set(type, Double.parseDouble(serviceElement.attribute(Qos.NAMES[type]).getText()));
         }
-        service.setOriginQoS(originQoS);
-        log.trace("{} origin {}", service, service.getOriginQoS());
+        service.setOriginQos(originQos);
+        log.trace("{} origin {}", service, service.getOriginQos());
     }
 
     /**
@@ -109,45 +107,45 @@ public class XMLDataSetReader extends LocalDatasetSetReader {
      */
     private void rescaleQos() {
 
-        minQoS = new QoS(Double.MAX_VALUE);
-        maxQoS = new QoS(Double.MIN_VALUE);
-        distanceQoS = new QoS();
+        minQos = new Qos(Double.MAX_VALUE);
+        maxQos = new Qos(Double.MIN_VALUE);
+        distanceQos = new Qos();
 
         // Init min qos and max qos
         for (Map.Entry<String, Service> entry : serviceMap.entrySet()) {
-            QoS qos = entry.getValue().getOriginQoS();
-            for (int type : QoS.TYPES) {
-                if (minQoS.get(type) > qos.get(type))
-                    minQoS.set(type, qos.get(type));
-                if (maxQoS.get(type) < qos.get(type))
-                    maxQoS.set(type, qos.get(type));
+            Qos qos = entry.getValue().getOriginQos();
+            for (int type : Qos.TYPES) {
+                if (minQos.get(type) > qos.get(type))
+                    minQos.set(type, qos.get(type));
+                if (maxQos.get(type) < qos.get(type))
+                    maxQos.set(type, qos.get(type));
             }
         }
 
         // Calculate distance qos
-        for (int type : QoS.TYPES) {
-            distanceQoS.set(type, maxQoS.get(type) - minQoS.get(type));
+        for (int type : Qos.TYPES) {
+            distanceQos.set(type, maxQos.get(type) - minQos.get(type));
         }
-        log.debug("Min {}", minQoS);
-        log.debug("Max {}", maxQoS);
-        log.debug("Distance {}", distanceQoS);
+        log.debug("Min {}", minQos);
+        log.debug("Max {}", maxQos);
+        log.debug("Distance {}", distanceQos);
 
         // Rescale qos
         for (Map.Entry<String, Service> entry : serviceMap.entrySet()) {
             Service service = entry.getValue();
-            QoS qos = new QoS();
-            for (int type : QoS.TYPES) {
-                double distance = distanceQoS.get(type);
+            Qos qos = new Qos();
+            for (int type : Qos.TYPES) {
+                double distance = distanceQos.get(type);
                 // Avoid distance equals 0
                 if (distance == 0.0) {
                     distance = 1.0;
                 }
-                qos.set(type, (service.getOriginQoS().get(type) - minQoS.get(type)) / distance);
+                qos.set(type, (service.getOriginQos().get(type) - minQos.get(type)) / distance);
             }
             service.setQos(qos);
             service.setCost(QosUtils.sumQosToCost(qos));
-            log.trace("{} origin {}", service, service.getOriginQoS().getValues());
-            log.trace("{} rescale {}", service, service.getQos().getValues());
+            log.trace("{} origin {}", service, service.getOriginQos().getData());
+            log.trace("{} rescale {}", service, service.getQos().getData());
         }
 
     }

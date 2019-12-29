@@ -1,6 +1,5 @@
-package com.ingbyr.hwsc.dataset;
+package com.ingbyr.hwsc.common;
 
-import com.ingbyr.hwsc.common.WorkDir;
 import lombok.Getter;
 
 import java.nio.file.Path;
@@ -33,7 +32,7 @@ public enum Dataset {
     Dataset(String datasetId1, String datasetId2) {
         this.datasetId1 = datasetId1;
         this.datasetId2 = datasetId2;
-        this.path = WorkDir.WORK_DIR.resolve("data")
+        this.path = WorkDir.DATASET_DIR
                 .resolve("wsc" + datasetId1)
                 .resolve("Testset" + datasetId2)
                 .normalize();

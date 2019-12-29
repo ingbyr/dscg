@@ -1,7 +1,7 @@
 package com.ingbyr.hwsc.webui.config;
 
-import com.ingbyr.hwsc.dataset.DataSetReader;
-import com.ingbyr.hwsc.dataset.XMLDataSetReader;
+import com.ingbyr.hwsc.common.DataSetReader;
+import com.ingbyr.hwsc.common.XMLDataSetReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

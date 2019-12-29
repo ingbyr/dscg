@@ -1,7 +1,7 @@
 package com.ingbyr.hwsc.webui.service;
 
-import com.ingbyr.hwsc.dataset.DataSetReader;
-import com.ingbyr.hwsc.dataset.Dataset;
+import com.ingbyr.hwsc.common.DataSetReader;
+import com.ingbyr.hwsc.common.Dataset;
 import com.ingbyr.hwsc.webui.model.MemoryDatasetReader;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

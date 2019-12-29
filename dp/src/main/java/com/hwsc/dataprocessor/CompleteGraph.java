@@ -10,13 +10,13 @@ import com.hwsc.dataprocessor.models.DWGEdge;
 import com.hwsc.dataprocessor.models.DWGNode;
 import com.hwsc.dataprocessor.models.PlanningGraph;
 import com.hwsc.dataprocessor.searching.GeneratePlanningGraph;
-import com.ingbyr.hwsc.common.QoS;
+import com.ingbyr.hwsc.common.Qos;
 import com.ingbyr.hwsc.common.QosUtils;
 import com.ingbyr.hwsc.common.Service;
 import com.ingbyr.hwsc.common.WorkDir;
-import com.ingbyr.hwsc.dataset.DataSetReader;
-import com.ingbyr.hwsc.dataset.Dataset;
-import com.ingbyr.hwsc.dataset.XMLDataSetReader;
+import com.ingbyr.hwsc.common.DataSetReader;
+import com.ingbyr.hwsc.common.Dataset;
+import com.ingbyr.hwsc.common.XMLDataSetReader;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.jgrapht.GraphPath;
@@ -43,9 +43,10 @@ public class CompleteGraph {
         log.info("Max new pre node limit: {}", MAX_NEW_PRE_NODE_SIZE);
     }
 
+    // FIXME Dir bug
     public static void findBestQoS(List<Dataset> datasetList) throws IOException {
         File logFile = WorkDir.WORK_DIR.resolve("best-qos")
-                .resolve("best_" + String.join("_", QoS.NAMES) + ".txt")
+                .resolve("best_" + String.join("_", Qos.NAMES) + ".txt")
                 .toFile();
         StringBuilder result = new StringBuilder();
 
@@ -69,15 +70,15 @@ public class CompleteGraph {
                 List<Service> services = PlanExtractors.getServices(path);
                 log.info("services: {}", services);
                 log.info("valid: {}", PlanExtractors.validServices(services, reader.getInputSet(), reader.getGoalSet()));
-                QoS scaledQoS = QosUtils.mergeQos(services);
-                log.info("scaled qos: {}", scaledQoS);
-                QoS originQoS = QosUtils.mergeOriginQos(services);
-                log.info("origin qos: {}", originQoS);
+                Qos scaledQos = QosUtils.mergeQos(services);
+                log.info("scaled qos: {}", scaledQos);
+                Qos originQos = QosUtils.mergeOriginQos(services);
+                log.info("origin qos: {}", originQos);
 
                 result.append("[" + dataset + "] services: " + services);
                 result.append("\n[" + dataset + "] cost: " + cost);
-                result.append("\n[" + dataset + "] scaled qos: " + scaledQoS);
-                result.append("\n[" + dataset + "] origin qos: " + originQoS);
+                result.append("\n[" + dataset + "] scaled qos: " + scaledQos);
+                result.append("\n[" + dataset + "] origin qos: " + originQos);
 
                 result.append("\n\n");
             }
@@ -105,7 +106,7 @@ public class CompleteGraph {
         for (GraphPath<DWGNode, DWGEdge> path : extractor.getPaths()) {
             List<Service> services = PlanExtractors.getServices(path);
             log.trace("Service {}", services);
-            QoS qos = QosUtils.mergeQos(services);
+            Qos qos = QosUtils.mergeQos(services);
             log.trace("Qos {}", qos);
             data.append(qos.toNumpy());
             data.append("\n");
@@ -119,9 +120,9 @@ public class CompleteGraph {
         for (Map.Entry<String, Service> entry : reader.getServiceMap().entrySet()) {
             Service service = entry.getValue();
             double newCost = 0.0;
-            QoS scaledQoS = service.getQos();
-            for (int qosType : QoS.TYPES) {
-                newCost += scaledQoS.get(qosType);
+            Qos scaledQos = service.getQos();
+            for (int qosType : Qos.TYPES) {
+                newCost += scaledQos.get(qosType);
             }
             service.setCost(newCost);
         }

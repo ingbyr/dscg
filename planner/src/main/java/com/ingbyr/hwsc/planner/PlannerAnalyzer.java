@@ -1,9 +1,9 @@
 package com.ingbyr.hwsc.planner;
 
 import com.ingbyr.hwsc.common.Concept;
-import com.ingbyr.hwsc.common.QoS;
+import com.ingbyr.hwsc.common.Dataset;
+import com.ingbyr.hwsc.common.Qos;
 import com.ingbyr.hwsc.common.Service;
-import com.ingbyr.hwsc.dataset.Dataset;
 import com.ingbyr.hwsc.planner.exception.NotValidSolutionException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,12 +25,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PlannerAnalyzer {
 
-    // Best QoS
-    @Getter
-    private final List<QoS> bestQos = new LinkedList<>();
-
-    // All QoS
-    List<List<QoS>> allQoS = new LinkedList<>();
+    // Log
+    List<List<Qos>> QosLog = new LinkedList<>();
+    List<Double> GDLog = new LinkedList<>();
+    List<Double> IGDLog = new LinkedList<>();
 
     @Getter
     private Instant startTime;
@@ -48,18 +46,42 @@ public class PlannerAnalyzer {
     @Getter
     private boolean save2file;
 
+    private PlannerIndicator indicator;
+
+    @Setter
+    private Fitness fitness;
+
     public void setDataset(Dataset dataset) {
         this.dataset = dataset;
+        this.indicator = new PlannerIndicator(dataset);
     }
 
-    public void recordStepInfo(List<Individual> pop) {
-        allQoS.add(pop.stream().map(Individual::getQos).collect(Collectors.toList()));
-        Individual bestInd = pop.get(0);
-        QoS realQoS = bestInd.getQos();
-        bestQos.add(realQoS);
+    /**
+     * Record every step pop info and return GD as indicator of pop
+     *
+     * @param pop Population
+     * @return The GD of pop
+     */
+    public String recordStepInfo(List<Individual> pop) {
+        QosLog.add(pop.stream().map(Individual::getQos).collect(Collectors.toList()));
+
         log.debug("Population :");
         for (Individual individual : pop) {
             log.debug("{}", individual.toSimpleInfo());
+        }
+
+        double stepGD = indicator.GD(pop);
+        log.info("GD: {}", stepGD);
+        GDLog.add(stepGD);
+
+        double stepIGD = indicator.IGD(pop);
+        log.info("IGD: {}", stepIGD);
+        IGDLog.add(stepIGD);
+
+        if (fitness instanceof FitnessParetoFront) {
+            return String.valueOf(stepGD);
+        } else {
+            return pop.get(0).getQos().toString();
         }
     }
 
@@ -74,12 +96,12 @@ public class PlannerAnalyzer {
 
     public void displayLogOnConsole() {
         log.info("Time used {} seconds", getRuntime());
-        log.info("Best QoS log:");
-        System.out.println(bestQos);
-        log.info("All QoS:");
-        for (List<QoS> qos : allQoS) {
-            System.out.println(qos);
-        }
+
+        log.info("GD (Generational distance): ");
+        System.out.println(GDLog);
+
+        log.info("IGD (Inverted Generational Distance): ");
+        System.out.println(IGDLog);
     }
 
     public static void displayPopulation(List<Individual> individuals) {

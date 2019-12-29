@@ -1,14 +1,13 @@
 package com.ingbyr.hwsc.planner;
 
 import com.ingbyr.hwsc.common.WorkDir;
-import com.ingbyr.hwsc.dataset.Dataset;
+import com.ingbyr.hwsc.common.Dataset;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
 import java.io.File;
-import java.util.Arrays;
 
 /**
  * File name daex.properties

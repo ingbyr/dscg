@@ -14,7 +14,6 @@ jar {
 
 dependencies {
     compile project(":common")
-    compile project(":dataset")
     compile("commons-io:commons-io:2.6")
     compile("org.apache.commons:commons-lang3:3.8.1")
     compile("com.google.guava:guava:28.0-jre")

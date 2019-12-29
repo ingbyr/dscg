@@ -1,6 +1,6 @@
 package com.ingbyr.hwsc.planner;
 
-import com.ingbyr.hwsc.common.QoS;
+import com.ingbyr.hwsc.common.Qos;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,10 +19,14 @@ public class FitnessBinaryIndicator implements Fitness {
     private final double k = 1;
 
     @Override
-    public void calculatePopulationFitness(List<Individual> population) {
-        for (Individual ind : population) {
-            ind.setFitness(calculateIndividualFitness(ind, population));
+    public double calc(List<Individual> pop) {
+        double max = Double.MIN_VALUE;
+        for (Individual ind : pop) {
+            double f = calculateIndividualFitness(ind, pop);
+            ind.setFitness(f);
+            max = Math.max(max, f);
         }
+        return max;
     }
 
     private double calculateIndividualFitness(Individual ind, List<Individual> population) {
@@ -48,13 +52,13 @@ public class FitnessBinaryIndicator implements Fitness {
         return distance;
     }
 
-    private double indicatorValue(QoS qoS1, QoS qoS2) {
+    private double indicatorValue(Qos qos1, Qos qos2) {
         double minDistance = Double.MAX_VALUE;
         double maxDistance = Double.MIN_EXPONENT;
         boolean isPositive = false;
 
-        for (int type : QoS.TYPES) {
-            double distance = qoS1.get(type) - qoS2.get(type);
+        for (int type : Qos.TYPES) {
+            double distance = qos1.get(type) - qos2.get(type);
             if (distance > 0) {
                 isPositive = true;
                 minDistance = Math.min(minDistance, distance);

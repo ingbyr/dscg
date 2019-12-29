@@ -1,6 +1,6 @@
 package com.ingbyr.hwsc.planner;
 
-import com.ingbyr.hwsc.common.QoS;
+import com.ingbyr.hwsc.common.Qos;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,9 +18,9 @@ import java.util.List;
 public class FitnessParetoFront implements Fitness {
 
     @Override
-    public void calculatePopulationFitness(List<Individual> population) {
+    public double calc(List<Individual> pop) {
 
-        List<Individual> popCopy = new LinkedList<>(population);
+        List<Individual> popCopy = new LinkedList<>(pop);
         popCopy.forEach(ind -> ind.setFitness(-1.0));
         double level = 0;
         int cur = popCopy.size();
@@ -47,14 +47,14 @@ public class FitnessParetoFront implements Fitness {
             ind.setFitness(level);
         }
 
-//        population.stream().sorted().forEach(ind -> log.debug("{} {}", ind.getQos().toNumpy(), ind.getFitness()));
+        return level;
     }
 
     private boolean domain(Individual ind1, Individual ind2) {
-        QoS q1 = ind1.getQos();
-        QoS q2 = ind2.getQos();
+        Qos q1 = ind1.getQos();
+        Qos q2 = ind2.getQos();
         boolean hasBetter = false;
-        for (int type : QoS.TYPES) {
+        for (int type : Qos.TYPES) {
             if (q1.get(type) - q2.get(type) > 0) {
                 return false;
             } else if (q1.get(type) - q2.get(type) < 0)

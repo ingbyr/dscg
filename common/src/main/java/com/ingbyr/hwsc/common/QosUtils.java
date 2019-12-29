@@ -5,27 +5,27 @@ import java.util.Collection;
 
 public class QosUtils {
 
-    public static double sumQosToCost(QoS qos) {
-        return Arrays.stream(qos.getValues()).sum();
+    public static double sumQosToCost(Qos qos) {
+        return Arrays.stream(qos.getData()).sum();
     }
 
-    public static QoS mergeQos(Collection<Service> services) {
-        QoS qos = new QoS();
+    public static Qos mergeQos(Collection<Service> services) {
+        Qos qos = new Qos();
         // Update qos
         for (Service service : services) {
-            for (int type : QoS.TYPES) {
+            for (int type : Qos.TYPES) {
                 qos.set(type, qos.get(type) + service.getQos().get(type));
             }
         }
         return qos;
     }
 
-    public static QoS mergeOriginQos(Collection<Service> services) {
-        QoS qos = new QoS();
+    public static Qos mergeOriginQos(Collection<Service> services) {
+        Qos qos = new Qos();
         // Update qos
         for (Service service : services) {
-            for (int type : QoS.TYPES) {
-                    qos.set(type, qos.get(type) + service.getOriginQoS().get(type));
+            for (int type : Qos.TYPES) {
+                    qos.set(type, qos.get(type) + service.getOriginQos().get(type));
             }
         }
         return qos;

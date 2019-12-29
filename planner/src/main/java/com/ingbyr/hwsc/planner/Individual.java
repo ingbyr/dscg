@@ -2,7 +2,7 @@ package com.ingbyr.hwsc.planner;
 
 import com.google.common.collect.Lists;
 import com.ingbyr.hwsc.common.Concept;
-import com.ingbyr.hwsc.common.QoS;
+import com.ingbyr.hwsc.common.Qos;
 import com.ingbyr.hwsc.common.Service;
 import com.ingbyr.hwsc.common.QosUtils;
 import lombok.EqualsAndHashCode;
@@ -48,7 +48,7 @@ public class Individual implements Comparable<Individual> {
      * Qos from services
      */
     @EqualsAndHashCode.Exclude
-    private QoS qos = null;
+    private Qos qos = null;
 
     /**
      * State index that can be reached by executing the services
@@ -72,6 +72,10 @@ public class Individual implements Comparable<Individual> {
 
     public Individual() {
         this.id = globalId++;
+    }
+
+    public void offsetFitness(double offset) {
+        fitness += offset;
     }
 
     public Individual copy() {

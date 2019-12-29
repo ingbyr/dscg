@@ -17,8 +17,8 @@ public class Service extends NamedObject {
     private Set<Param> outputParamSet;
     private Set<Concept> inputConceptSet;
     private Set<Concept> outputConceptSet;
-    private QoS qos;
-    private QoS originQoS;
+    private Qos qos;
+    private Qos originQos;
     private double cost;
 
     public Service(String name) {

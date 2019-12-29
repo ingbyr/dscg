@@ -27,13 +27,12 @@ public class SurvivalSelector {
         List<Individual> feasiblePop = pop.stream()
                 .filter(ind -> ind.isFeasible)
                 .collect(Collectors.toList());
-        log.trace("Feasible individuals size {}", feasiblePop.size());
-        feasiblePop.forEach(ind -> log.trace("{}", ind));
+        log.debug("Feasible individuals size {}", feasiblePop.size());
 
-        // Recalculate the fitness because individual has feasible solution
-        fitness.calculatePopulationFitness(feasiblePop);
+        // Recalculate the fitness because individual is feasible
+        fitness.calc(feasiblePop);
 
-        List<Individual> survivalPop = null;
+        List<Individual> survivalPop;
         if (feasiblePop.size() >= survivalSize) {
             // Choose survival individual from feasible individuals directly if it has enough individuals
             survivalPop = feasiblePop.stream().sorted().limit(survivalSize).collect(Collectors.toList());

@@ -1,6 +1,5 @@
 rootProject.name = 'hwsc'
-include 'planner'
 include 'common'
-include 'dataset'
-include 'webui'
 include 'dp'
+include 'planner'
+include 'webui'

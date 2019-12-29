@@ -16,9 +16,9 @@
     </appender>
 
     <logger name="com.hwsc.dataprocessor.models.CompletePlaningGraph" level="off"/>
-    <logger name="com.hwsc.dataprocessor.searching.GeneratePlanningGraph" level="off"/>
+    <logger name="com.hwsc.dataprocessor.searching.GeneratePlanningGraph" level="info"/>
 
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="STDOUT"/>
     </root>
 

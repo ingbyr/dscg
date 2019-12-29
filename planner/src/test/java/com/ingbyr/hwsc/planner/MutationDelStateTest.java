@@ -1,8 +1,8 @@
 package com.ingbyr.hwsc.planner;
 
-import com.ingbyr.hwsc.dataset.DataSetReader;
-import com.ingbyr.hwsc.dataset.Dataset;
-import com.ingbyr.hwsc.dataset.XMLDataSetReader;
+import com.ingbyr.hwsc.common.DataSetReader;
+import com.ingbyr.hwsc.common.Dataset;
+import com.ingbyr.hwsc.common.XMLDataSetReader;
 import org.junit.jupiter.api.Test;
 
 /**

@@ -15,7 +15,7 @@ import java.util.Arrays;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Slf4j
-public class QoS implements NumpyDataFormat {
+public class Qos implements NumpyDataFormat {
 
     private static final String PRECISION = "%.1f";
 
@@ -66,29 +66,33 @@ public class QoS implements NumpyDataFormat {
 
     // Qos values
     @Setter
-    private double[] values = new double[QOS_NUM];
+    private double[] data = new double[QOS_NUM];
 
-    public QoS(Double initialValue) {
-        Arrays.fill(values, initialValue);
+    public Qos(Double initialValue) {
+        Arrays.fill(data, initialValue);
     }
 
-    public QoS(double[] values) {
-        this.values = values;
+    public Qos(double[] data) {
+        this.data = data;
+    }
+
+    public static Qos ofNumpyFormat(String valueStr) {
+        return new Qos(Arrays.stream(valueStr.split(" ")).mapToDouble(Double::valueOf).toArray());
     }
 
     public void set(int type, double value) {
-        values[type] = value;
+        data[type] = value;
     }
 
     public double get(int type) {
-        return values[type];
+        return data[type];
     }
 
     @Override
     public String toString() {
         StringBuilder qStr = new StringBuilder();
         qStr.append("QoS(");
-        for (double v : values) {
+        for (double v : data) {
             qStr.append(String.format(PRECISION, v));
             qStr.append(',');
         }
@@ -100,7 +104,7 @@ public class QoS implements NumpyDataFormat {
     @Override
     public String toNumpy() {
         StringBuilder vStr = new StringBuilder();
-        for (double v : values) {
+        for (double v : data) {
             vStr.append(String.format(PRECISION, v));
             vStr.append(' ');
         }

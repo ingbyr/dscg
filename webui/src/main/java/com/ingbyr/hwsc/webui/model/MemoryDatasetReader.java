@@ -1,7 +1,7 @@
 package com.ingbyr.hwsc.webui.model;
 
-import com.ingbyr.hwsc.dataset.AbstractDataSetReader;
-import com.ingbyr.hwsc.dataset.DataSetReader;
+import com.ingbyr.hwsc.common.AbstractDataSetReader;
+import com.ingbyr.hwsc.common.DataSetReader;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;

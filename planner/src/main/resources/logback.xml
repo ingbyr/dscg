@@ -15,21 +15,21 @@
         </encoder>
     </appender>
 
-    <logger name="com.ingbyr.hwsc.reader.XMLDataSetReader" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.planner.innerplanner.cpg" level="info"/>
-    <logger name="com.ingbyr.hwsc.planner.innerplanner.yashp2" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.planner.MutationAddState" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.planner.MutationDelState" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.planner.MutationAddConcept" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.planner.MutationDelConcept" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.planner.CrossoverSwapState" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.planner.EvaluatorGoalDistance" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.planner.EvaluatorGoalDistanceConcurrent" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.planner.IndividualGenerator" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.planner.SurvivalSelector" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.planner.FitnessLinearAggregation" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.planner.FitnessBinaryIndicator" level="OFF"/>
-    <logger name="com.ingbyr.hwsc.planner.FitnessParetoFront" level="debug"/>
+    <logger name="com.ingbyr.hwsc.reader.XMLDataSetReader" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.innerplanner.yashp2" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.MutationAddState" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.MutationDelState" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.MutationAddConcept" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.MutationDelConcept" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.CrossoverSwapState" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.EvaluatorGoalDistance" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.EvaluatorGoalDistanceConcurrent" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.IndividualGenerator" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.SurvivalSelector" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.FitnessLinearAggregation" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.FitnessBinaryIndicator" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.FitnessParetoFront" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.PlannerAnalyzer" level="debug"/>
 
     <root level="debug">
         <appender-ref ref="STDOUT"/>

@@ -1,6 +1,6 @@
 package com.ingbyr.hwsc.webui.controller;
 
-import com.ingbyr.hwsc.dataset.Dataset;
+import com.ingbyr.hwsc.common.Dataset;
 import com.ingbyr.hwsc.planner.PlannerAnalyzer;
 import com.ingbyr.hwsc.planner.PlannerConfig;
 import com.ingbyr.hwsc.webui.service.DatasetService;

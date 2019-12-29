@@ -2,7 +2,7 @@ package com.hwsc.dataprocessor;
 
 import com.ingbyr.hwsc.common.NumpyDataFormat;
 import com.ingbyr.hwsc.common.WorkDir;
-import com.ingbyr.hwsc.dataset.Dataset;
+import com.ingbyr.hwsc.common.Dataset;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 

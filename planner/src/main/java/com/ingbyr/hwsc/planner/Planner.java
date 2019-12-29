@@ -1,9 +1,9 @@
 package com.ingbyr.hwsc.planner;
 
-import com.ingbyr.hwsc.common.QoS;
+import com.ingbyr.hwsc.common.DataSetReader;
+import com.ingbyr.hwsc.common.Qos;
 import com.ingbyr.hwsc.common.Service;
-import com.ingbyr.hwsc.dataset.DataSetReader;
-import com.ingbyr.hwsc.dataset.XMLDataSetReader;
+import com.ingbyr.hwsc.common.XMLDataSetReader;
 import com.ingbyr.hwsc.planner.exception.DAEXConfigException;
 import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
 import com.ingbyr.hwsc.planner.innerplanner.yashp2.InnerPlannerYashp2;
@@ -18,7 +18,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.stream.Collectors;
 
 /**
  * TODO support changeable services
@@ -50,7 +49,7 @@ public class Planner {
 
     private PlannerAnalyzer analyzer;
 
-    private QoS preQoS;
+    private String popIndicator;
 
     private BlockingQueue<Service> serviceToAddQueue;
 
@@ -85,6 +84,7 @@ public class Planner {
         int stopStepCount = 0;
         for (int gen = 0; gen < config.getMaxGen(); gen++) {
 
+            // Build step message
             StringBuilder stepMsg = new StringBuilder();
             stepMsg.append("Process (");
             stepMsg.append(gen);
@@ -92,6 +92,7 @@ public class Planner {
             stepMsg.append(config.getMaxGen());
             stepMsg.append(")");
 
+            // Step message callback function
             log.info("{}", stepMsg.toString());
             stepMsgHandler.handle(stepMsg.toString());
 
@@ -119,28 +120,21 @@ public class Planner {
             // Survival selection
             population = survivalSelector.filter(population, offspring);
 
-            // Check the termination condition
-            QoS bestQoS = population.get(0).getQos();
+            // Analyze current step
+            String currentPopIndicator = analyzer.recordStepInfo(population);
 
-            // Auto stop the process when no improvements
+            // Check the termination condition
             if (config.isEnableAutoStop()) {
-                log.debug("Current best {}", bestQoS);
-                if (bestQoS.equals(preQoS)) {
+                if (currentPopIndicator.equals(popIndicator)) {
                     if (++stopStepCount >= config.getAutoStopStep()) {
                         log.info("Auto stop process because of no improvements");
                         break;
                     }
                 } else {
-                    // Reset stop step count
                     stopStepCount = 0;
                 }
-                preQoS = bestQoS;
-            } else {
-                log.debug("Current best qos {}", bestQoS);
+                popIndicator = currentPopIndicator;
             }
-
-            // Record best individual log
-            analyzer.recordStepInfo(population);
         }
 
         log.info("Process is finished");
@@ -148,24 +142,24 @@ public class Planner {
     }
 
     private void monitorServiceStatus(List<Individual> population) {
-        if (serviceToRemoveQueue != null && !serviceToRemoveQueue.isEmpty()) {
-            List<Service> servicesToRemove = new ArrayList<>(serviceToRemoveQueue.size());
-            while (!serviceToRemoveQueue.isEmpty()) {
-                servicesToRemove.add(serviceToRemoveQueue.poll());
-            }
-            refreshPlannerContext();
-            filterDeadIndividuals(population,servicesToRemove);
-            supplementPopulation(population, config.getSurvivalSize());
-        }
-
-        if (serviceToAddQueue != null && !serviceToAddQueue.isEmpty()) {
-            List<Service> servicesToAdd = new ArrayList<>(serviceToAddQueue.size());
-            while (!serviceToAddQueue.isEmpty()) {
-                servicesToAdd.add(serviceToAddQueue.poll());
-            }
-            refreshPlannerContext();
-            replacePopulation(population, config.getSurvivalSize() >> 1);
-        }
+//        if (serviceToRemoveQueue != null && !serviceToRemoveQueue.isEmpty()) {
+//            List<Service> servicesToRemove = new ArrayList<>(serviceToRemoveQueue.size());
+//            while (!serviceToRemoveQueue.isEmpty()) {
+//                servicesToRemove.add(serviceToRemoveQueue.poll());
+//            }
+//            refreshPlannerContext();
+//            filterDeadIndividuals(population,servicesToRemove);
+//            supplementPopulation(population, config.getSurvivalSize());
+//        }
+//
+//        if (serviceToAddQueue != null && !serviceToAddQueue.isEmpty()) {
+//            List<Service> servicesToAdd = new ArrayList<>(serviceToAddQueue.size());
+//            while (!serviceToAddQueue.isEmpty()) {
+//                servicesToAdd.add(serviceToAddQueue.poll());
+//            }
+//            refreshPlannerContext();
+//            replacePopulation(population, config.getSurvivalSize() >> 1);
+//        }
     }
 
     private void replacePopulation(List<Individual> population, int replaceSize) {
@@ -234,6 +228,9 @@ public class Planner {
         //Reset global id for individual
         Individual.globalId = 0;
 
+        // Reset GD
+        this.popIndicator = "";
+
         // If already setup then skip
         if (plannerConfig != null && plannerConfig.equals(this.config))
             return;
@@ -277,6 +274,7 @@ public class Planner {
         analyzer = new PlannerAnalyzer();
         analyzer.setDataset(config.getDataset());
         analyzer.setSave2file(config.saveToFile);
+        analyzer.setFitness(fitness);
     }
 
     public static void main(String[] args) throws ConfigurationException, DAEXConfigException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {

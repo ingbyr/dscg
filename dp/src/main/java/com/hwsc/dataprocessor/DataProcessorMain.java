@@ -1,7 +1,7 @@
 package com.hwsc.dataprocessor;
 
-import com.ingbyr.hwsc.common.QoS;
-import com.ingbyr.hwsc.dataset.Dataset;
+import com.ingbyr.hwsc.common.Qos;
+import com.ingbyr.hwsc.common.Dataset;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -15,7 +15,7 @@ public class DataProcessorMain {
             return;
         }
         Dataset dataset = Dataset.valueOf(args[1]);
-        log.info("Active qos: {}", Arrays.toString(QoS.NAMES));
+        log.info("Active qos: {}", Arrays.toString(Qos.NAMES));
         switch (args[0]) {
             case "sp":
                 CompleteGraph.findSearchSpace(dataset);

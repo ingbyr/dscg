@@ -1,10 +1,5 @@
-package com.ingbyr.hwsc.dataset;
+package com.ingbyr.hwsc.common;
 
-import com.ingbyr.hwsc.common.Concept;
-import com.ingbyr.hwsc.common.Param;
-import com.ingbyr.hwsc.common.Service;
-import com.ingbyr.hwsc.common.Thing;
-import com.ingbyr.hwsc.dataset.util.XMLFileUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.dom4j.DocumentException;

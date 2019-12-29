@@ -2,7 +2,7 @@ package com.hwsc.dataprocessor.searching;
 
 import com.ingbyr.hwsc.common.Concept;
 import com.ingbyr.hwsc.common.Service;
-import com.ingbyr.hwsc.dataset.DataSetReader;
+import com.ingbyr.hwsc.common.DataSetReader;
 import lombok.extern.slf4j.Slf4j;
 import com.hwsc.dataprocessor.models.PlanningGraph;
 
