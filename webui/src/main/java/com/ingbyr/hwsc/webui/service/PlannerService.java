@@ -3,7 +3,7 @@ package com.ingbyr.hwsc.webui.service;
 import com.ingbyr.hwsc.planner.Planner;
 import com.ingbyr.hwsc.planner.PlannerAnalyzer;
 import com.ingbyr.hwsc.planner.PlannerConfig;
-import com.ingbyr.hwsc.planner.exception.DAEXConfigException;
+import com.ingbyr.hwsc.planner.exception.HWSCConfigException;
 import com.ingbyr.hwsc.webui.dao.PlannerDao;
 import com.ingbyr.hwsc.webui.model.MemoryDatasetReader;
 import lombok.extern.slf4j.Slf4j;
@@ -37,11 +37,12 @@ public class PlannerService {
         return plannerDao.loadConfig();
     }
 
-    public PlannerAnalyzer exec(PlannerConfig config) throws DAEXConfigException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public PlannerAnalyzer exec(PlannerConfig config) throws HWSCConfigException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        // TODO
         Planner planner = new Planner();
-        planner.setup(config, memoryDatasetReader);
-        planner.setStepMsgHandler(plannerStepMsgHandlerService);
-        planner.exec();
+//        planner.setup(config, memoryDatasetReader);
+//        planner.setStepMsgHandler(plannerStepMsgHandlerService);
+//        planner.exec();
         return planner.getAnalyzer();
     }
 }

@@ -15,7 +15,7 @@ import java.util.Set;
 @Slf4j
 public class MutationAddConcept implements Mutation {
 
-    Context context;
+    HeuristicInfo heuristicInfo;
 
     double pChange;
 
@@ -39,7 +39,7 @@ public class MutationAddConcept implements Mutation {
         if (mutated)
             log.debug("Create {}", individual);
         else {
-            log.warn("Can not add/change concept of {}", individual);
+            log.debug("Can not add/change concept of {}", individual);
         }
         return mutated;
     }
@@ -59,9 +59,9 @@ public class MutationAddConcept implements Mutation {
     }
 
     private boolean addRandomConcepts(State state, int t) {
-        Set<Concept> remainingConcepts = Sets.difference(context.conceptsAtTime.get(t), state.concepts);
+        Set<Concept> remainingConcepts = Sets.difference(heuristicInfo.conceptsAtTime.get(t), state.concepts);
         if (remainingConcepts.size() == 0) {
-            log.warn("Abort to mutation because that all concepts are included");
+            log.debug("Abort to mutation because that all concepts are included");
             return false;
         }
         Concept newConcept = UniformUtils.oneFromSet(remainingConcepts);

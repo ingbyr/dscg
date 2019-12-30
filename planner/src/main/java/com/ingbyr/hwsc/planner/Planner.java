@@ -1,10 +1,9 @@
 package com.ingbyr.hwsc.planner;
 
 import com.ingbyr.hwsc.common.DataSetReader;
-import com.ingbyr.hwsc.common.Qos;
 import com.ingbyr.hwsc.common.Service;
 import com.ingbyr.hwsc.common.XMLDataSetReader;
-import com.ingbyr.hwsc.planner.exception.DAEXConfigException;
+import com.ingbyr.hwsc.planner.exception.HWSCConfigException;
 import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
 import com.ingbyr.hwsc.planner.innerplanner.yashp2.InnerPlannerYashp2;
 import com.ingbyr.hwsc.planner.utils.UniformUtils;
@@ -14,6 +13,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ public class Planner {
 
     private PlannerConfig config;
 
-    private Context context;
+    private HeuristicInfo heuristicInfo;
 
     private IndividualGenerator individualGenerator;
 
@@ -45,11 +45,15 @@ public class Planner {
 
     private Mutations mutations;
 
+    private Fitness fitness;
+
     private SurvivalSelector survivalSelector;
 
     private PlannerAnalyzer analyzer;
 
-    private String popIndicator;
+    private double popIndicator;
+
+    private PlannerIndicator plannerIndicator;
 
     private BlockingQueue<Service> serviceToAddQueue;
 
@@ -59,15 +63,14 @@ public class Planner {
     private StepMsgHandler stepMsgHandler;
 
     public void exec() {
+        resetAnalyzer();
 
-        beforeExec();
-
-        log.info("Create initial population");
+        analyzer.recordStartTime();
         // Generate population
         List<Individual> population = new ArrayList<>(config.getPopulationSize());
 
         // Get max state size
-        int candidateStartTimesSize = context.candidateStartTimes.length;
+        int candidateStartTimesSize = heuristicInfo.candidateStartTimes.length;
         int stateSize = Math.min(candidateStartTimesSize, config.getMaxStateSize());
 
         for (int i = 0; i < config.getPopulationSize(); i++) {
@@ -121,11 +124,11 @@ public class Planner {
             population = survivalSelector.filter(population, offspring);
 
             // Analyze current step
-            String currentPopIndicator = analyzer.recordStepInfo(population);
+            double currentPopIndicator = analyzer.recordStepInfo(population);
 
             // Check the termination condition
             if (config.isEnableAutoStop()) {
-                if (currentPopIndicator.equals(popIndicator)) {
+                if (currentPopIndicator == popIndicator) {
                     if (++stopStepCount >= config.getAutoStopStep()) {
                         log.info("Auto stop process because of no improvements");
                         break;
@@ -138,7 +141,14 @@ public class Planner {
         }
 
         log.info("Process is finished");
-        afterExec();
+
+        analyzer.recordEndTime();
+        analyzer.setLastPop(population);
+        analyzer.displayLogOnConsole();
+
+        if (config.isSaveToFile()) {
+            analyzer.saveLog2File();
+        }
     }
 
     private void monitorServiceStatus(List<Individual> population) {
@@ -202,34 +212,25 @@ public class Planner {
         return newIndividual;
     }
 
-    protected void beforeExec() {
-        analyzer.recordStartTime();
-
-        // Check components
-        if (stepMsgHandler == null) {
-            stepMsgHandler = new StepMsgHandlerDefault();
-            log.info("Not found step msg handler, so set to default");
-        }
-    }
-
-    protected void afterExec() {
-        log.info("================Analyzer================");
-        analyzer.recordEndTime();
-        analyzer.displayLogOnConsole();
-    }
-
-    private void checkPlannerConfig(PlannerConfig config) throws DAEXConfigException {
+    private void checkPlannerConfig(PlannerConfig config) throws HWSCConfigException {
         log.info("Check the planner config {}", config);
         if (config.getPopulationSize() + config.getOffspringSize() < config.getSurvivalSize())
-            throw new DAEXConfigException("populationSize + offspringSize < survivalSize");
+            throw new HWSCConfigException("populationSize + offspringSize < survivalSize");
     }
 
-    public void setup(PlannerConfig plannerConfig, DataSetReader reader) throws DAEXConfigException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    private void resetAnalyzer() {
+        analyzer = new PlannerAnalyzer();
+        analyzer.setDataset(config.getDataset());
+        analyzer.setFitness(fitness);
+        analyzer.setIndicator(plannerIndicator);
+    }
+
+    public void setup(PlannerConfig plannerConfig, DataSetReader reader) throws HWSCConfigException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, IOException {
         //Reset global id for individual
         Individual.globalId = 0;
 
         // Reset GD
-        this.popIndicator = "";
+        this.popIndicator = Double.MAX_VALUE;
 
         // If already setup then skip
         if (plannerConfig != null && plannerConfig.equals(this.config))
@@ -248,40 +249,34 @@ public class Planner {
         evaluator.setInnerPlannerMaxStep(config.getInnerPlanMaxStep());
         evaluator.setMaxStateSize(config.getMaxStateSize());
 
-        context = new Context();
-        context.setup(this.dataSetReader);
+        heuristicInfo = new HeuristicInfo();
+        heuristicInfo.setup(this.dataSetReader);
 
-        individualGenerator = new IndividualGenerator(this.dataSetReader, context);
+        individualGenerator = new IndividualGenerator(this.dataSetReader, heuristicInfo);
 
         crossover = new CrossoverSwapState();
 
         mutations = new Mutations();
         mutations.addMutation(
-                new MutationAddState(context, config.getMutationAddStateRadius()),
+                new MutationAddState(heuristicInfo, config.getMutationAddStateRadius()),
                 config.getMutationAddStateWeight());
         mutations.addMutation(
-                new MutationAddConcept(context,
+                new MutationAddConcept(heuristicInfo,
                         config.getMutationAddConceptChangePossibility(),
                         config.getMutationAddConceptAddPossibility()),
                 config.getMutationAddConceptWeight());
         mutations.addMutation(new MutationDelState(), config.getMutationDelStateWeight());
         mutations.addMutation(new MutationDelConcept(), config.getMutationDelConceptWeight());
 
-        Fitness fitness = (Fitness) Class.forName(PlannerConfig.FITNESS_CLASS_PREFIX + config.getFitness())
+        fitness = (Fitness) Class.forName(PlannerConfig.FITNESS_CLASS_PREFIX + config.getFitness())
                 .getDeclaredConstructor().newInstance();
         survivalSelector = new SurvivalSelector(config.getSurvivalSize(), fitness);
 
-        analyzer = new PlannerAnalyzer();
-        analyzer.setDataset(config.getDataset());
-        analyzer.setSave2file(config.saveToFile);
-        analyzer.setFitness(fitness);
-    }
+        if (stepMsgHandler == null) {
+            stepMsgHandler = new StepMsgHandlerDefault();
+            log.info("Not found step msg handler, so set to default");
+        }
 
-    public static void main(String[] args) throws ConfigurationException, DAEXConfigException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        PlannerConfig config = new PlannerConfigFile();
-        log.debug("{}", config);
-        Planner planner = new Planner();
-        planner.setup(config, new XMLDataSetReader());
-        planner.exec();
+        plannerIndicator = new PlannerIndicator(config.getDataset());
     }
 }

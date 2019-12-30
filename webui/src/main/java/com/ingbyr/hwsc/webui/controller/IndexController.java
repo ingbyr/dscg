@@ -33,7 +33,6 @@ public class IndexController {
         model.addAttribute("dataset_list", Dataset.values());
         System.out.println(Arrays.toString(Evaluators.values()));
         model.addAttribute("evaluators", Evaluators.values());
-        model.addAttribute("indicators", Fitness.getAllNames());
         log.debug("Load planner config {}", config);
         return "index";
     }

@@ -25,10 +25,10 @@ class EvaluatorGoalDistanceConcurrentTest {
         evaluator.setMaxStateSize(10);
         evaluator.setInnerPlannerMaxStep(10);
 
-        Context context = new Context();
-        context.setup(dataSetReader);
+        HeuristicInfo heuristicInfo = new HeuristicInfo();
+        heuristicInfo.setup(dataSetReader);
 
-        IndividualGenerator individualGenerator = new IndividualGenerator(dataSetReader, context);
+        IndividualGenerator individualGenerator = new IndividualGenerator(dataSetReader, heuristicInfo);
 
         Individual individual = individualGenerator.generate(-1);
         List<Individual> individuals = new ArrayList<>();

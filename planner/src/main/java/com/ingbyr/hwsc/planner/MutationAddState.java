@@ -12,7 +12,7 @@ import java.util.Set;
 @Slf4j
 public class MutationAddState implements Mutation {
 
-    private Context context;
+    private HeuristicInfo heuristicInfo;
 
     private int radius;
 
@@ -25,7 +25,7 @@ public class MutationAddState implements Mutation {
         log.trace("Mutate at {} of {}", selectedStateIndex, individual);
 
         if (t2 == t1 + 1 || t2 <= t1) {
-            log.warn("Mutation is aborted because of state[{}] is next to state[{}]", t1, t2);
+            log.debug("Mutation is aborted because of state[{}] is next to state[{}]", t1, t2);
             return false;
         }
 
@@ -42,17 +42,17 @@ public class MutationAddState implements Mutation {
 
     private State neighbourhoodState(int t) {
         int l = Math.max(1, t - (2 * radius + 1));
-        int r = Math.min(context.time, t + (2 * radius + 1));
+        int r = Math.min(heuristicInfo.time, t + (2 * radius + 1));
         log.trace("Mutate selected time is {} , and select concepts in time [{}, {}]", t, l, r);
 
         if (l == r) {
-            log.warn("Mutation is aborted because of no available concepts");
+            log.debug("Mutation is aborted because of no available concepts");
             return null;
         }
 
         Set<Concept> neighbourhoodConcepts = new HashSet<>();
         for (int i = l; i < r; i++) {
-            neighbourhoodConcepts.addAll(context.conceptsAtTime.get(i));
+            neighbourhoodConcepts.addAll(heuristicInfo.conceptsAtTime.get(i));
         }
 
         int stateSize = UniformUtils.rangeIE(1, neighbourhoodConcepts.size());
@@ -60,7 +60,7 @@ public class MutationAddState implements Mutation {
 
         int newTime = t;
         for (Concept concept : concepts) {
-            newTime = Math.max(context.earliestTimeOfConcept.get(concept), newTime);
+            newTime = Math.max(heuristicInfo.earliestTimeOfConcept.get(concept), newTime);
         }
 
         return new State(concepts, newTime);

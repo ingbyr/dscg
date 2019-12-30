@@ -10,8 +10,6 @@ import java.nio.file.Paths;
  */
 public final class WorkDir {
 
-    public static final Path CURRENT_DIR = Paths.get(System.getProperty("user.dir"));
-
     public static final Path WORK_DIR = Paths.get(System.getenv("HWSC_WORK_DIR"));
 
     public static final Path DATASET_DIR = WORK_DIR.resolve("dataset");
@@ -19,6 +17,8 @@ public final class WorkDir {
     public static final Path LOG_DIR = WORK_DIR.resolve("log");
 
     public static final Path RESULT_DIR = WORK_DIR.resolve("result");
+
+    public static final Path PLANNER_LOG_DIR = WORK_DIR.resolve("result").resolve("planner").resolve("log.txt");
 
     private static final String ACTIVE_QOS = String.join("_", Qos.NAMES);
 
@@ -42,15 +42,19 @@ public final class WorkDir {
         }
     }
 
-    public static Path getRawQosSearchSpaceFile(String dataset) {
-        return WorkDir.QOS_SP_DIR.resolve("raw_" + dataset + ".txt");
-    }
-
-    public static Path getQosSearchSpaceFile(String dataset) {
+    public static Path getSearchSpaceFile(String dataset) {
         return WorkDir.QOS_SP_DIR.resolve(dataset + ".txt");
     }
 
-    public static Path getQosParetoFrontFile(String dataset) {
+    public static Path getSearchSpaceFile(String dataset, String type) {
+        return WorkDir.QOS_SP_DIR.resolve(dataset + "_" + type + ".txt");
+    }
+
+    public static Path getParetoFrontFile(String dataset) {
         return WorkDir.QOS_PF_DIR.resolve(dataset + ".txt");
+    }
+
+    public static Path getParetoFrontFile(String dataset, String type) {
+        return WorkDir.QOS_PF_DIR.resolve(dataset + "_" + type + ".txt");
     }
 }

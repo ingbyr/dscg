@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,14 +21,16 @@ public final class PlannerIndicator {
 
     private List<Qos> pf;
 
-    public PlannerIndicator(Dataset dataset) {
+    public PlannerIndicator(Dataset dataset) throws IOException {
         this.dataset = dataset;
-        Path pfFilePath = WorkDir.getQosParetoFrontFile(dataset.name());
-        log.debug("Load pareto front data from {}", pfFilePath);
-        try {
+        Path pfFilePath = WorkDir.getParetoFrontFile(dataset.name());
+        if (Files.exists(pfFilePath)) {
+            log.info("Load pareto front data from {}", pfFilePath);
             this.pf = Files.readAllLines(pfFilePath).stream().map(Qos::ofNumpyFormat).collect(Collectors.toList());
-        } catch (IOException e) {
-            e.printStackTrace();
+        } else {
+            log.info("No pareto front data, so add one zero vector");
+            this.pf = new LinkedList<>();
+            this.pf.add(new Qos(0.0));
         }
     }
 
@@ -53,8 +56,8 @@ public final class PlannerIndicator {
      * @return Pareto front population
      */
     private static List<Individual> popParetoFront(List<Individual> pop) {
-        return pop;
-//        return pop.stream().filter(ind -> ind.getFitness() == 0.0).collect(Collectors.toList());
+        double min = pop.get(0).getFitness();
+        return pop.stream().filter(ind -> ind.getFitness() == min).collect(Collectors.toList());
     }
 
     /**

@@ -5,7 +5,7 @@ import com.google.common.collect.Sets;
 import com.ingbyr.hwsc.common.Concept;
 import com.ingbyr.hwsc.common.NamedObject;
 import com.ingbyr.hwsc.common.Service;
-import com.ingbyr.hwsc.planner.Solution;
+import com.ingbyr.hwsc.planner.innerplanner.Solution;
 import com.ingbyr.hwsc.planner.State;
 import com.ingbyr.hwsc.planner.innerplanner.AbstractInnerPlanner;
 import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;

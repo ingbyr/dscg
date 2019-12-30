@@ -1,15 +1,14 @@
 package com.ingbyr.hwsc.planner;
 
-import com.ingbyr.hwsc.common.Concept;
-import com.ingbyr.hwsc.common.Dataset;
-import com.ingbyr.hwsc.common.Qos;
-import com.ingbyr.hwsc.common.Service;
+import com.ingbyr.hwsc.common.*;
 import com.ingbyr.hwsc.planner.exception.NotValidSolutionException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashSet;
@@ -27,6 +26,7 @@ public class PlannerAnalyzer {
 
     // Log
     List<List<Qos>> QosLog = new LinkedList<>();
+    List<Qos> BestQosLog = new LinkedList<>();
     List<Double> GDLog = new LinkedList<>();
     List<Double> IGDLog = new LinkedList<>();
 
@@ -40,21 +40,18 @@ public class PlannerAnalyzer {
     private double runtime;
 
     @Getter
+    @Setter
     private Dataset dataset;
 
     @Setter
-    @Getter
-    private boolean save2file;
-
     private PlannerIndicator indicator;
 
     @Setter
     private Fitness fitness;
 
-    public void setDataset(Dataset dataset) {
-        this.dataset = dataset;
-        this.indicator = new PlannerIndicator(dataset);
-    }
+    @Setter
+    @Getter
+    private List<Individual> lastPop;
 
     /**
      * Record every step pop info and return GD as indicator of pop
@@ -62,7 +59,7 @@ public class PlannerAnalyzer {
      * @param pop Population
      * @return The GD of pop
      */
-    public String recordStepInfo(List<Individual> pop) {
+    public Double recordStepInfo(List<Individual> pop) {
         QosLog.add(pop.stream().map(Individual::getQos).collect(Collectors.toList()));
 
         log.debug("Population :");
@@ -70,18 +67,19 @@ public class PlannerAnalyzer {
             log.debug("{}", individual.toSimpleInfo());
         }
 
-        double stepGD = indicator.GD(pop);
-        log.info("GD: {}", stepGD);
-        GDLog.add(stepGD);
-
-        double stepIGD = indicator.IGD(pop);
-        log.info("IGD: {}", stepIGD);
-        IGDLog.add(stepIGD);
-
         if (fitness instanceof FitnessParetoFront) {
-            return String.valueOf(stepGD);
+            double stepGD = indicator.GD(pop);
+            log.debug("GD: {}", stepGD);
+            GDLog.add(stepGD);
+            // TODO disable in bench
+//            double stepIGD = indicator.IGD(pop);
+//            log.debug("IGD: {}", stepIGD);
+//            IGDLog.add(stepIGD);
+
+            return stepGD;
         } else {
-            return pop.get(0).getQos().toString();
+            BestQosLog.add(pop.get(0).getQos());
+            return (double) pop.get(0).getId();
         }
     }
 
@@ -96,23 +94,17 @@ public class PlannerAnalyzer {
 
     public void displayLogOnConsole() {
         log.info("Time used {} seconds", getRuntime());
+        log.info("Last population:");
+        for (Individual ind : lastPop) {
+            log.info("{}", ind.toSimpleInfo());
+        }
 
-        log.info("GD (Generational distance): ");
-        System.out.println(GDLog);
-
-        log.info("IGD (Inverted Generational Distance): ");
-        System.out.println(IGDLog);
-    }
-
-    public static void displayPopulation(List<Individual> individuals) {
-        log.debug("Current population:");
-        individuals.forEach(individual -> {
-            Integer id = individual.getId();
-            log.debug("[{}] Individual {}", id, individual);
-            log.debug("[{}] Services {}", id, individual.getServices());
-            log.debug("[{}] Fitness {}, {}", id, individual.getFitness(), individual.getQos());
-            log.debug("");
-        });
+        if (fitness instanceof FitnessParetoFront) {
+            log.info("GD: {}", GDLog);
+            log.info("IGD: {}", IGDLog);
+        } else {
+            log.info("Best qos log: {}", BestQosLog);
+        }
     }
 
     public static void checkSolution(Set<Concept> input, Set<Concept> goal, List<Service> services) throws NotValidSolutionException {
@@ -134,4 +126,7 @@ public class PlannerAnalyzer {
         log.debug("The solution is valid");
     }
 
+    public void saveLog2File() {
+        // TODO
+    }
 }

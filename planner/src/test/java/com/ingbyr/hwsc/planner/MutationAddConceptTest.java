@@ -14,14 +14,14 @@ class MutationAddConceptTest {
     void mutate() {
         DataSetReader dataSetReader = new XMLDataSetReader(Dataset.wsc2009_01);
 
-        Context context = new Context();
-        context.setup(dataSetReader);
+        HeuristicInfo heuristicInfo = new HeuristicInfo();
+        heuristicInfo.setup(dataSetReader);
 
-        IndividualGenerator individualGenerator = new IndividualGenerator(dataSetReader, context);
+        IndividualGenerator individualGenerator = new IndividualGenerator(dataSetReader, heuristicInfo);
         Individual individual = individualGenerator.generate(3);
         individual.lastReachedStateIndex = 2;
 
-        Mutation mutation = new MutationAddConcept(context, 0.5, 0.5);
+        Mutation mutation = new MutationAddConcept(heuristicInfo, 0.5, 0.5);
         mutation.mutate(individual);
     }
 }

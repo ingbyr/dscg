@@ -11,14 +11,14 @@ class MutationAddStateTest {
     void mutate() {
         DataSetReader dataSetReader = new XMLDataSetReader(Dataset.wsc2009_01);
 
-        Context context = new Context();
-        context.setup(dataSetReader);
+        HeuristicInfo heuristicInfo = new HeuristicInfo();
+        heuristicInfo.setup(dataSetReader);
 
-        IndividualGenerator individualGenerator = new IndividualGenerator(dataSetReader, context);
+        IndividualGenerator individualGenerator = new IndividualGenerator(dataSetReader, heuristicInfo);
         Individual individual = individualGenerator.generate(3);
         individual.lastReachedStateIndex = 2;
 
-        Mutation mutation = new MutationAddState(context, 0);
+        Mutation mutation = new MutationAddState(heuristicInfo, 0);
         for (int i = 0; i < 10; i++) {
             mutation.mutate(individual);
         }

@@ -2,7 +2,7 @@ package com.ingbyr.hwsc.planner.innerplanner.yashp2;
 
 import com.ingbyr.hwsc.planner.PlannerAnalyzer;
 import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
-import com.ingbyr.hwsc.planner.Solution;
+import com.ingbyr.hwsc.planner.innerplanner.Solution;
 import com.ingbyr.hwsc.common.Dataset;
 import com.ingbyr.hwsc.common.DataSetReader;
 import com.ingbyr.hwsc.common.XMLDataSetReader;

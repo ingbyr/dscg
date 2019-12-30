@@ -1,5 +1,5 @@
 rootProject.name = 'hwsc'
 include 'common'
-include 'dp'
+include 'bench'
 include 'planner'
 include 'webui'

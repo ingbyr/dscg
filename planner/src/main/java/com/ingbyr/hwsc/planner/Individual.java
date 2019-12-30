@@ -3,11 +3,12 @@ package com.ingbyr.hwsc.planner;
 import com.google.common.collect.Lists;
 import com.ingbyr.hwsc.common.Concept;
 import com.ingbyr.hwsc.common.Qos;
-import com.ingbyr.hwsc.common.Service;
 import com.ingbyr.hwsc.common.QosUtils;
+import com.ingbyr.hwsc.common.Service;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Slf4j
+@ToString
 public class Individual implements Comparable<Individual> {
 
     static int globalId = 0;
@@ -145,24 +147,15 @@ public class Individual implements Comparable<Individual> {
         else return Double.compare(this.fitness, another.fitness);
     }
 
-    @Override
-    public String toString() {
-        return "Ind{" +
-                "S=" + states +
-                ", id=" + id +
-                ", w=" + services +
-                ", q=" + qos +
-                ", sl=" + lastReachedStateIndex +
-                ", f=" + isFeasible +
-                ", F=" + fitness +
-                '}';
-    }
-
     public String toSimpleInfo() {
         return "Ind{id=" + id +
                 ", q=" + qos +
                 ", f=" + isFeasible +
                 ", F=" + fitness +
                 '}';
+    }
+
+    public String toStatesStr() {
+        return states.toString();
     }
 }

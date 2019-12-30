@@ -3,6 +3,7 @@ package com.ingbyr.hwsc.planner;
 import com.ingbyr.hwsc.common.Concept;
 import com.ingbyr.hwsc.common.Service;
 import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
+import com.ingbyr.hwsc.planner.innerplanner.Solution;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;

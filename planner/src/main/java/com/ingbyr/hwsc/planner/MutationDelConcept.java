@@ -14,7 +14,7 @@ public class MutationDelConcept implements Mutation {
         int selectedStateIndex = UniformUtils.rangeII(1, Math.min(individual.getStateSize() - 1, individual.lastReachedStateIndex + 1));
         State selectedState = individual.getState(selectedStateIndex);
         if (selectedState.concepts.size() <= 1) {
-            log.warn("Abort to mutation because of atom size <= 1");
+            log.debug("Abort to mutation because of atom size <= 1");
             return false;
         }
         Concept removedConcept = UniformUtils.oneFromSet(selectedState.concepts);

@@ -1,0 +1,31 @@
+<configuration debug="false">
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%-5level %boldGreen([%logger{0}]) %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.hwsc.models.CompletePlaningGraph" level="off"/>
+    <logger name="com.hwsc.searching.GeneratePlanningGraph" level="off"/>
+    <logger name="com.ingbyr.hwsc.reader.XMLDataSetReader" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.innerplanner.yashp2" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.MutationAddState" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.MutationDelState" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.MutationAddConcept" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.MutationDelConcept" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.CrossoverSwapState" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.EvaluatorGoalDistance" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.EvaluatorGoalDistanceConcurrent" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.IndividualGenerator" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.SurvivalSelector" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.FitnessLinearAggregation" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.FitnessBinaryIndicator" level="off"/>
+<!--    <logger name="com.ingbyr.hwsc.planner.FitnessParetoFront" level="off"/>-->
+<!--    <logger name="com.ingbyr.hwsc.planner.PlannerAnalyzer" level="off"/>-->
+
+    <root level="info">
+        <appender-ref ref="console"/>
+    </root>
+
+</configuration>
