@@ -27,7 +27,7 @@ import java.util.Set;
 @ToString
 public class Individual implements Comparable<Individual> {
 
-    static int globalId = 0;
+    static long globalId = 0;
 
     /**
      * State list
@@ -38,7 +38,7 @@ public class Individual implements Comparable<Individual> {
      * Id
      */
     @EqualsAndHashCode.Exclude
-    private int id;
+    private long id;
 
     /**
      * Services that can be executed in this states
@@ -51,6 +51,12 @@ public class Individual implements Comparable<Individual> {
      */
     @EqualsAndHashCode.Exclude
     private Qos qos = null;
+
+    /**
+     * Raw qos from services
+     */
+    @EqualsAndHashCode.Exclude
+    private Qos rawQos = null;
 
     /**
      * State index that can be reached by executing the services
@@ -74,10 +80,6 @@ public class Individual implements Comparable<Individual> {
 
     public Individual() {
         this.id = globalId++;
-    }
-
-    public void offsetFitness(double offset) {
-        fitness += offset;
     }
 
     public Individual copy() {
@@ -129,7 +131,9 @@ public class Individual implements Comparable<Individual> {
 
         this.services = services;
         this.qos = QosUtils.mergeQos(services);
-        log.trace("{} scaled {}", id, qos);
+        log.trace("{} qos {}", id, qos);
+        this.rawQos = QosUtils.mergeRawQos(services);
+        log.trace("{} raw qos {}", id, rawQos);
     }
 
     /**

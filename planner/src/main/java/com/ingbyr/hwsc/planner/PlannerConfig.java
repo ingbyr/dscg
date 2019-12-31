@@ -38,8 +38,6 @@ public class PlannerConfig {
 
     protected int autoStopStep;
 
-    protected boolean saveToFile;
-
     // Mutation config
     protected int mutationAddStateRadius;
 

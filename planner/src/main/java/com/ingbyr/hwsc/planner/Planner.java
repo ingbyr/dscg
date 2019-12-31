@@ -2,7 +2,6 @@ package com.ingbyr.hwsc.planner;
 
 import com.ingbyr.hwsc.common.DataSetReader;
 import com.ingbyr.hwsc.common.Service;
-import com.ingbyr.hwsc.common.XMLDataSetReader;
 import com.ingbyr.hwsc.planner.exception.HWSCConfigException;
 import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
 import com.ingbyr.hwsc.planner.innerplanner.yashp2.InnerPlannerYashp2;
@@ -11,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.configuration2.ex.ConfigurationException;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -85,7 +83,8 @@ public class Planner {
         log.info("Start processing ...");
         // Start process
         int stopStepCount = 0;
-        for (int gen = 0; gen < config.getMaxGen(); gen++) {
+        int gen = 0;
+        for (; gen < config.getMaxGen(); gen++) {
 
             // Build step message
             StringBuilder stepMsg = new StringBuilder();
@@ -95,12 +94,12 @@ public class Planner {
             stepMsg.append(config.getMaxGen());
             stepMsg.append(")");
 
-            // Step message callback function
             log.info("{}", stepMsg.toString());
-            stepMsgHandler.handle(stepMsg.toString());
+            // Step message callback function
+//            stepMsgHandler.handle(stepMsg.toString());
 
-            // Monitor service add or remove operation
-            monitorServiceStatus(population);
+//            // Monitor service add or remove operation
+//            monitorServiceStatus(population);
 
             // Create offspring
             List<Individual> offspring = new ArrayList<>(config.getOffspringSize());
@@ -144,11 +143,8 @@ public class Planner {
 
         analyzer.recordEndTime();
         analyzer.setLastPop(population);
+        analyzer.setGen(gen);
         analyzer.displayLogOnConsole();
-
-        if (config.isSaveToFile()) {
-            analyzer.saveLog2File();
-        }
     }
 
     private void monitorServiceStatus(List<Individual> population) {
@@ -223,6 +219,7 @@ public class Planner {
         analyzer.setDataset(config.getDataset());
         analyzer.setFitness(fitness);
         analyzer.setIndicator(plannerIndicator);
+        Individual.globalId = 0;
     }
 
     public void setup(PlannerConfig plannerConfig, DataSetReader reader) throws HWSCConfigException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, IOException {

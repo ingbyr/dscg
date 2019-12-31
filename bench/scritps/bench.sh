@@ -4,5 +4,5 @@ declare -a sets=("wsc2008_01" "wsc2008_02" "wsc2008_03" "wsc2008_04" "wsc2008_05
 for data in "${sets[@]}"
 do
         java -jar bench-1.0.jar -t sp:hwsc -b "$bench" -d "$data"
-        java -jar bench-1.0.jar -t pf:hwsc -d "$data"
+        java -jar bench-1.0.jar -t pf -d "$data"
 done

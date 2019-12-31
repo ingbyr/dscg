@@ -1,20 +1,17 @@
 package com.ingbyr.hwsc.planner;
 
-import com.ingbyr.hwsc.common.*;
-import com.ingbyr.hwsc.planner.exception.NotValidSolutionException;
+import com.ingbyr.hwsc.common.Dataset;
+import com.ingbyr.hwsc.common.MemoryUtils;
+import com.ingbyr.hwsc.common.Qos;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -25,10 +22,15 @@ import java.util.stream.Collectors;
 public class PlannerAnalyzer {
 
     // Log
-    List<List<Qos>> QosLog = new LinkedList<>();
-    List<Qos> BestQosLog = new LinkedList<>();
+    List<List<Qos>> qosLog = new LinkedList<>();
+    List<List<Qos>> rawQosLog = new LinkedList<>();
+    List<Qos> bestQosLog = new LinkedList<>();
     List<Double> GDLog = new LinkedList<>();
     List<Double> IGDLog = new LinkedList<>();
+    List<Long> memoryLog = new LinkedList<>();
+
+    @Getter
+    private PlannerResult result = new PlannerResult();
 
     @Getter
     private Instant startTime;
@@ -60,12 +62,15 @@ public class PlannerAnalyzer {
      * @return The GD of pop
      */
     public Double recordStepInfo(List<Individual> pop) {
-        QosLog.add(pop.stream().map(Individual::getQos).collect(Collectors.toList()));
+        qosLog.add(pop.stream().map(Individual::getQos).collect(Collectors.toList()));
+        rawQosLog.add(pop.stream().map(Individual::getQos).collect(Collectors.toList()));
 
         log.debug("Population :");
         for (Individual individual : pop) {
             log.debug("{}", individual.toSimpleInfo());
         }
+
+        memoryLog.add(MemoryUtils.currentUsedMemory());
 
         if (fitness instanceof FitnessParetoFront) {
             double stepGD = indicator.GD(pop);
@@ -78,9 +83,11 @@ public class PlannerAnalyzer {
 
             return stepGD;
         } else {
-            BestQosLog.add(pop.get(0).getQos());
+            bestQosLog.add(pop.get(0).getQos());
             return (double) pop.get(0).getId();
         }
+
+
     }
 
     void recordStartTime() {
@@ -90,43 +97,27 @@ public class PlannerAnalyzer {
     void recordEndTime() {
         endTime = Instant.now();
         runtime = Duration.between(startTime, endTime).toMillis() / 1000.0;
+        result.setIndNum(Individual.globalId);
+        result.setRuntime(runtime);
+        result.setMemoryLog(memoryLog);
     }
 
     public void displayLogOnConsole() {
         log.info("Time used {} seconds", getRuntime());
-        log.info("Last population:");
+        log.debug("Last population:");
         for (Individual ind : lastPop) {
-            log.info("{}", ind.toSimpleInfo());
+            log.debug("{}", ind.toSimpleInfo());
         }
 
         if (fitness instanceof FitnessParetoFront) {
             log.info("GD: {}", GDLog);
             log.info("IGD: {}", IGDLog);
         } else {
-            log.info("Best qos log: {}", BestQosLog);
+            log.info("Best qos log: {}", bestQosLog);
         }
     }
 
-    public static void checkSolution(Set<Concept> input, Set<Concept> goal, List<Service> services) throws NotValidSolutionException {
-        if (services == null) {
-            log.error("Service list is null");
-            return;
-        }
-
-        Set<Concept> concepts = new HashSet<>(input);
-        for (Service service : services) {
-            if (!concepts.containsAll(service.getInputConceptSet()))
-                throw new NotValidSolutionException("Service " + service + " can not proceed because that some input concepts not existed");
-            concepts.addAll(service.getOutputConceptSet());
-        }
-
-        if (!concepts.containsAll(goal))
-            throw new NotValidSolutionException("Some goals are not contained when finishing execution");
-
-        log.debug("The solution is valid");
-    }
-
-    public void saveLog2File() {
-        // TODO
+    public void setGen(int gen) {
+        result.setGen(gen);
     }
 }

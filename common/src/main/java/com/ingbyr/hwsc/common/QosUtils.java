@@ -20,36 +20,14 @@ public class QosUtils {
         return qos;
     }
 
-    public static Qos mergeOriginQos(Collection<Service> services) {
-        Qos qos = new Qos();
-        // Update qos
+    public static Qos mergeRawQos(Collection<Service> services) {
+        Qos rawQos = new Qos();
+        // Update raw qos
         for (Service service : services) {
             for (int type : Qos.TYPES) {
-                    qos.set(type, qos.get(type) + service.getOriginQos().get(type));
+                    rawQos.set(type, rawQos.get(type) + service.getOriginQos().get(type));
             }
         }
-        return qos;
+        return rawQos;
     }
-
-//    public static Qos mergeOriginQos1(Collection<Service> services) {
-//        Qos qos = new Qos();
-//        // Update qos
-//        for (Service service : services) {
-//            for (int type : Qos.TYPES) {
-//                qos.set(type, qos.get(type) + service.getOriginQos().get(type));
-//            }
-//        }
-//        return qos;
-//    }
-
-//    public static Qos mergeOriginQos2(Collection<Service> services) {
-//        Qos qos = new Qos(1.0);
-//        // Update qos
-//        for (Service service : services) {
-//            for (int type : Qos.TYPES) {
-//                qos.set(type, qos.get(type) * (1 - service.getOriginQos().get(type)));
-//            }
-//        }
-//        return qos;
-//    }
 }

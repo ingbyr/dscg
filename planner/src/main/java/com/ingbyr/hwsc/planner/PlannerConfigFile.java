@@ -45,8 +45,6 @@ public final class PlannerConfigFile extends PlannerConfig {
 
     private static final String STOP_STEP = "stop_step";
 
-    private static final String SAVE_TO_FILE = "save_to_file";
-
     private static final String MUTATION_ADD_STATE_RADIUS = "mutation_add_state_radius";
 
     public static final String MUTATION_ADD_CONCEPT_ADD_POSSIBILITY = "mutation_add_concept_add_possibility";
@@ -84,7 +82,6 @@ public final class PlannerConfigFile extends PlannerConfig {
         enableAutoStop = config.getBoolean(ENABLE_AUTO_STOP);
         maxGen = config.getInt(MAX_GEN);
         autoStopStep = config.getInt(STOP_STEP);
-        saveToFile = config.getBoolean(SAVE_TO_FILE);
         mutationAddStateRadius = config.getInt(MUTATION_ADD_STATE_RADIUS);
         mutationAddConceptAddPossibility = config.getDouble(MUTATION_ADD_CONCEPT_ADD_POSSIBILITY);
         mutationAddConceptChangePossibility = config.getDouble(MUTATION_ADD_CONCEPT_CHANGE_POSSIBILITY);

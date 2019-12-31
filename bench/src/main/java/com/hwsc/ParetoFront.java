@@ -6,11 +6,15 @@ import com.ingbyr.hwsc.common.WorkDir;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -66,14 +70,22 @@ public final class ParetoFront {
         return hasBetter;
     }
 
-    public static void find(Dataset dataset, String type) throws IOException {
+    public static void find(Dataset dataset) throws IOException {
+        findFromFileData(WorkDir.getSearchSpaceFile(dataset.name()),
+                WorkDir.getParetoFrontFile(dataset.name()),
+                dataset);
+
+        findFromFileData(WorkDir.getRawSearchSpaceFile(dataset.name()),
+                WorkDir.getRawParetoFrontFile(dataset.name()),
+                dataset);
+    }
+
+    private static void findFromFileData(Path sourceFile, Path destFile, Dataset dataset) throws IOException {
         Set<QosLevel> dataSet = new HashSet<>();
-        Path dataPath = WorkDir.getSearchSpaceFile(dataset.name(), type);
-        log.info("Finding pareto front in {}", dataPath.getFileName());
-        try (Stream<String> fs = Files.lines(dataPath)) {
-            fs.forEach(data -> dataSet.add(new QosLevel(data)));
+        log.info("Load search space from {}", sourceFile.getFileName());
+        try (Stream<String> fs = Files.lines(sourceFile)) {
+            fs.filter(StringUtils::isNoneBlank).forEach(data -> dataSet.add(new QosLevel(data)));
         }
-        log.debug("Loaded {} data", dataSet.size());
 
         for (QosLevel q : dataSet) {
             boolean next = false;
@@ -96,9 +108,8 @@ public final class ParetoFront {
             pfData.append(data.toNumpy());
             pfData.append('\n');
         });
-        Path pfDataFile = WorkDir.getParetoFrontFile(dataset.name(), type);
-        Files.write(pfDataFile, pfData.toString().getBytes());
+        Files.write(destFile, pfData.toString().getBytes());
 
-        log.info("Save pareto front data to {}", pfDataFile.getFileName());
+        log.info("Save pareto front data to {}", destFile.getFileName());
     }
 }

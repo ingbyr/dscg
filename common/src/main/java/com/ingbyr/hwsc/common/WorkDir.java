@@ -18,7 +18,9 @@ public final class WorkDir {
 
     public static final Path RESULT_DIR = WORK_DIR.resolve("result");
 
-    public static final Path PLANNER_LOG_DIR = WORK_DIR.resolve("result").resolve("planner").resolve("log.txt");
+    public static final Path BENCH_RESULT_DIR = WORK_DIR.resolve("result").resolve("planner");
+
+    public static final Path PLANNER_LOG_DIR = BENCH_RESULT_DIR.resolve("log.txt");
 
     private static final String ACTIVE_QOS = String.join("_", Qos.NAMES);
 
@@ -30,6 +32,7 @@ public final class WorkDir {
     static {
         createDirIfNotExist(QOS_SP_DIR);
         createDirIfNotExist(QOS_PF_DIR);
+        createDirIfNotExist(BENCH_RESULT_DIR);
     }
 
     private static void createDirIfNotExist(Path dir) {
@@ -46,15 +49,19 @@ public final class WorkDir {
         return WorkDir.QOS_SP_DIR.resolve(dataset + ".txt");
     }
 
-    public static Path getSearchSpaceFile(String dataset, String type) {
-        return WorkDir.QOS_SP_DIR.resolve(dataset + "_" + type + ".txt");
+    public static Path getRawSearchSpaceFile(String dataset) {
+        return WorkDir.QOS_SP_DIR.resolve(dataset + "_raw.txt");
     }
 
     public static Path getParetoFrontFile(String dataset) {
         return WorkDir.QOS_PF_DIR.resolve(dataset + ".txt");
     }
 
-    public static Path getParetoFrontFile(String dataset, String type) {
-        return WorkDir.QOS_PF_DIR.resolve(dataset + "_" + type + ".txt");
+    public static Path getRawParetoFrontFile(String dataset) {
+        return WorkDir.QOS_PF_DIR.resolve(dataset + "_raw.txt");
+    }
+
+    public static Path getPlannerBenchFile(String dataset) {
+        return BENCH_RESULT_DIR.resolve(dataset + ".json");
     }
 }

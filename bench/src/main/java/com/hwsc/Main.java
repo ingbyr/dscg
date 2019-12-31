@@ -45,11 +45,8 @@ public class Main {
                 case "dj":
                     SearchSpace.findBestQoS(dataset, maxPreNode);
                     break;
-                case "pf:cpg":
-                    ParetoFront.find(dataset, "cpg");
-                    break;
-                case "pf:hwsc":
-                    ParetoFront.find(dataset, "hwsc");
+                case "pf":
+                    ParetoFront.find(dataset);
                     break;
                 default:
                     displayHelpInfo();
@@ -63,8 +60,7 @@ public class Main {
     private static void displayHelpInfo() {
         log.info("[-type, -t] sp:cpg (search space)");
         log.info("[-type, -t] sp:hwsc (best result by dijkstra)");
-        log.info("[-type, -t] pf:cpg (pareto front from cpg)");
-        log.info("[-type, -t] pf:hwsc (pareto front from hwsc)");
+        log.info("[-type, -t] pf (pareto front)");
         log.info("[-bench, -b: bench size");
         log.info("[-dataset, -d] dataset ("
                 + Arrays.stream(Dataset.values()).map(Enum::name).collect(Collectors.joining(",")) + ")");
