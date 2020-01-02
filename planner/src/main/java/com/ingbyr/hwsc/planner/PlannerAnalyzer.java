@@ -97,9 +97,9 @@ public class PlannerAnalyzer {
     void recordEndTime() {
         endTime = Instant.now();
         runtime = Duration.between(startTime, endTime).toMillis() / 1000.0;
-        result.setIndNum(Individual.globalId);
-        result.setRuntime(runtime);
-        result.setMemoryLog(memoryLog);
+        result.indNum = Individual.globalId;
+        result.runtime = runtime;
+        result.memoryLog = memoryLog;
     }
 
     public void displayLogOnConsole() {
@@ -118,6 +118,6 @@ public class PlannerAnalyzer {
     }
 
     public void setGen(int gen) {
-        result.setGen(gen);
+        result.gen = gen;
     }
 }

@@ -25,7 +25,7 @@ public class HeuristicInfo {
 
     int time = 0;
 
-    void setup(DataSetReader dataSetReader) {
+    boolean setup(DataSetReader dataSetReader) {
 
         conceptsAtTime = new HashMap<>();
         earliestTimeOfConcept = new HashMap<>();

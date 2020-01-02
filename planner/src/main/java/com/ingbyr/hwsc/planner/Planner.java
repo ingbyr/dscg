@@ -2,6 +2,7 @@ package com.ingbyr.hwsc.planner;
 
 import com.ingbyr.hwsc.common.DataSetReader;
 import com.ingbyr.hwsc.common.Service;
+import com.ingbyr.hwsc.common.XMLDataSetReader;
 import com.ingbyr.hwsc.planner.exception.HWSCConfigException;
 import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
 import com.ingbyr.hwsc.planner.innerplanner.yashp2.InnerPlannerYashp2;
@@ -10,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -275,5 +277,13 @@ public class Planner {
         }
 
         plannerIndicator = new PlannerIndicator(config.getDataset());
+    }
+
+    public static void main(String[] args) throws ConfigurationException, NoSuchMethodException, IOException, IllegalAccessException, HWSCConfigException, InstantiationException, InvocationTargetException, ClassNotFoundException {
+        PlannerConfig config = new PlannerConfigFile();
+        log.debug("{}", config);
+        Planner planner = new Planner();
+        planner.setup(config, new XMLDataSetReader());
+        planner.exec();
     }
 }

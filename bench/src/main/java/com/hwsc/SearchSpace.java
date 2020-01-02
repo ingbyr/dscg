@@ -100,7 +100,7 @@ public class SearchSpace {
         List<PlannerResult> plannerResultList = new LinkedList<>();
         try (FileOutputStream fos = new FileOutputStream(searchSpaceFile.toFile(), true);
              FileOutputStream rfos = new FileOutputStream(rawSearchSpaceFile.toFile(), true)) {
-            for (int b = 0; b < bench; b++) {
+            for (int b = -5; b < bench; b++) {
                 log.info("Bench {}/{}", b + 1, bench);
                 planner.exec();
                 PlannerAnalyzer analyzer = planner.getAnalyzer();
@@ -120,7 +120,7 @@ public class SearchSpace {
                 rfos.write('\n');
 
                 PlannerResult plannerResult = analyzer.getResult();
-                plannerResult.setBench(b);
+                plannerResult.bench = b;
                 plannerResultList.add(plannerResult);
             }
         }
