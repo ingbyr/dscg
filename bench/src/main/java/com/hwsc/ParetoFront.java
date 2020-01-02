@@ -72,15 +72,13 @@ public final class ParetoFront {
 
     public static void find(Dataset dataset) throws IOException {
         findFromFileData(WorkDir.getSearchSpaceFile(dataset.name()),
-                WorkDir.getParetoFrontFile(dataset.name()),
-                dataset);
+                WorkDir.getParetoFrontFile(dataset.name()));
 
         findFromFileData(WorkDir.getRawSearchSpaceFile(dataset.name()),
-                WorkDir.getRawParetoFrontFile(dataset.name()),
-                dataset);
+                WorkDir.getRawParetoFrontFile(dataset.name()));
     }
 
-    private static void findFromFileData(Path sourceFile, Path destFile, Dataset dataset) throws IOException {
+    private static void findFromFileData(Path sourceFile, Path destFile) throws IOException {
         Set<QosLevel> dataSet = new HashSet<>();
         log.info("Load search space from {}", sourceFile.getFileName());
         try (Stream<String> fs = Files.lines(sourceFile)) {

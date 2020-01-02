@@ -1,12 +1,11 @@
 package com.ingbyr.hwsc.planner.innerplanner.yashp2;
 
-import com.ingbyr.hwsc.planner.PlannerAnalyzer;
+import com.ingbyr.hwsc.common.DataSetReader;
+import com.ingbyr.hwsc.common.Dataset;
+import com.ingbyr.hwsc.common.XMLDataSetReader;
+import com.ingbyr.hwsc.planner.HeuristicInfo;
 import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
 import com.ingbyr.hwsc.planner.innerplanner.Solution;
-import com.ingbyr.hwsc.common.Dataset;
-import com.ingbyr.hwsc.common.DataSetReader;
-import com.ingbyr.hwsc.common.XMLDataSetReader;
-import com.ingbyr.hwsc.planner.exception.NotValidSolutionException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -32,10 +31,12 @@ class Yashp2InnerPlannerTest {
     }
 
     @Test
-    void solve() throws NotValidSolutionException {
+    void solve() {
         DataSetReader reader = new XMLDataSetReader(Dataset.wsc2009_01);
-        InnerPlanner innerPlanner = new InnerPlannerYashp2(reader.getServiceMap(),reader.getConceptMap(),1);
+        HeuristicInfo h = new HeuristicInfo();
+        h.setup(reader);
+        InnerPlanner innerPlanner = new InnerPlannerYashp2(h.getServiceMap(), h.getConceptMap(), 1);
         Solution solution = innerPlanner.solve(reader.getInputSet(), reader.getGoalSet(), 1);
-        PlannerAnalyzer.checkSolution(reader.getInputSet(), reader.getGoalSet(), solution.services);
+        System.out.println(solution);
     }
 }

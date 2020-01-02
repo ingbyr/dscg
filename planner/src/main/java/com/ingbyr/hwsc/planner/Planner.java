@@ -33,7 +33,7 @@ public class Planner {
 
     private PlannerConfig config;
 
-    private HeuristicInfo heuristicInfo;
+    private HeuristicInfo h;
 
     private IndividualGenerator individualGenerator;
 
@@ -70,7 +70,7 @@ public class Planner {
         List<Individual> population = new ArrayList<>(config.getPopulationSize());
 
         // Get max state size
-        int candidateStartTimesSize = heuristicInfo.candidateStartTimes.length;
+        int candidateStartTimesSize = h.candidateStartTimes.length;
         int stateSize = Math.min(candidateStartTimesSize, config.getMaxStateSize());
 
         for (int i = 0; i < config.getPopulationSize(); i++) {
@@ -97,8 +97,10 @@ public class Planner {
             stepMsg.append(")");
 
             log.info("{}", stepMsg.toString());
-            // Step message callback function
-//            stepMsgHandler.handle(stepMsg.toString());
+
+//             Step message callback function
+            if (stepMsgHandler != null)
+                stepMsgHandler.handle(stepMsg.toString());
 
 //            // Monitor service add or remove operation
 //            monitorServiceStatus(population);
@@ -241,26 +243,28 @@ public class Planner {
         dataSetReader = reader;
         dataSetReader.setDataset(config.getDataset());
 
-        innerPlanner = new InnerPlannerYashp2(this.dataSetReader.getServiceMap(), this.dataSetReader.getConceptMap(), 1);
-
         evaluator = (Evaluator) Class.forName(PlannerConfig.EVALUATOR_CLASS_PREFIX + config.getEvaluator())
                 .getDeclaredConstructor().newInstance();
         evaluator.setInnerPlannerMaxStep(config.getInnerPlanMaxStep());
         evaluator.setMaxStateSize(config.getMaxStateSize());
 
-        heuristicInfo = new HeuristicInfo();
-        heuristicInfo.setup(this.dataSetReader);
+        h = new HeuristicInfo();
+        h.setup(this.dataSetReader);
+        innerPlanner = new InnerPlannerYashp2(
+                h.serviceMap,
+                h.conceptMap,
+                1);
 
-        individualGenerator = new IndividualGenerator(this.dataSetReader, heuristicInfo);
+        individualGenerator = new IndividualGenerator(this.dataSetReader, h);
 
         crossover = new CrossoverSwapState();
 
         mutations = new Mutations();
         mutations.addMutation(
-                new MutationAddState(heuristicInfo, config.getMutationAddStateRadius()),
+                new MutationAddState(h, config.getMutationAddStateRadius()),
                 config.getMutationAddStateWeight());
         mutations.addMutation(
-                new MutationAddConcept(heuristicInfo,
+                new MutationAddConcept(h,
                         config.getMutationAddConceptChangePossibility(),
                         config.getMutationAddConceptAddPossibility()),
                 config.getMutationAddConceptWeight());
@@ -272,18 +276,9 @@ public class Planner {
         survivalSelector = new SurvivalSelector(config.getSurvivalSize(), fitness);
 
         if (stepMsgHandler == null) {
-            stepMsgHandler = new StepMsgHandlerDefault();
-            log.info("Not found step msg handler, so set to default");
+            log.info("Not found step msg handler");
         }
 
         plannerIndicator = new PlannerIndicator(config.getDataset());
-    }
-
-    public static void main(String[] args) throws ConfigurationException, NoSuchMethodException, IOException, IllegalAccessException, HWSCConfigException, InstantiationException, InvocationTargetException, ClassNotFoundException {
-        PlannerConfig config = new PlannerConfigFile();
-        log.debug("{}", config);
-        Planner planner = new Planner();
-        planner.setup(config, new XMLDataSetReader());
-        planner.exec();
     }
 }

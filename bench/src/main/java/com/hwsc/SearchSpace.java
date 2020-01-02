@@ -94,15 +94,21 @@ public class SearchSpace {
         Planner planner = new Planner();
         planner.setup(config, new XMLDataSetReader());
 
+        log.info("Warm up search");
+        for (int i = 0; i < 3; i++) {
+            planner.exec();
+        }
 
+        // Start bench test
         Path searchSpaceFile = WorkDir.getSearchSpaceFile(dataset.name());
         Path rawSearchSpaceFile = WorkDir.getRawSearchSpaceFile(dataset.name());
         List<PlannerResult> plannerResultList = new LinkedList<>();
         try (FileOutputStream fos = new FileOutputStream(searchSpaceFile.toFile(), true);
              FileOutputStream rfos = new FileOutputStream(rawSearchSpaceFile.toFile(), true)) {
-            for (int b = -5; b < bench; b++) {
+            for (int b = 0; b < bench; b++) {
                 log.info("Bench {}/{}", b + 1, bench);
                 planner.exec();
+
                 PlannerAnalyzer analyzer = planner.getAnalyzer();
 
                 Set<String> qos = analyzer.getLastPop().stream().map(ind -> ind.getQos().toNumpy()).collect(Collectors.toSet());
@@ -122,6 +128,7 @@ public class SearchSpace {
                 PlannerResult plannerResult = analyzer.getResult();
                 plannerResult.bench = b;
                 plannerResultList.add(plannerResult);
+
             }
         }
 

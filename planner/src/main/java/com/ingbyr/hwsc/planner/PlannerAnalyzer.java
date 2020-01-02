@@ -1,8 +1,6 @@
 package com.ingbyr.hwsc.planner;
 
-import com.ingbyr.hwsc.common.Dataset;
-import com.ingbyr.hwsc.common.MemoryUtils;
-import com.ingbyr.hwsc.common.Qos;
+import com.ingbyr.hwsc.common.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +10,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -55,6 +54,7 @@ public class PlannerAnalyzer {
     @Getter
     private List<Individual> lastPop;
 
+
     /**
      * Record every step pop info and return GD as indicator of pop
      *
@@ -65,10 +65,10 @@ public class PlannerAnalyzer {
         qosLog.add(pop.stream().map(Individual::getQos).collect(Collectors.toList()));
         rawQosLog.add(pop.stream().map(Individual::getQos).collect(Collectors.toList()));
 
-        log.debug("Population :");
-        for (Individual individual : pop) {
-            log.debug("{}", individual.toSimpleInfo());
-        }
+//        log.debug("Population :");
+//        for (Individual individual : pop) {
+//            log.debug("{}", individual.toSimpleInfo());
+//        }
 
         memoryLog.add(MemoryUtils.currentUsedMemory());
 
@@ -80,14 +80,11 @@ public class PlannerAnalyzer {
 //            double stepIGD = indicator.IGD(pop);
 //            log.debug("IGD: {}", stepIGD);
 //            IGDLog.add(stepIGD);
-
             return stepGD;
         } else {
             bestQosLog.add(pop.get(0).getQos());
             return (double) pop.get(0).getId();
         }
-
-
     }
 
     void recordStartTime() {

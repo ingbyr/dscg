@@ -2,77 +2,84 @@ package com.ingbyr.hwsc.planner;
 
 import com.google.common.collect.Sets;
 import com.ingbyr.hwsc.common.Concept;
-import com.ingbyr.hwsc.common.Service;
 import com.ingbyr.hwsc.common.DataSetReader;
+import com.ingbyr.hwsc.common.Service;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author ingbyr
  */
 @Slf4j
+@Getter
 public class HeuristicInfo {
 
-    public int[] candidateStartTimes;
+    int[] candidateStartTimes;
 
-    public Map<Integer, Set<Concept>> conceptsAtTime;
+    Map<Integer, Set<Concept>> conceptsAtTime;
 
     Map<Concept, Integer> earliestTimeOfConcept;
 
-    int time = 0;
+    Map<String, Service> serviceMap;
 
-    boolean setup(DataSetReader dataSetReader) {
+    Map<String, Concept> conceptMap;
+
+    int time;
+
+    public boolean setup(DataSetReader dataSetReader) {
 
         conceptsAtTime = new HashMap<>();
         earliestTimeOfConcept = new HashMap<>();
+        serviceMap = new HashMap<>();
+        conceptMap = new HashMap<>();
+        List<Integer> cst = new LinkedList<>();
 
-        // Input set
-        conceptsAtTime.put(time, Sets.newHashSet(dataSetReader.getInputSet()));
+        // Input set at time 0
+        time = 0;
+        conceptsAtTime.put(time, dataSetReader.getInputSet());
         for (Concept concept : dataSetReader.getInputSet()) {
             earliestTimeOfConcept.put(concept, time);
+            conceptMap.put(concept.getName(), concept);
         }
 
-        time++;
-
         Set<Service> services = Sets.newHashSet(dataSetReader.getServiceMap().values());
-
-        // TODO better stop condition
-        while (true) {
+        Set<Concept> state = new HashSet<>(dataSetReader.getInputSet());
+        // Start from time 1
+        time = 1;
+        while (!state.containsAll(dataSetReader.getGoalSet())) {
             boolean hasNewConcept = false;
             // Init
             conceptsAtTime.put(time, Sets.newHashSet(conceptsAtTime.get(time - 1)));
-            Set<Concept> currentConcept = earliestTimeOfConcept.keySet();
             for (Service service : services) {
                 // If service can be executed in this time
-                if (currentConcept.containsAll(service.getInputConceptSet())) {
+                if (state.containsAll(service.getInputConceptSet())) {
                     // Build output index
                     for (Concept concept : service.getOutputConceptSet()) {
                         // If concept never appears before
                         if (!earliestTimeOfConcept.containsKey(concept)) {
                             earliestTimeOfConcept.put(concept, time);
                             conceptsAtTime.get(time).add(concept);
+                            conceptMap.put(concept.getName(), concept);
+                            state.add(concept);
                             hasNewConcept = true;
                         }
+                    }
+                    if (hasNewConcept) {
+                        serviceMap.put(service.getName(), service);
                     }
                 }
             }
 
-            if (!hasNewConcept) {
-                conceptsAtTime.remove(time--);
-                break;
+            if (hasNewConcept) {
+                cst.add(time++);
             } else {
-                time++;
+                return false;
             }
         }
-
-        candidateStartTimes = conceptsAtTime.keySet().stream()
-                .mapToInt(Integer::intValue)
-                .filter(i -> i != 0) // Skip input time
-                .toArray();
+        time--;
+        candidateStartTimes = cst.stream().mapToInt(Integer::intValue).toArray();
 
         log.debug("Total time {}", time);
         log.debug("Candidate start times {}", Arrays.toString(candidateStartTimes));
@@ -80,7 +87,9 @@ public class HeuristicInfo {
             log.debug("Time {}, concepts size {} ", time, concepts.size());
         });
         log.debug("Total concepts {}, reachable concepts {}", dataSetReader.getConceptMap().size(), earliestTimeOfConcept.size());
-        log.debug("Reachable concepts include goal set: {}", conceptsAtTime.get(time).containsAll(dataSetReader.getGoalSet()));
+        log.debug("Total services {}, reachable service {}", dataSetReader.getServiceMap().size(), serviceMap.size());
+        log.debug("Reachable concepts include goal set");
+        return true;
     }
 
     void update() {

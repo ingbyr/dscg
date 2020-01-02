@@ -202,7 +202,6 @@ public class InnerPlannerYashp2 extends AbstractInnerPlanner implements InnerPla
         Pair<Map<NamedObject, Integer>, List<Service>> costApp = computeHAdd(n.state);
         Map<NamedObject, Integer> cost = costApp.getLeft();
         List<Service> app = costApp.getRight();
-
         int gCost = sumCost(goalSet, cost);
 
         if (gCost == 0) return n;
@@ -235,6 +234,7 @@ public class InnerPlannerYashp2 extends AbstractInnerPlanner implements InnerPla
      * @return NamedObject value map and applicable services
      */
     private Pair<Map<NamedObject, Integer>, List<Service>> computeHAdd(State state) {
+        log.debug("Current state concepts {}", state.concepts);
         int size = serviceMap.size() + conceptMap.size();
         Map<NamedObject, Integer> cost = new HashMap<>(size);
         Map<NamedObject, Boolean> update = new HashMap<>(size);
@@ -245,10 +245,13 @@ public class InnerPlannerYashp2 extends AbstractInnerPlanner implements InnerPla
         });
 
         conceptMap.forEach((s, concept) -> {
+            log.trace("Update flag of {}", concept);
             if (state.concepts.contains(concept)) {
+                log.trace("Reach concept {}", concept);
                 cost.put(concept, 0);
                 for (Service usedByService : concept.getUsedByServices()) {
-                    update.put(usedByService, true);
+                    if (serviceMap.containsKey(usedByService.getName()))
+                        update.put(usedByService, true);
                 }
             } else {
                 cost.put(concept, Integer.MAX_VALUE);
@@ -273,8 +276,10 @@ public class InnerPlannerYashp2 extends AbstractInnerPlanner implements InnerPla
                             if (c + 1 < cost.get(outputConcept)) {
                                 cost.put(outputConcept, c + 1);
                                 for (Service usedByService : outputConcept.getUsedByServices()) {
-                                    loop = true;
-                                    update.put(usedByService, true);
+                                    if (serviceMap.containsKey(usedByService.getName())) {
+                                        loop = true;
+                                        update.put(usedByService, true);
+                                    }
                                 }
                             }
                         }
@@ -429,7 +434,7 @@ public class InnerPlannerYashp2 extends AbstractInnerPlanner implements InnerPla
         Service minCostService = null;
         int minCost = Integer.MAX_VALUE;
         for (Service service : usedByServices) {
-            if (cost.get(service) < minCost) {
+            if (serviceMap.containsKey(service.getName()) && cost.get(service) < minCost) {
                 minCost = cost.get(service);
                 minCostService = service;
             }

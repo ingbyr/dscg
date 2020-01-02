@@ -16,4 +16,12 @@ class HeuristicInfoTest {
         HeuristicInfo heuristicInfo = new HeuristicInfo();
         heuristicInfo.setup(dataSetReader);
     }
+
+    @Test
+    void setup() {
+    }
+
+    @Test
+    void update() {
+    }
 }
