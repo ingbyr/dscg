@@ -13,15 +13,15 @@
     <logger name="com.ingbyr.hwsc.planner.MutationAddConcept" level="off"/>
     <logger name="com.ingbyr.hwsc.planner.MutationDelConcept" level="off"/>
     <logger name="com.ingbyr.hwsc.planner.CrossoverSwapState" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.EvaluatorGoalDistance" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.EvaluatorGoalDistanceConcurrent" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.Evaluator" level="off"/>
+    <logger name="com.ingbyr.hwsc.planner.EvaluatorConcurrent" level="off"/>
     <logger name="com.ingbyr.hwsc.planner.IndividualGenerator" level="off"/>
     <logger name="com.ingbyr.hwsc.planner.SurvivalSelector" level="off"/>
     <logger name="com.ingbyr.hwsc.planner.FitnessLinearAggregation" level="off"/>
     <logger name="com.ingbyr.hwsc.planner.FitnessBinaryIndicator" level="off"/>
     <logger name="com.ingbyr.hwsc.planner.FitnessParetoFront" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.PlannerAnalyzer" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.HeuristicInfo" level="debug"/>
+    <logger name="com.ingbyr.hwsc.planner.PlannerAnalyzer" level="on"/>
+    <logger name="com.ingbyr.hwsc.planner.HeuristicInfo" level="off"/>
 
     <root level="debug">
         <appender-ref ref="console"/>

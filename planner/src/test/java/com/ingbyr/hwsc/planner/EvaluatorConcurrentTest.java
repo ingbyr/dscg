@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * @author ingbyr
  */
-class EvaluatorGoalDistanceConcurrentTest {
+class EvaluatorConcurrentTest {
 
     @Test
     void evaluate() {
@@ -21,9 +21,9 @@ class EvaluatorGoalDistanceConcurrentTest {
 
         InnerPlanner innerPlanner = new InnerPlannerYashp2(dataSetReader.getServiceMap(), dataSetReader.getConceptMap(), 1);
 
-        Evaluator evaluator = new EvaluatorGoalDistanceConcurrent();
-        evaluator.setMaxStateSize(10);
-        evaluator.setInnerPlannerMaxStep(10);
+        Evaluate evaluate = new EvaluatorConcurrent();
+        evaluate.setMaxStateSize(10);
+        evaluate.setInnerPlannerMaxStep(10);
 
         HeuristicInfo heuristicInfo = new HeuristicInfo();
         heuristicInfo.setup(dataSetReader);
@@ -33,7 +33,7 @@ class EvaluatorGoalDistanceConcurrentTest {
         Individual individual = individualGenerator.generate(-1);
         List<Individual> individuals = new ArrayList<>();
         individuals.add(individual);
-        evaluator.evaluate(individuals, innerPlanner);
+        evaluate.evaluate(individuals, innerPlanner);
         System.out.println(individual);
     }
 

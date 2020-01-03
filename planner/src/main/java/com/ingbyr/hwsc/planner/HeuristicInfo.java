@@ -44,7 +44,6 @@ public class HeuristicInfo {
             conceptMap.put(concept.getName(), concept);
         }
 
-        Set<Service> services = Sets.newHashSet(dataSetReader.getServiceMap().values());
         Set<Concept> state = new HashSet<>(dataSetReader.getInputSet());
         // Start from time 1
         time = 1;
@@ -52,7 +51,8 @@ public class HeuristicInfo {
             boolean hasNewConcept = false;
             // Init
             conceptsAtTime.put(time, Sets.newHashSet(conceptsAtTime.get(time - 1)));
-            for (Service service : services) {
+            for (Map.Entry<String, Service> entry : dataSetReader.getServiceMap().entrySet()) {
+                Service service = entry.getValue();
                 // If service can be executed in this time
                 if (state.containsAll(service.getInputConceptSet())) {
                     // Build output index
@@ -60,7 +60,6 @@ public class HeuristicInfo {
                         // If concept never appears before
                         if (!earliestTimeOfConcept.containsKey(concept)) {
                             earliestTimeOfConcept.put(concept, time);
-                            conceptsAtTime.get(time).add(concept);
                             conceptMap.put(concept.getName(), concept);
                             state.add(concept);
                             hasNewConcept = true;
@@ -73,7 +72,8 @@ public class HeuristicInfo {
             }
 
             if (hasNewConcept) {
-                cst.add(time++);
+                conceptsAtTime.put(time, new HashSet<>(state));
+                cst.add(time);
             } else {
                 return false;
             }

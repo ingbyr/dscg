@@ -162,11 +162,11 @@
 
                         <div class="row">
                             <div class="col">
-                                <label for="evaluator">evaluator</label>
-                                <select id="evaluator" name="evaluator" class="form-control">
-                                    <#list evaluators as evaluator>
-                                        <option <#if (planner_config.evaluator)?has_content && evaluator == planner_config.evaluator>selected</#if> >
-                                            ${evaluator}
+                                <label for="evaluate">evaluate</label>
+                                <select id="evaluate" name="evaluate" class="form-control">
+                                    <#list evaluators as evaluate>
+                                        <option <#if (planner_config.evaluate)?has_content && evaluate == planner_config.evaluate>selected</#if> >
+                                            ${evaluate}
                                         </option>
                                     </#list>
                                 </select>
@@ -175,7 +175,7 @@
                                 <label for="fitness">fitness</label>
                                 <select id="fitness" name="fitness" class="form-control">
                                     <#list indicators as fitness>
-                                        <option <#if (planner_config.evaluator)?has_content && fitness == planner_config.fitness>selected</#if> >
+                                        <option <#if (planner_config.evaluate)?has_content && fitness == planner_config.fitness>selected</#if> >
                                             ${fitness}
                                         </option>
                                     </#list>

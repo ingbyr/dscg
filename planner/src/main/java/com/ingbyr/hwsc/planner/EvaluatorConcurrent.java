@@ -24,7 +24,7 @@ import java.util.concurrent.RecursiveAction;
 @Slf4j
 @NoArgsConstructor
 @Setter
-public class EvaluatorGoalDistanceConcurrent implements Evaluator {
+public class EvaluatorConcurrent implements Evaluate {
 
     private final ForkJoinPool commonPool = ForkJoinPool.commonPool();
 

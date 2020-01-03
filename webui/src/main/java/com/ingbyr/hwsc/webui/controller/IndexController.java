@@ -1,8 +1,6 @@
 package com.ingbyr.hwsc.webui.controller;
 
 import com.ingbyr.hwsc.common.Dataset;
-import com.ingbyr.hwsc.planner.Evaluators;
-import com.ingbyr.hwsc.planner.Fitness;
 import com.ingbyr.hwsc.planner.PlannerConfig;
 import com.ingbyr.hwsc.webui.service.PlannerService;
 import io.swagger.annotations.ApiOperation;
@@ -31,8 +29,8 @@ public class IndexController {
         PlannerConfig config = plannerService.loadConfig();
         model.addAttribute("planner_config", config);
         model.addAttribute("dataset_list", Dataset.values());
-        System.out.println(Arrays.toString(Evaluators.values()));
-        model.addAttribute("evaluators", Evaluators.values());
+//        System.out.println(Arrays.toString(Evaluators.values()));
+//        model.addAttribute("evaluators", Evaluators.values());
         log.debug("Load planner config {}", config);
         return "index";
     }

@@ -2,7 +2,6 @@ package com.ingbyr.hwsc.planner;
 
 import com.ingbyr.hwsc.common.DataSetReader;
 import com.ingbyr.hwsc.common.Service;
-import com.ingbyr.hwsc.common.XMLDataSetReader;
 import com.ingbyr.hwsc.planner.exception.HWSCConfigException;
 import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
 import com.ingbyr.hwsc.planner.innerplanner.yashp2.InnerPlannerYashp2;
@@ -11,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.configuration2.ex.ConfigurationException;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -39,7 +37,7 @@ public class Planner {
 
     private InnerPlanner innerPlanner;
 
-    private Evaluator evaluator;
+    private Evaluate evaluate;
 
     private Crossover crossover;
 
@@ -80,7 +78,7 @@ public class Planner {
         }
 
         // Evaluate initial population
-        evaluator.evaluate(population, innerPlanner);
+        evaluate.evaluate(population, innerPlanner);
 
         log.info("Start processing ...");
         // Start process
@@ -121,7 +119,7 @@ public class Planner {
             }
 
             // Evaluation
-            evaluator.evaluate(offspring, innerPlanner);
+            evaluate.evaluate(offspring, innerPlanner);
 
             // Survival selection
             population = survivalSelector.filter(population, offspring);
@@ -243,10 +241,11 @@ public class Planner {
         dataSetReader = reader;
         dataSetReader.setDataset(config.getDataset());
 
-        evaluator = (Evaluator) Class.forName(PlannerConfig.EVALUATOR_CLASS_PREFIX + config.getEvaluator())
+        System.out.println(PlannerConfig.EVALUATOR_CLASS_PREFIX + config.getEvaluator());
+        evaluate = (Evaluate) Class.forName(PlannerConfig.EVALUATOR_CLASS_PREFIX + config.getEvaluator())
                 .getDeclaredConstructor().newInstance();
-        evaluator.setInnerPlannerMaxStep(config.getInnerPlanMaxStep());
-        evaluator.setMaxStateSize(config.getMaxStateSize());
+        evaluate.setInnerPlannerMaxStep(config.getInnerPlanMaxStep());
+        evaluate.setMaxStateSize(config.getMaxStateSize());
 
         h = new HeuristicInfo();
         h.setup(this.dataSetReader);
