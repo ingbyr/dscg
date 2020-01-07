@@ -2,7 +2,7 @@ package com.ingbyr.hwsc.planner.innerplanner.yashp2;
 
 import com.ingbyr.hwsc.common.DataSetReader;
 import com.ingbyr.hwsc.common.Dataset;
-import com.ingbyr.hwsc.common.XMLDataSetReader;
+import com.ingbyr.hwsc.common.XmlDatasetReader;
 import com.ingbyr.hwsc.planner.HeuristicInfo;
 import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
 import com.ingbyr.hwsc.planner.innerplanner.Solution;
@@ -32,7 +32,7 @@ class Yashp2InnerPlannerTest {
 
     @Test
     void solve() {
-        DataSetReader reader = new XMLDataSetReader(Dataset.wsc2009_01);
+        DataSetReader reader = new XmlDatasetReader(Dataset.wsc2009_01);
         HeuristicInfo h = new HeuristicInfo();
         h.setup(reader);
         InnerPlanner innerPlanner = new InnerPlannerYashp2(h.getServiceMap(), h.getConceptMap(), 1);

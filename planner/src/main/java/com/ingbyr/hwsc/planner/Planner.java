@@ -241,7 +241,6 @@ public class Planner {
         dataSetReader = reader;
         dataSetReader.setDataset(config.getDataset());
 
-        System.out.println(PlannerConfig.EVALUATOR_CLASS_PREFIX + config.getEvaluator());
         evaluate = (Evaluate) Class.forName(PlannerConfig.EVALUATOR_CLASS_PREFIX + config.getEvaluator())
                 .getDeclaredConstructor().newInstance();
         evaluate.setInnerPlannerMaxStep(config.getInnerPlanMaxStep());

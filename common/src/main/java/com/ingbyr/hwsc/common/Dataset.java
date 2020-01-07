@@ -18,7 +18,9 @@ public enum Dataset {
     wsc2009_02("2009", "02"),
     wsc2009_03("2009", "03"),
     wsc2009_04("2009", "04"),
-    wsc2009_05("2009", "05");
+    wsc2009_05("2009", "05"),
+
+    wsc2020_01("2020", "01");
 
     @Getter
     private final String datasetId1;

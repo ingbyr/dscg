@@ -18,11 +18,11 @@ public final class WorkDir {
 
     public static final Path RESULT_DIR = WORK_DIR.resolve("result");
 
-    public static final Path BENCH_RESULT_DIR = WORK_DIR.resolve("result").resolve("planner");
+    public static final Path BENCH_RESULT_DIR = RESULT_DIR.resolve("bench");
 
-    public static final Path PLANNER_LOG_DIR = BENCH_RESULT_DIR.resolve("log.txt");
+    public static final Path PLANNER_LOG_DIR = RESULT_DIR.resolve("planner");
 
-    private static final String ACTIVE_QOS = String.join("_", Qos.NAMES);
+    private static final String ACTIVE_QOS = Qos.TYPES_STRING;
 
     public static final Path QOS_SP_DIR = RESULT_DIR.resolve(ACTIVE_QOS).resolve("sp");
 
@@ -33,6 +33,7 @@ public final class WorkDir {
         createDirIfNotExist(QOS_SP_DIR);
         createDirIfNotExist(QOS_PF_DIR);
         createDirIfNotExist(BENCH_RESULT_DIR);
+        createDirIfNotExist(PLANNER_LOG_DIR);
     }
 
     private static void createDirIfNotExist(Path dir) {

@@ -6,8 +6,8 @@
         </encoder>
     </appender>
 
-    <logger name="com.hwsc.models.CompletePlaningGraph" level="off"/>
-    <logger name="com.hwsc.searching.GeneratePlanningGraph" level="off"/>
+    <logger name="com.ingbyr.hwsc.graphplan.qgp.CPG" level="off"/>
+    <logger name="com.ingbyr.hwsc.graphplan.qgp.searching.GeneratePlanningGraph" level="off"/>
     <logger name="com.ingbyr.hwsc.reader.XMLDataSetReader" level="off"/>
     <logger name="com.ingbyr.hwsc.planner.innerplanner.yashp2" level="off"/>
     <logger name="com.ingbyr.hwsc.planner.MutationAddState" level="off"/>

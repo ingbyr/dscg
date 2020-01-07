@@ -26,6 +26,11 @@ subprojects {
         compile 'ch.qos.logback:logback-classic:1.2.3'
         compileOnly 'org.projectlombok:lombok:1.18.8'
         annotationProcessor 'org.projectlombok:lombok:1.18.8'
+        testCompile "org.junit.jupiter:junit-jupiter:5.5.2"
+    }
+
+    test {
+        useJUnitPlatform()
     }
 
 }

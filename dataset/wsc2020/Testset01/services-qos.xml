@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<services>
+    <service name="w1" Res="120" Ava="0" Suc="0" Rel="0" Lat="0" Pri="0">
+        <inputs>
+            <instance name="a"/>
+        </inputs>
+        <outputs>
+            <instance name="c"/>
+            <instance name="e"/>
+        </outputs>
+    </service>
+
+    <service name="w2" Res="30" Ava="0" Suc="0" Rel="0" Lat="0" Pri="0">
+        <inputs>
+            <instance name="a"/>
+            <instance name="b"/>
+        </inputs>
+        <outputs>
+            <instance name="e"/>
+            <instance name="j"/>
+        </outputs>
+    </service>
+
+    <service name="w3" Res="50" Ava="0" Suc="0" Rel="0" Lat="0" Pri="0">
+        <inputs>
+            <instance name="c"/>
+        </inputs>
+        <outputs>
+            <instance name="d"/>
+        </outputs>
+    </service>
+
+    <service name="w4" Res="10" Ava="0" Suc="0" Rel="0" Lat="0" Pri="0">
+        <inputs>
+            <instance name="e"/>
+        </inputs>
+        <outputs>
+            <instance name="g"/>
+        </outputs>
+    </service>
+
+    <service name="w5" Res="70" Ava="0" Suc="0" Rel="0" Lat="0" Pri="0">
+        <inputs>
+            <instance name="b"/>
+            <instance name="j"/>
+        </inputs>
+        <outputs>
+            <instance name="c"/>
+        </outputs>
+    </service>
+</services>

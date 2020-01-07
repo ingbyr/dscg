@@ -2,7 +2,7 @@ package com.ingbyr.hwsc.planner;
 
 import com.ingbyr.hwsc.common.Dataset;
 import com.ingbyr.hwsc.common.DataSetReader;
-import com.ingbyr.hwsc.common.XMLDataSetReader;
+import com.ingbyr.hwsc.common.XmlDatasetReader;
 import com.ingbyr.hwsc.planner.innerplanner.InnerPlanner;
 import com.ingbyr.hwsc.planner.innerplanner.yashp2.InnerPlannerYashp2;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ class EvaluatorConcurrentTest {
 
     @Test
     void evaluate() {
-        DataSetReader dataSetReader = new XMLDataSetReader(Dataset.wsc2009_01);
+        DataSetReader dataSetReader = new XmlDatasetReader(Dataset.wsc2009_01);
 
         InnerPlanner innerPlanner = new InnerPlannerYashp2(dataSetReader.getServiceMap(), dataSetReader.getConceptMap(), 1);
 

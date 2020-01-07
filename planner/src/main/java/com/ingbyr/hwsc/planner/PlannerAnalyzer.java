@@ -1,16 +1,21 @@
 package com.ingbyr.hwsc.planner;
 
-import com.ingbyr.hwsc.common.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ingbyr.hwsc.common.Dataset;
+import com.ingbyr.hwsc.common.MemoryUtils;
+import com.ingbyr.hwsc.common.Qos;
+import com.ingbyr.hwsc.common.WorkDir;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -21,15 +26,21 @@ import java.util.stream.Collectors;
 public class PlannerAnalyzer {
 
     // Log
-    List<List<Qos>> qosLog = new LinkedList<>();
-    List<List<Qos>> rawQosLog = new LinkedList<>();
     List<Qos> bestQosLog = new LinkedList<>();
-    List<Double> GDLog = new LinkedList<>();
-    List<Double> IGDLog = new LinkedList<>();
     List<Long> memoryLog = new LinkedList<>();
+    List<List<Qos>> rawQosLog = new LinkedList<>();
+    private PlannerResult result = new PlannerResult();
 
     @Getter
-    private PlannerResult result = new PlannerResult();
+    private BenchStepResult benchResult = new BenchStepResult();
+
+    @Getter
+    @Setter
+    private static class PlannerResult {
+        List<List<double[]>> qosLog = new LinkedList<>();
+        List<Double> gdLog = new LinkedList<>();
+        List<Double> igdLog = new LinkedList<>();
+    }
 
     @Getter
     private Instant startTime;
@@ -62,7 +73,7 @@ public class PlannerAnalyzer {
      * @return The GD of pop
      */
     public Double recordStepInfo(List<Individual> pop) {
-        qosLog.add(pop.stream().map(Individual::getQos).collect(Collectors.toList()));
+        result.qosLog.add(pop.stream().map(Individual::getQoSValues).collect(Collectors.toList()));
         rawQosLog.add(pop.stream().map(Individual::getQos).collect(Collectors.toList()));
 
 //        log.debug("Population :");
@@ -75,11 +86,13 @@ public class PlannerAnalyzer {
         if (fitness instanceof FitnessParetoFront) {
             double stepGD = indicator.GD(pop);
             log.debug("GD: {}", stepGD);
-            GDLog.add(stepGD);
-            // TODO disable in bench
-//            double stepIGD = indicator.IGD(pop);
-//            log.debug("IGD: {}", stepIGD);
-//            IGDLog.add(stepIGD);
+            result.gdLog.add(stepGD);
+
+            // Disable IGD in bench mode
+            double stepIGD = indicator.IGD(pop);
+            log.debug("IGD: {}", stepIGD);
+            result.igdLog.add(stepIGD);
+
             return stepGD;
         } else {
             bestQosLog.add(pop.get(0).getQos());
@@ -94,27 +107,30 @@ public class PlannerAnalyzer {
     void recordEndTime() {
         endTime = Instant.now();
         runtime = Duration.between(startTime, endTime).toMillis() / 1000.0;
-        result.indNum = Individual.globalId;
-        result.runtime = runtime;
-        result.memoryLog = memoryLog;
+        benchResult.indNum = Individual.globalId;
+        benchResult.runtime = runtime;
+        benchResult.memoryLog = memoryLog;
     }
 
     public void displayLogOnConsole() {
-        log.info("Time used {} seconds", getRuntime());
-        log.debug("Last population:");
-        for (Individual ind : lastPop) {
-            log.debug("{}", ind.toSimpleInfo());
-        }
 
-        if (fitness instanceof FitnessParetoFront) {
-            log.info("GD: {}", GDLog);
-            log.info("IGD: {}", IGDLog);
-        } else {
-            log.info("Best qos log: {}", bestQosLog);
+        log.info("Time used {} seconds", getRuntime());
+
+        try {
+            Path logFile = WorkDir.PLANNER_LOG_DIR.resolve(dataset.name() + ".json");
+            log.info("Save result to {}", logFile);
+            saveLogToFile(logFile);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
+    private void saveLogToFile(Path file) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.writeValue(file.toFile(), result);
+    }
+
     public void setGen(int gen) {
-        result.gen = gen;
+        benchResult.gen = gen;
     }
 }

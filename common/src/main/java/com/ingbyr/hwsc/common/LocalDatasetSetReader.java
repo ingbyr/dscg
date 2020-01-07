@@ -55,6 +55,7 @@ public abstract class LocalDatasetSetReader extends AbstractDataSetReader {
 
             Concept concept = entry.getValue();
             if (concept.isRoot()) {
+                concept.addParentConcept(concept);
                 continue;
             }
 

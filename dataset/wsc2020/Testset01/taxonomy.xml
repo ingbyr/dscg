@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taxonomy>
+    <concept name="A">
+        <instance name="a"/>
+    </concept>
+    <concept name="B">
+        <instance name="b"/>
+    </concept>
+    <concept name="C">
+        <instance name="c"/>
+    </concept>
+    <concept name="D">
+        <instance name="d"/>
+    </concept>
+    <concept name="E">
+        <instance name="e"/>
+    </concept>
+    <concept name="G">
+        <instance name="g"/>
+    </concept>
+    <concept name="J">
+        <instance name="j"/>
+    </concept>
+</taxonomy>

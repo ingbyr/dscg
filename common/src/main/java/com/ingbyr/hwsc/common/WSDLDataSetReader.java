@@ -9,16 +9,16 @@ import java.util.*;
 
 @Getter
 @Slf4j
-public class WSDLDataSetReader extends LocalDatasetSetReader {
+public class WsdlDatasetReader extends LocalDatasetSetReader {
 
     private String TAXONOMY_URL;
     private String SERVICES_URL;
     private String PROBLEM_URL;
 
-    public WSDLDataSetReader() {
+    public WsdlDatasetReader() {
     }
 
-    public WSDLDataSetReader(Dataset dataset) {
+    public WsdlDatasetReader(Dataset dataset) {
         setDataset(dataset);
     }
 

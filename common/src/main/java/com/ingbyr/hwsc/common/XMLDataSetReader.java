@@ -11,7 +11,7 @@ import java.util.*;
  * @author ing
  */
 @Slf4j
-public class XMLDataSetReader extends LocalDatasetSetReader {
+public class XmlDatasetReader extends LocalDatasetSetReader {
 
     // taxonomy xml constants
     private static final String NAME = "name";
@@ -32,10 +32,10 @@ public class XMLDataSetReader extends LocalDatasetSetReader {
     private String SERVICES_URL;
     private String PROBLEM_URL;
 
-    public XMLDataSetReader() {
+    public XmlDatasetReader() {
     }
 
-    public XMLDataSetReader(Dataset dataset) {
+    public XmlDatasetReader(Dataset dataset) {
         setDataset(dataset);
     }
 
@@ -143,7 +143,9 @@ public class XMLDataSetReader extends LocalDatasetSetReader {
                 qos.set(type, (service.getOriginQos().get(type) - minQos.get(type)) / distance);
             }
             service.setQos(qos);
-            service.setCost(QosUtils.sumQosToCost(qos));
+
+            // TODO set service cost
+            service.setCost(QosUtils.sumQosToCost(service.getOriginQos()));
             log.trace("{} origin {}", service, service.getOriginQos().getData());
             log.trace("{} rescale {}", service, service.getQos().getData());
         }

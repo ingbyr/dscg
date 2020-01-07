@@ -47,11 +47,12 @@ public class HeuristicInfo {
         Set<Concept> state = new HashSet<>(dataSetReader.getInputSet());
         // Start from time 1
         time = 1;
+        Set<Map.Entry<String, Service>> services = dataSetReader.getServiceMap().entrySet();
         while (!state.containsAll(dataSetReader.getGoalSet())) {
             boolean hasNewConcept = false;
             // Init
             conceptsAtTime.put(time, Sets.newHashSet(conceptsAtTime.get(time - 1)));
-            for (Map.Entry<String, Service> entry : dataSetReader.getServiceMap().entrySet()) {
+            for (Map.Entry<String, Service> entry : services) {
                 Service service = entry.getValue();
                 // If service can be executed in this time
                 if (state.containsAll(service.getInputConceptSet())) {

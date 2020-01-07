@@ -162,4 +162,8 @@ public class Individual implements Comparable<Individual> {
     public String toStatesStr() {
         return states.toString();
     }
+
+    public double[] getQoSValues() {
+        return qos.getData();
+    }
 }

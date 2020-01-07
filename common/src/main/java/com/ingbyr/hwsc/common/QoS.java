@@ -40,12 +40,15 @@ public class Qos implements NumpyDataFormat {
 
     public static int[] TYPES;
 
+    public static String TYPES_STRING;
+
     public static String[] NAMES;
 
     static {
         String qosTypes = System.getenv("HWSC_QOS_TYPES");
         try {
             TYPES = Arrays.stream(qosTypes.split(" ")).mapToInt(Integer::valueOf).sorted().toArray();
+            TYPES_STRING = qosTypes.replaceAll(" ", "");
         } catch (Exception e) {
             TYPES = new int[RAW_TYPES.length];
             System.arraycopy(RAW_TYPES, 0, TYPES, 0, RAW_TYPES.length);
@@ -91,13 +94,13 @@ public class Qos implements NumpyDataFormat {
     @Override
     public String toString() {
         StringBuilder qStr = new StringBuilder();
-        qStr.append("QoS(");
+        qStr.append('[');
         for (double v : data) {
             qStr.append(String.format(PRECISION, v));
             qStr.append(',');
         }
         qStr.deleteCharAt(qStr.length() - 1);
-        qStr.append(')');
+        qStr.append(']');
         return qStr.toString();
     }
 
