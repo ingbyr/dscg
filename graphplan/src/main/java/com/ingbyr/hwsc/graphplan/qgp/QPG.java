@@ -34,11 +34,7 @@ public class QPG {
 
         @Override
         public String toString() {
-            return "Label{" +
-                    "a=" + a +
-                    ", l=" + l +
-                    ", c=" + c +
-                    '}';
+            return "{" + a + ", " + l + ", " + c + "}";
         }
     }
 
@@ -55,10 +51,7 @@ public class QPG {
 
         @Override
         public String toString() {
-            return "LabeledConcept{" +
-                    "concept=" + concept +
-                    ", labels=" + labels +
-                    '}';
+            return "Concept: " + concept + ", Labels: " + labels;
         }
     }
 
@@ -67,40 +60,111 @@ public class QPG {
 
         Set<LabeledConcept> labeledConcepts = new HashSet<>();
 
-        Set<Concept> concepts = new HashSet<>();
+        Map<Concept, LabeledConcept> cache = new HashMap<>();
 
         void addConcept(LabeledConcept labeledConcept) {
             labeledConcepts.add(labeledConcept);
-            concepts.add(labeledConcept.concept);
+            cache.put(labeledConcept.concept, labeledConcept);
         }
 
         void setLabeledConcepts(Set<LabeledConcept> labeledConcepts) {
             this.labeledConcepts = labeledConcepts;
-            this.concepts = labeledConcepts.stream().map(LabeledConcept::getConcept).collect(Collectors.toSet());
+            for (LabeledConcept labeledConcept : labeledConcepts) {
+                cache.put(labeledConcept.concept, labeledConcept);
+            }
+        }
+
+        public boolean containsAll(Set<Concept> inputConceptSet) {
+            return cache.keySet().containsAll(inputConceptSet);
         }
 
         @Override
         public String toString() {
-            return "PLevel{" +
-                    "labeledConcepts=" + labeledConcepts +
-                    ", concepts=" + concepts +
-                    '}';
+            return "PLevel{" + labeledConcepts + '}';
         }
+    }
+
+    @AllArgsConstructor
+    private static class PLPG {
+        List<PLevel> pList;
+        List<Set<Service>> aList;
+        int level;
     }
 
     /**
      * Main
      */
     public void qosWSC() {
-        qosGraphPlan();
+        PLPG gh = qosGraphPlan();
+        displayPALevel(gh);
+        graphConversion(gh);
     }
+
+    private void graphConversion(PLPG gh) {
+        int n = gh.pList.size() - 1;
+
+        List<List<Label>> goalLabel = new ArrayList<>(reader.getGoalSet().size());
+
+        PLevel pLevelLast = gh.pList.get(gh.pList.size() - 1);
+        for (Concept goal : reader.getGoalSet()) {
+            goalLabel.add(new ArrayList<>(pLevelLast.cache.get(goal).labels));
+        }
+        for (List<Label> labels : goalLabel) {
+            log.debug("Goal labels: {}", labels);
+        }
+
+        Set<Set<Label>> allComb = combineLabel(goalLabel);
+        for (Set<Label> labels : allComb) {
+            log.debug("Goal Comb: {}", labels);
+        }
+
+        int i = n;
+        while (i == 1) {
+            i--;
+        }
+    }
+
+
+    private Set<Set<Label>> combineLabel(List<List<Label>> labels) {
+        Set<Set<Label>> labelCombinationResult = new LinkedHashSet<>();
+        List<Label> labelCombinationStepResult = new LinkedList<>();
+        combineLabelHelper(labels, 0, labelCombinationResult, labelCombinationStepResult);
+        return labelCombinationResult;
+    }
+
+    private void combineLabelHelper(List<List<Label>> labels,
+                                    int depth,
+                                    Set<Set<Label>> labelCombinationResult,
+                                    List<Label> labelCombinationStepResult) {
+
+        // // FIXME auto stop combine service when size too big
+        // if (services.size() == 0 || serviceCombinationResult.size() > maxPreNodeSize)
+        //     return;
+
+        for (int i = 0; i < labels.get(depth).size(); i++) {
+            Label label = labels.get(depth).get(i);
+            try {
+                labelCombinationStepResult.set(depth, label);
+            } catch (IndexOutOfBoundsException e) {
+                labelCombinationStepResult.add(label);
+            }
+
+            if (depth == labels.size() - 1) {
+                // create new one because that data will be reset in next search
+                labelCombinationResult.add(Sets.newLinkedHashSet(labelCombinationStepResult));
+            } else {
+                combineLabelHelper(labels, depth + 1, labelCombinationResult, labelCombinationStepResult);
+            }
+        }
+    }
+
 
     /**
      * Build PLPG layer by layer
      *
      * @return
      */
-    private void qosGraphPlan() {
+    private PLPG qosGraphPlan() {
         Set<Service> serviceSet = new HashSet<>(reader.getServiceMap().values());
 
         List<PLevel> pList = new ArrayList<>();
@@ -117,15 +181,16 @@ public class QPG {
         aList.add(new HashSet<>());
 
         Set<Concept> sp = new HashSet<>(reader.getInputSet());
-        int i = 1;
+        int level = 1;
+        int reachable = 0;
 
         while (true) {
             // Pre p level
-            PLevel pLevelPre = pList.get(i - 1);
+            PLevel pLevelPre = pList.get(level - 1);
 
             // A_i
             Set<Service> aLevel = serviceSet.stream().filter(
-                    service -> pLevelPre.concepts.containsAll(service.getInputConceptSet())
+                    service -> pLevelPre.containsAll(service.getInputConceptSet())
             ).collect(Collectors.toSet());
             aList.add(aLevel);
 
@@ -149,7 +214,7 @@ public class QPG {
                 Set<Label> ppLabel = new HashSet<>();
                 for (Service a : aLevel) {
                     if (a.getOutputConceptSet().contains(p)) {
-                        ppLabel.add(new Label(a, i, a.getCost()));
+                        ppLabel.add(new Label(a, level, a.getCost()));
                     }
                 }
                 ppLevel.addConcept(new LabeledConcept(p, ppLabel));
@@ -179,16 +244,21 @@ public class QPG {
             pLevel.setLabeledConcepts(lc);
             pList.add(pLevel);
 
-            displayPLevel(pLevelPre, i - 1);
-            displayALevel(aLevel, i);
-            displayPLevel(pLevel, i);
+            // displayPLevel(pLevelPre, i - 1);
+            // displayALevel(aLevel, i);
+            // displayPLevel(pLevel, i);
 
-            if (aLevel.equals(aList.get(i - 1))) {
-                break;
-            } else {
-                i++;
+            // TODO fixed point
+            if (pLevel.containsAll(reader.getGoalSet())) {
+                reachable++;
             }
+            if (aLevel.equals(aList.get(level - 1)) || reachable >= 2)
+                break;
+            else
+                level++;
         }
+
+        return new PLPG(pList, aList, level);
     }
 
     private void displayPLevel(PLevel pLevel, int level) {
@@ -205,9 +275,25 @@ public class QPG {
         System.out.println();
     }
 
+    private void displayPALevel(PLPG gh) {
+        List<PLevel> pList = gh.pList;
+        List<Set<Service>> aList = gh.aList;
+        for (int i = 0; i < pList.size(); i++) {
+            log.debug("");
+            log.debug("============== level {}/{} =============", i, gh.level);
+            log.debug("Services {}: {}", aList.get(i).size(), aList.get(i));
+            log.debug("Labeled concepts: {}", pList.get(i).labeledConcepts.size());
+            for (LabeledConcept p : pList.get(i).labeledConcepts) {
+                log.debug("{}", p);
+            }
+        }
+        log.debug("");
+    }
+
     public static void main(String[] args) {
         DataSetReader reader = new XmlDatasetReader();
         reader.setDataset(Dataset.wsc2020_01);
+        // reader.setDataset(Dataset.wsc2009_01);
         reader.getServiceMap().forEach((s, ser) -> {
             log.debug("service {}, in {}, out {}", s, ser.getInputConceptSet(), ser.getOutputConceptSet());
         });
