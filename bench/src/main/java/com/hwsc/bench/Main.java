@@ -2,7 +2,10 @@ package com.hwsc.bench;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import com.ingbyr.hwsc.common.DataSetReader;
 import com.ingbyr.hwsc.common.Dataset;
+import com.ingbyr.hwsc.common.XmlDatasetReader;
+import com.ingbyr.hwsc.graphplan.qgp.QPG;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
@@ -32,6 +35,8 @@ public class Main {
     }
 
     public void run() {
+        DataSetReader reader = new XmlDatasetReader();
+
         try {
             Dataset dataset = Dataset.valueOf(datasetName);
             switch (type) {
@@ -46,6 +51,11 @@ public class Main {
                     break;
                 case "pf":
                     ParetoFront.find(dataset);
+                    break;
+                case "qpg":
+                    reader.setDataset(dataset);
+                    QPG qpg = new QPG(reader);
+                    qpg.qosWSC();
                     break;
                 default:
                     displayHelpInfo();

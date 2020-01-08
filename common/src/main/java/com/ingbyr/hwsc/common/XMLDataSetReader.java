@@ -27,7 +27,6 @@ public class XmlDatasetReader extends LocalDatasetSetReader {
     private static final String PROVIDED = "provided";
     private static final String WANTED = "wanted";
 
-
     private String TAXONOMY_URL;
     private String SERVICES_URL;
     private String PROBLEM_URL;
@@ -41,11 +40,14 @@ public class XmlDatasetReader extends LocalDatasetSetReader {
 
     @Override
     public void setDataset(Dataset dataset) {
+        log.info("Load dataset {}", dataset);
         super.setDataset(dataset);
         this.TAXONOMY_URL = dataset.getPath() + File.separator + "taxonomy.xml";
         this.SERVICES_URL = dataset.getPath() + File.separator + "services-qos.xml";
         this.PROBLEM_URL = dataset.getPath() + File.separator + "problem.xml";
         process();
+        log.info("Dataset service size {}", serviceMap.size());
+        log.info("Dataset concept size {}", conceptMap.size());
     }
 
     @Override
@@ -126,9 +128,9 @@ public class XmlDatasetReader extends LocalDatasetSetReader {
         for (int type : Qos.TYPES) {
             distanceQos.set(type, maxQos.get(type) - minQos.get(type));
         }
-        log.debug("Min {}", minQos);
-        log.debug("Max {}", maxQos);
-        log.debug("Distance {}", distanceQos);
+        log.trace("Min {}", minQos);
+        log.trace("Max {}", maxQos);
+        log.trace("Distance {}", distanceQos);
 
         // Rescale qos
         for (Map.Entry<String, Service> entry : serviceMap.entrySet()) {
@@ -145,7 +147,7 @@ public class XmlDatasetReader extends LocalDatasetSetReader {
             service.setQos(qos);
 
             // TODO set service cost
-            service.setCost(QosUtils.sumQosToCost(service.getOriginQos()));
+            service.setCost(QosUtils.sumQosToCost(service.getQos()));
             log.trace("{} origin {}", service, service.getOriginQos().getData());
             log.trace("{} rescale {}", service, service.getQos().getData());
         }
