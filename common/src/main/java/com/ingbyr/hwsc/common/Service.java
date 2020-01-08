@@ -3,6 +3,7 @@ package com.ingbyr.hwsc.common;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,4 +47,11 @@ public class Service extends NamedObject {
         this.outputConceptSet.add(concept);
     }
 
+    public static double calcCost(Collection<Service> services) {
+        double cost = 0.0;
+        for (Service service : services) {
+            cost += service.getCost();
+        }
+        return cost;
+    }
 }

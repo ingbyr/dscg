@@ -9,7 +9,7 @@
 <!--    <logger name="com.ingbyr.hwsc.graphplan.qgp.CPG" level="off"/>-->
 <!--    <logger name="com.ingbyr.hwsc.graphplan.qgp.searching.GeneratePlanningGraph" level="off"/>-->
 
-    <root level="info">
+    <root level="debug">
         <appender-ref ref="console"/>
     </root>
 

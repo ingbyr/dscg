@@ -2,6 +2,7 @@ package com.hwsc.bench;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ingbyr.hwsc.common.*;
 import com.ingbyr.hwsc.graphplan.qgp.CPG;
 import com.ingbyr.hwsc.graphplan.qgp.extractors.AllPathsExtractor;
 import com.ingbyr.hwsc.graphplan.qgp.extractors.DijkstraExtractor;
@@ -11,7 +12,6 @@ import com.ingbyr.hwsc.graphplan.qgp.models.DWGEdge;
 import com.ingbyr.hwsc.graphplan.qgp.models.DWGNode;
 import com.ingbyr.hwsc.graphplan.qgp.models.PlanningGraph;
 import com.ingbyr.hwsc.graphplan.qgp.searching.GeneratePlanningGraph;
-import com.ingbyr.hwsc.common.*;
 import com.ingbyr.hwsc.planner.*;
 import com.ingbyr.hwsc.planner.exception.HWSCConfigException;
 import lombok.extern.slf4j.Slf4j;
@@ -80,7 +80,7 @@ public class SearchSpace {
             data.append("\n");
         }
 
-        Path dataFile = WorkDir.getSearchSpaceFile(dataset.name());
+        Path dataFile = WorkDir.getSearchSpaceFile("cpg_" + dataset.name());
         Files.write(dataFile, data.toString().getBytes());
         log.info("[{}] Saved to file {}", dataset, dataFile.getFileName());
 

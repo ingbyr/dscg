@@ -1,9 +1,7 @@
 package com.ingbyr.hwsc.graphplan.qgp;
 
 import com.google.common.collect.Sets;
-import com.ingbyr.hwsc.common.Concept;
-import com.ingbyr.hwsc.common.DataSetReader;
-import com.ingbyr.hwsc.common.Service;
+import com.ingbyr.hwsc.common.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.jgrapht.Graph;
@@ -13,6 +11,8 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 import java.io.Serializable;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 public class QPG {
 
     private static final Service dummyService = new Service("I");
-    private static final Concept dummyConcept = new Concept("#");
 
     @NonNull
     private DataSetReader reader;
@@ -36,9 +35,13 @@ public class QPG {
 
     private LWGNode endNode;
 
+    // private static final double beamPathUtilityWeight = 0.5;
+    // private static final double beamGoalDistanceWeight = 1 - beamPathUtilityWeight;
+
 
     @NoArgsConstructor
     @EqualsAndHashCode
+    @Getter
     private static class Label {
         Concept concept;
 
@@ -118,10 +121,10 @@ public class QPG {
     @ToString
     private static class ALevel {
 
-        Set<Service> services = new HashSet<>();
+        Set<Service> services;
 
         void setServices(Set<Service> services) {
-            this.services.addAll(services);
+            this.services = new HashSet<>(services);
         }
 
         public Object size() {
@@ -180,10 +183,13 @@ public class QPG {
      * Main
      */
     public void qosWSC() {
+        Instant startTime = Instant.now();
         PLPG gh = buildPLPG();
         displayPALevel(gh);
         Graph<LWGNode, LWGEdge> lwg = PLPG2PLG(gh);
         findShortestPath(lwg);
+        Instant endTime = Instant.now();
+        log.info("Runtime {}", Duration.between(startTime, endTime).toMillis() / 1000.0);
     }
 
     private void findShortestPath(Graph<LWGNode, LWGEdge> lwg) {
@@ -193,6 +199,7 @@ public class QPG {
         List<Service> services = bestServices(shortestPath);
         log.info("Best service chain {}", services);
         log.info("Best service cost {}", calcCost(services));
+        log.info("Best service qos {}", QosUtils.mergeQos(services));
     }
 
     private double calcCost(Collection<Service> services) {
@@ -231,7 +238,7 @@ public class QPG {
             log.debug("Goal labels: {}", labels);
         }
 
-        Set<Set<Label>> allComb = combineLabel(goalLabel);
+        Set<Set<Label>> allComb = CombineUtils.combine(goalLabel);
         log.info("Goal nodes size {}", allComb.size());
         for (Set<Label> labels : allComb) {
             log.debug("Goal Comb: {}", labels);
@@ -310,7 +317,6 @@ public class QPG {
             LWGNode preNode = LWGNode.copyOf(node, level - 1);
             plg.addVertex(preNode);
             LWGEdge edge = plg.addEdge(preNode, node);
-            log.debug("add edge");
             edge.services = new HashSet<>();
             plg.setEdgeWeight(edge, 0.0);
 
@@ -328,8 +334,7 @@ public class QPG {
             }
 
 
-            Set<Set<Label>> newNodeLabelSet = combineLabel(newConceptLabels);
-
+            Set<Set<Label>> newNodeLabelSet = CombineUtils.combine(newConceptLabels);
             for (Set<Label> nodeLabels : newNodeLabelSet) {
                 LWGNode preNode = new LWGNode(preNodeConcepts, nodeLabels, level - 1);
                 boolean newNode = plg.addVertex(preNode);
@@ -343,7 +348,6 @@ public class QPG {
 
                 double cost = addServices2Edge(edgeLabels, edge);
                 plg.setEdgeWeight(edge, cost);
-                log.debug("add edge");
 
                 newPreNodes.add(preNode);
             }
@@ -361,39 +365,6 @@ public class QPG {
         return cost;
     }
 
-    private <T> Set<Set<T>> combineLabel(List<List<T>> labels) {
-        Set<Set<T>> labelCombinationResult = new LinkedHashSet<>();
-        List<T> labelCombinationStepResult = new LinkedList<>();
-        combineLabelHelper(labels, 0, labelCombinationResult, labelCombinationStepResult);
-        return labelCombinationResult;
-    }
-
-    private <T> void combineLabelHelper(List<List<T>> labels,
-                                        int depth,
-                                        Set<Set<T>> labelCombinationResult,
-                                        List<T> labelCombinationStepResult) {
-
-        // // FIXME auto stop combine service when size too big
-        // if (services.size() == 0 || serviceCombinationResult.size() > maxPreNodeSize)
-        //     return;
-
-        for (int i = 0; i < labels.get(depth).size(); i++) {
-            T label = labels.get(depth).get(i);
-            try {
-                labelCombinationStepResult.set(depth, label);
-            } catch (IndexOutOfBoundsException e) {
-                labelCombinationStepResult.add(label);
-            }
-
-            if (depth == labels.size() - 1) {
-                // create new one because that data will be reset in next search
-                labelCombinationResult.add(Sets.newLinkedHashSet(labelCombinationStepResult));
-            } else {
-                combineLabelHelper(labels, depth + 1, labelCombinationResult, labelCombinationStepResult);
-            }
-        }
-    }
-
     private PLPG buildPLPG() {
         Set<Service> serviceSet = new HashSet<>(reader.getServiceMap().values());
 
@@ -403,7 +374,6 @@ public class QPG {
         PLevel p0 = new PLevel();
 
         for (Concept inputConcept : reader.getInputSet()) {
-
             Label dummyLabel = new Label(dummyService, 0, 0, inputConcept);
             p0.addLabel(dummyLabel);
         }
@@ -438,6 +408,7 @@ public class QPG {
                     sa.add(service);
                 }
             }
+            aLevel.setServices(sa); // TODO FIXME
 
 
             // SP
@@ -482,12 +453,12 @@ public class QPG {
 
             pLevelPreCopy.addAll(ppLevelCopy);
             pLevelPreCopy.addAll(pppLabels);
-            Set<Label> pLevelLC = new HashSet<>(pLevelPreCopy);
+            Set<Label> pLevelLabels = new HashSet<>(pLevelPreCopy);
             // System.out.println("P: " + pLevelLC);
 
             // P_i
             PLevel pLevel = new PLevel();
-            pLevel.addLabels(pLevelLC);
+            pLevel.addLabels(pLevelLabels);
             pList.add(pLevel);
 
             // displayPLevel(pLevel, level);
@@ -500,7 +471,6 @@ public class QPG {
             else
                 level++;
         }
-
 
         return new PLPG(pList, aList, level);
     }
