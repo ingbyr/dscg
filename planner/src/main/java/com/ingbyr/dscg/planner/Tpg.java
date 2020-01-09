@@ -25,11 +25,9 @@ public class Tpg extends AbstractPlanner {
 
     private static final double goalWeight = 1 - pathUtilityWeight;
 
-    public static int BEAM_WIDTH = 1;
+    public static final int BEAM_WIDTH = 1;
 
     private int level = 0;
-
-    // private Set<Service> serviceSet;
 
     @NoArgsConstructor
     @EqualsAndHashCode
@@ -314,8 +312,7 @@ public class Tpg extends AbstractPlanner {
             if (pLevel.containsAll(goalSet)) {
                 if (reachable >= 2) {
                     break;
-                }
-                else {
+                } else {
                     reachable++;
                     level++;
                 }

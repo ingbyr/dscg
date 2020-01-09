@@ -59,7 +59,7 @@ public class MutationAddConcept implements Mutation {
     }
 
     private boolean addRandomConcepts(State state, int t) {
-        Set<Concept> remainingConcepts = Sets.difference(heuristicInfo.conceptsAtTime.get(t), state.concepts);
+        Set<Concept> remainingConcepts = Sets.difference(heuristicInfo.conceptLevel.get(t), state.concepts);
         if (remainingConcepts.size() == 0) {
             log.debug("Abort to mutation because that all concepts are included");
             return false;

@@ -58,7 +58,7 @@ public final class IndividualGenerator {
     }
 
     private void expandIndividual(Individual individual, int time) {
-        Set<Concept> currentConcepts = h.conceptsAtTime.get(time);
+        Set<Concept> currentConcepts = h.conceptLevel.get(time);
         int selectedConceptSize = UniformUtils.rangeII(1, currentConcepts.size());
         Set<Concept> selectedConcepts = UniformUtils.set(currentConcepts, selectedConceptSize);
         individual.addState(new State(new HashSet<>(selectedConcepts), time));

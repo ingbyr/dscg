@@ -72,15 +72,13 @@ public class DscgAnalyzer {
      * @return The GD of pop
      */
     public Double recordStepInfo(List<Individual> pop) {
-        log.debug("Best {}", pop.get(0).getQos());
-        log.debug("Services {}", pop.get(0).getServices());
         result.qosLog.add(pop.stream().map(Individual::getQoSValues).collect(Collectors.toList()));
         rawQosLog.add(pop.stream().map(Individual::getQos).collect(Collectors.toList()));
 
-//        log.debug("Population :");
-//        for (Individual individual : pop) {
-//            log.debug("{}", individual.toSimpleInfo());
-//        }
+       log.debug("Population :");
+       for (Individual individual : pop) {
+           log.debug("{}", individual.toSimpleInfo());
+       }
 
         memoryLog.add(MemoryUtils.currentUsedMemory());
 

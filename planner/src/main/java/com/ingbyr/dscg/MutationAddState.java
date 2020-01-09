@@ -52,7 +52,7 @@ public class MutationAddState implements Mutation {
 
         Set<Concept> neighbourhoodConcepts = new HashSet<>();
         for (int i = l; i < r; i++) {
-            neighbourhoodConcepts.addAll(heuristicInfo.conceptsAtTime.get(i));
+            neighbourhoodConcepts.addAll(heuristicInfo.conceptLevel.get(i));
         }
 
         int stateSize = UniformUtils.rangeIE(1, neighbourhoodConcepts.size());

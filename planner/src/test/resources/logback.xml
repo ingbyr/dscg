@@ -8,7 +8,7 @@
 
     <logger name="com.ingbyr.hwsc.reader.XMLDataSetReader" level="off"/>
     <logger name="com.ingbyr.dscg.planner.Yashp2" level="off"/>
-    <logger name="com.ingbyr.dscg.planner.Tpg" level="info"/>
+    <logger name="com.ingbyr.dscg.planner.Tpg" level="off"/>
     <logger name="com.ingbyr.dscg.MutationAddState" level="off"/>
     <logger name="com.ingbyr.dscg.MutationDelState" level="off"/>
     <logger name="com.ingbyr.dscg.MutationAddConcept" level="off"/>
@@ -22,7 +22,7 @@
     <logger name="com.ingbyr.dscg.FitnessBinaryIndicator" level="off"/>
     <logger name="com.ingbyr.dscg.FitnessParetoFront" level="off"/>
     <logger name="com.ingbyr.dscg.DscgAnalyzer" level="on"/>
-    <logger name="com.ingbyr.dscg.HeuristicInfo" level="off"/>
+    <logger name="com.ingbyr.dscg.HeuristicInfo" level="on"/>
 
     <root level="debug">
         <appender-ref ref="console"/>

@@ -1,7 +1,7 @@
 package com.ingbyr.dscg;
 
-import com.ingbyr.hwsc.common.Dataset;
 import com.ingbyr.hwsc.common.DataSetReader;
+import com.ingbyr.hwsc.common.Dataset;
 import com.ingbyr.hwsc.common.XmlDatasetReader;
 import org.junit.jupiter.api.Test;
 
@@ -11,17 +11,13 @@ import org.junit.jupiter.api.Test;
 class HeuristicInfoTest {
 
     @Test
-    void build() {
-        DataSetReader dataSetReader = new XmlDatasetReader(Dataset.wsc2009_01);
-        HeuristicInfo heuristicInfo = new HeuristicInfo();
-        heuristicInfo.setup(dataSetReader);
-    }
-
-    @Test
     void setup() {
-    }
+        DataSetReader dataSetReader = new XmlDatasetReader(Dataset.wsc2020_01);
+        HeuristicInfo h = new HeuristicInfo();
+        h.setup(dataSetReader);
 
-    @Test
-    void update() {
+        for (int i = 0; i < h.conceptLevel.size(); i++) {
+            System.out.println("Time " + i + " concepts " + h.conceptLevel.get(i));
+        }
     }
 }
