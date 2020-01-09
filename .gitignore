@@ -6,5 +6,5 @@ build/
 gradle/
 gradlew
 gradlew.bat
-planner.properties
+DSCG.properties
 result/

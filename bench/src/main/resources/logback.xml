@@ -9,20 +9,20 @@
     <logger name="com.ingbyr.hwsc.graphplan.qgp.CPG" level="off"/>
     <logger name="com.ingbyr.hwsc.graphplan.qgp.searching.GeneratePlanningGraph" level="off"/>
     <logger name="com.ingbyr.hwsc.reader.XMLDataSetReader" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.innerplanner.yashp2" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.MutationAddState" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.MutationDelState" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.MutationAddConcept" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.MutationDelConcept" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.CrossoverSwapState" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.Evaluator" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.EvaluatorConcurrent" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.IndividualGenerator" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.SurvivalSelector" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.FitnessLinearAggregation" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.FitnessBinaryIndicator" level="off"/>
-<!--    <logger name="com.ingbyr.hwsc.planner.FitnessParetoFront" level="off"/>-->
-<!--    <logger name="com.ingbyr.hwsc.planner.PlannerAnalyzer" level="off"/>-->
+    <logger name="com.ingbyr.hwsc.DSCG.innerplanner.yashp2" level="off"/>
+    <logger name="com.ingbyr.hwsc.DSCG.MutationAddState" level="off"/>
+    <logger name="com.ingbyr.hwsc.DSCG.MutationDelState" level="off"/>
+    <logger name="com.ingbyr.hwsc.DSCG.MutationAddConcept" level="off"/>
+    <logger name="com.ingbyr.hwsc.DSCG.MutationDelConcept" level="off"/>
+    <logger name="com.ingbyr.hwsc.DSCG.CrossoverSwapState" level="off"/>
+    <logger name="com.ingbyr.hwsc.DSCG.Evaluator" level="off"/>
+    <logger name="com.ingbyr.hwsc.DSCG.EvaluatorConcurrent" level="off"/>
+    <logger name="com.ingbyr.hwsc.DSCG.IndividualGenerator" level="off"/>
+    <logger name="com.ingbyr.hwsc.DSCG.SurvivalSelector" level="off"/>
+    <logger name="com.ingbyr.hwsc.DSCG.FitnessLinearAggregation" level="off"/>
+    <logger name="com.ingbyr.hwsc.DSCG.FitnessBinaryIndicator" level="off"/>
+<!--    <logger name="com.ingbyr.hwsc.DSCG.FitnessParetoFront" level="off"/>-->
+<!--    <logger name="com.ingbyr.hwsc.DSCG.PlannerAnalyzer" level="off"/>-->
 
     <root level="info">
         <appender-ref ref="console"/>

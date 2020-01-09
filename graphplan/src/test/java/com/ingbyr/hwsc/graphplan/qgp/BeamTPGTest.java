@@ -5,8 +5,6 @@ import com.ingbyr.hwsc.common.Dataset;
 import com.ingbyr.hwsc.common.XmlDatasetReader;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class BeamTPGTest {
 
     @Test
@@ -16,6 +14,8 @@ class BeamTPGTest {
         // reader.setDataset(Dataset.wsc2008_01);
         reader.setDataset(Dataset.wsc2009_05);
         BeamTPG beamTPG = new BeamTPG(reader);
-        beamTPG.beamSearch();
+        BeamTPG.CombService combService = beamTPG.beamSearch();
+        BeamTPG.BEAM_WIDTH = 1;
+        System.out.println("Result " + combService);
     }
 }

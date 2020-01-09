@@ -7,21 +7,22 @@
     </appender>
 
     <logger name="com.ingbyr.hwsc.reader.XMLDataSetReader" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.innerplanner.yashp2" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.MutationAddState" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.MutationDelState" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.MutationAddConcept" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.MutationDelConcept" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.CrossoverSwapState" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.Evaluator" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.EvaluatorConcurrent" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.IndividualGenerator" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.SurvivalSelector" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.FitnessLinearAggregation" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.FitnessBinaryIndicator" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.FitnessParetoFront" level="off"/>
-    <logger name="com.ingbyr.hwsc.planner.PlannerAnalyzer" level="on"/>
-    <logger name="com.ingbyr.hwsc.planner.HeuristicInfo" level="off"/>
+    <logger name="com.ingbyr.dscg.planner.Yashp2" level="off"/>
+    <logger name="com.ingbyr.dscg.planner.Tpg" level="info"/>
+    <logger name="com.ingbyr.dscg.MutationAddState" level="off"/>
+    <logger name="com.ingbyr.dscg.MutationDelState" level="off"/>
+    <logger name="com.ingbyr.dscg.MutationAddConcept" level="off"/>
+    <logger name="com.ingbyr.dscg.MutationDelConcept" level="off"/>
+    <logger name="com.ingbyr.dscg.CrossoverSwapState" level="off"/>
+    <logger name="com.ingbyr.dscg.Evaluator" level="off"/>
+    <logger name="com.ingbyr.dscg.EvaluatorConcurrent" level="off"/>
+    <logger name="com.ingbyr.dscg.IndividualGenerator" level="off"/>
+    <logger name="com.ingbyr.dscg.SurvivalSelector" level="off"/>
+    <logger name="com.ingbyr.dscg.FitnessLinearAggregation" level="off"/>
+    <logger name="com.ingbyr.dscg.FitnessBinaryIndicator" level="off"/>
+    <logger name="com.ingbyr.dscg.FitnessParetoFront" level="off"/>
+    <logger name="com.ingbyr.dscg.DscgAnalyzer" level="on"/>
+    <logger name="com.ingbyr.dscg.HeuristicInfo" level="off"/>
 
     <root level="debug">
         <appender-ref ref="console"/>

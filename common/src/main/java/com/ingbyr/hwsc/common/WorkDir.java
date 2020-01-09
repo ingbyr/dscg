@@ -65,4 +65,9 @@ public final class WorkDir {
     public static Path getPlannerBenchFile(String dataset) {
         return BENCH_RESULT_DIR.resolve(dataset + ".json");
     }
+
+    public static Path getBenchFile(String dataset, String dirName) throws IOException {
+        Files.createDirectories(BENCH_RESULT_DIR.resolve(dirName));
+        return BENCH_RESULT_DIR.resolve(dirName).resolve(dataset + ".json");
+    }
 }

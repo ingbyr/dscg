@@ -1,38 +1,35 @@
-package com.ingbyr.hwsc.graphplan.qgp;
+package com.ingbyr.dscg.planner;
 
 import com.google.common.collect.Sets;
-import com.ingbyr.hwsc.common.*;
+import com.ingbyr.hwsc.common.CombineUtils;
+import com.ingbyr.hwsc.common.Concept;
+import com.ingbyr.hwsc.common.Service;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-@RequiredArgsConstructor
-public class BeamTPG {
+public class Tpg extends AbstractPlanner {
 
     private static final Service dummyService = new Service("I");
 
     private static final Set<Service> dummyServiceSet = new HashSet<>();
 
-    private static final double pathUtilityWeight = 0.5;
-
-    private static final double goalWeight = 1 - pathUtilityWeight;
-
-    public static int BEAM_WIDTH = 5;
-
-
     static {
         dummyServiceSet.add(dummyService);
     }
 
-    @NonNull
-    private DataSetReader reader;
+    private static final double pathUtilityWeight = 0.5;
+
+    private static final double goalWeight = 1 - pathUtilityWeight;
+
+    public static int BEAM_WIDTH = 1;
 
     private int level = 0;
+
+    // private Set<Service> serviceSet;
 
     @NoArgsConstructor
     @EqualsAndHashCode
@@ -107,7 +104,7 @@ public class BeamTPG {
                 labelSize++;
 
                 // Beam top k
-                if (labelSet.size() > BeamTPG.BEAM_WIDTH) {
+                if (labelSet.size() > Tpg.BEAM_WIDTH) {
                     Label rmLabel = label;
                     for (Label labelInSet : labelSet) {
                         if (labelInSet.h > rmLabel.h) {
@@ -176,38 +173,6 @@ public class BeamTPG {
         }
     }
 
-    @ToString
-    public static class CombService implements Comparable<CombService> {
-
-        Set<Service> services = new HashSet<>();
-
-        @Getter
-        Qos qos;
-
-        double cost = -1;
-
-        @Getter
-        double runtime;
-
-        @Override
-        public int compareTo(CombService o) {
-            return Double.compare(this.getCost(), o.getCost());
-        }
-
-        public void addServices(Set<Service> services) {
-            for (Service service : services) {
-                if (service != dummyService)
-                    this.services.add(service);
-            }
-        }
-
-        public double getCost() {
-            if (cost < 0)
-                cost = Service.calcCost(services);
-            return cost;
-        }
-    }
-
     @AllArgsConstructor
     private static class TPG {
         List<PLevel> pList;
@@ -215,27 +180,33 @@ public class BeamTPG {
         int level;
     }
 
-    /**
-     * Main
-     */
-    public CombService beamSearch() {
-        log.info("Max beam width {}", BEAM_WIDTH);
-        Instant startTime = Instant.now();
-
-        TPG gh = buildTPG();
-        displayPALevel(gh);
-        CombService combService = resultServicesList(gh);
-        Instant endTime = Instant.now();
-        combService.runtime = Duration.between(startTime, endTime).toMillis() / 1000.0;
-        combService.qos = QosUtils.mergeQos(combService.services);
-        return combService;
+    @Override
+    public Solution solve(Set<Concept> inputSet, Set<Concept> goalSet, int boundary) {
+        this.inputSet = inputSet;
+        this.goalSet = goalSet;
+        TPG gh = buildTPG(boundary);
+        // displayPALevel(gh);
+        return findSolution(gh);
     }
 
-    private CombService resultServicesList(TPG gh) {
+    @Override
+    public Planner copy() {
+        Planner tpg = new Tpg();
+        tpg.setServiceMap(this.serviceMap);
+        tpg.setConceptMap(this.conceptMap);
+        return tpg;
+    }
+
+    private Solution findSolution(TPG gh) {
+
+        if (gh == null) {
+            return null;
+        }
+
         PLevel lastPLevel = gh.pList.get(gh.level);
 
         List<List<Label>> goalLabels = new ArrayList<>();
-        for (Concept concept : reader.getGoalSet()) {
+        for (Concept concept : goalSet) {
             List<Label> labels = new ArrayList<>(lastPLevel.map.get(concept));
             goalLabels.add(labels);
         }
@@ -243,32 +214,32 @@ public class BeamTPG {
         log.debug("Combine result: ");
 
         Set<Set<Label>> resultLabels = CombineUtils.combine(goalLabels);
-        Queue<CombService> combServiceList = new PriorityQueue<>();
+        Queue<Solution> solutionPriorityQueue = new PriorityQueue<>();
         for (Set<Label> resultLabel : resultLabels) {
-            CombService combService = new CombService();
+            Set<Service> services = new HashSet<>();
             for (Label label : resultLabel) {
-                combService.addServices(label.services);
+                services.addAll(label.services);
             }
-            combServiceList.add(combService);
+            services.remove(dummyService);
+            Solution combService = new Solution(new ArrayList<>(services), Service.calcCost(services));
+            solutionPriorityQueue.add(combService);
         }
 
-        for (CombService combService : combServiceList) {
-            log.info("Combination service: {}", combService);
-            log.info("Qos {}", QosUtils.mergeQos(combService.services));
-        }
+        // for (Solution combService : solutionPriorityQueue) {
+        //     log.info("Combination service: {}", combService);
+        //     log.info("Qos {}", QosUtils.mergeQos(combService.services));
+        // }
 
-        return combServiceList.peek();
+        return solutionPriorityQueue.peek();
     }
 
-    private TPG buildTPG() {
-
-        Set<Service> serviceSet = new HashSet<>(reader.getServiceMap().values());
+    private TPG buildTPG(int maxLevel) {
 
         List<PLevel> pList = new ArrayList<>();
         List<ALevel> aList = new ArrayList<>();
 
         PLevel p0 = new PLevel();
-        for (Concept inputConcept : reader.getInputSet()) {
+        for (Concept inputConcept : inputSet) {
             Label dummyLabel = new Label(dummyServiceSet, 0.0, inputConcept);
             dummyLabel.h = 0;
             p0.addLabel(dummyLabel);
@@ -279,18 +250,18 @@ public class BeamTPG {
         a0.setServices(new HashSet<>());
         aList.add(a0);
 
-        Set<Concept> sp = new HashSet<>(reader.getInputSet());
+        Set<Concept> sp = new HashSet<>(inputSet);
         level = 1;
         int reachable = 0;
 
 
         while (true) {
-            log.info("Processing level {}", level);
+            log.debug("Processing level {}", level);
             // Pre p level
             PLevel pLevel = PLevel.of(pList.get(level - 1));
 
             // A_i
-            Set<Service> aLevelServices = serviceSet.stream()
+            Set<Service> aLevelServices = serviceMap.values().stream()
                     .filter(service -> pList.get(level - 1).containsAll(service.getInputConceptSet()))
                     .collect(Collectors.toSet());
 
@@ -340,13 +311,24 @@ public class BeamTPG {
             pList.add(pLevel);
 
             // Fixed point
-            if (pLevel.containsAll(reader.getGoalSet())) {
-                reachable++;
-            }
-            if (aList.get(level).equals(aList.get(level - 1)) || reachable >= 2)
-                break;
-            else
+            if (pLevel.containsAll(goalSet)) {
+                if (reachable >= 2) {
+                    break;
+                }
+                else {
+                    reachable++;
+                    level++;
+                }
+            } else if (aList.get(level).equals(aList.get(level - 1))) {
+                return null;
+            } else {
                 level++;
+            }
+
+            if (level > maxLevel) {
+                log.info("Over max level {} return null", maxLevel);
+                return null;
+            }
         }
 
         return new TPG(pList, aList, level);
@@ -363,23 +345,9 @@ public class BeamTPG {
     }
 
     private double percentageOfUnsatisfiedGoals(Label label) {
-        double goalSize = reader.getGoalSet().size();
-        Set<Concept> partGoalSet = new HashSet<>(Sets.intersection(label.getOutputConceptSet(), reader.getGoalSet()));
+        double goalSize = goalSet.size();
+        Set<Concept> partGoalSet = new HashSet<>(Sets.intersection(label.getOutputConceptSet(), goalSet));
         return goalWeight * (goalSize - partGoalSet.size()) / goalSize;
-    }
-
-    private void displayPLevel(PLevel pLevel, int level) {
-        pLevel.map.forEach(((concept, labels) -> {
-            log.debug("[P{}] {}:{}", level, concept, labels);
-        }));
-        log.debug("");
-    }
-
-    private void displayALevel(ALevel aLevel, int level) {
-        for (Service service : aLevel.services) {
-            System.out.println("[A" + level + "] " + service);
-        }
-        System.out.println();
     }
 
     private void displayPALevel(TPG gh) {
@@ -400,4 +368,3 @@ public class BeamTPG {
         }
     }
 }
-

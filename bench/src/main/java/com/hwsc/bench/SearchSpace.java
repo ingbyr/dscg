@@ -2,26 +2,16 @@ package com.hwsc.bench;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ingbyr.dscg.*;
 import com.ingbyr.hwsc.common.*;
-import com.ingbyr.hwsc.graphplan.qgp.CPG;
-import com.ingbyr.hwsc.graphplan.qgp.extractors.AllPathsExtractor;
-import com.ingbyr.hwsc.graphplan.qgp.extractors.DijkstraExtractor;
-import com.ingbyr.hwsc.graphplan.qgp.extractors.PlanExtractor;
-import com.ingbyr.hwsc.graphplan.qgp.extractors.PlanExtractors;
-import com.ingbyr.hwsc.graphplan.qgp.models.DWGEdge;
-import com.ingbyr.hwsc.graphplan.qgp.models.DWGNode;
-import com.ingbyr.hwsc.graphplan.qgp.models.PlanningGraph;
-import com.ingbyr.hwsc.graphplan.qgp.searching.GeneratePlanningGraph;
 import com.ingbyr.hwsc.planner.*;
-import com.ingbyr.hwsc.planner.exception.HWSCConfigException;
+import com.ingbyr.dscg.exception.HWSCConfigException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration2.ex.ConfigurationException;
-import org.jgrapht.GraphPath;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,72 +21,72 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SearchSpace {
 
-    public static void findBestQoS(Dataset dataset, int maxPreNodeSize) {
-        DataSetReader reader = new XmlDatasetReader();
-        reader.setDataset(dataset);
-
-        PlanningGraph pg = GeneratePlanningGraph.generatePlanningGraph(reader);
-
-        CPG planner = new CPG(pg);
-        planner.setMaxPreNodeSize(maxPreNodeSize);
-        planner.build();
-
-        log.info("Try to find best from {} by dijkstra", dataset);
-        PlanExtractor extractor = new DijkstraExtractor(planner);
-        extractor.find();
-        for (GraphPath<DWGNode, DWGEdge> path : extractor.getPaths()) {
-            double cost = PlanExtractors.calcCost(path);
-            log.info("Cost: {}", cost);
-            List<Service> services = PlanExtractors.getServices(path);
-            log.info("Services: {}", services);
-            Qos scaledQos = QosUtils.mergeQos(services);
-            log.info("Scaled qos: {}", scaledQos);
-            Qos originQos = QosUtils.mergeRawQos(services);
-            log.info("Origin qos: {}", originQos);
-        }
-    }
-
-    public static void findByCPG(Dataset dataset, int maxPreNodeSize) throws IOException {
-        log.info("Finding search space");
-        log.info("Max new pre node size {}", maxPreNodeSize);
-        DataSetReader reader = new XmlDatasetReader();
-        reader.setDataset(dataset);
-        PlanningGraph pg = GeneratePlanningGraph.generatePlanningGraph(reader);
-        CPG cpg = new CPG(pg);
-        cpg.setMaxPreNodeSize(maxPreNodeSize);
-        cpg.build();
-
-        log.info("Generating all path");
-        PlanExtractor extractor = new AllPathsExtractor(cpg);
-        extractor.find();
-
-        StringBuilder data = new StringBuilder();
-        for (GraphPath<DWGNode, DWGEdge> path : extractor.getPaths()) {
-            List<Service> services = PlanExtractors.getServices(path);
-            log.trace("Service {}", services);
-            Qos qos = QosUtils.mergeQos(services);
-            log.trace("Qos {}", qos);
-            data.append(qos.toNumpy());
-            data.append("\n");
-        }
-
-        Path dataFile = WorkDir.getSearchSpaceFile("cpg_" + dataset.name());
-        Files.write(dataFile, data.toString().getBytes());
-        log.info("[{}] Saved to file {}", dataset, dataFile.getFileName());
-
-    }
+    // public static void findBestQoS(Dataset dataset, int maxPreNodeSize) {
+    //     DataSetReader reader = new XmlDatasetReader();
+    //     reader.setDataset(dataset);
+    //
+    //     PlanningGraph pg = GeneratePlanningGraph.generatePlanningGraph(reader);
+    //
+    //     CPG planner = new CPG(pg);
+    //     planner.setMaxPreNodeSize(maxPreNodeSize);
+    //     planner.build();
+    //
+    //     log.info("Try to find best from {} by dijkstra", dataset);
+    //     PlanExtractor extractor = new DijkstraExtractor(planner);
+    //     extractor.find();
+    //     for (GraphPath<DWGNode, DWGEdge> path : extractor.getPaths()) {
+    //         double cost = PlanExtractors.calcCost(path);
+    //         log.info("Cost: {}", cost);
+    //         List<Service> services = PlanExtractors.getServices(path);
+    //         log.info("Services: {}", services);
+    //         Qos scaledQos = QosUtils.mergeQos(services);
+    //         log.info("Scaled qos: {}", scaledQos);
+    //         Qos originQos = QosUtils.mergeRawQos(services);
+    //         log.info("Origin qos: {}", originQos);
+    //     }
+    // }
+    //
+    // public static void findByCPG(Dataset dataset, int maxPreNodeSize) throws IOException {
+    //     log.info("Finding search space");
+    //     log.info("Max new pre node size {}", maxPreNodeSize);
+    //     DataSetReader reader = new XmlDatasetReader();
+    //     reader.setDataset(dataset);
+    //     PlanningGraph pg = GeneratePlanningGraph.generatePlanningGraph(reader);
+    //     CPG cpg = new CPG(pg);
+    //     cpg.setMaxPreNodeSize(maxPreNodeSize);
+    //     cpg.build();
+    //
+    //     log.info("Generating all path");
+    //     PlanExtractor extractor = new AllPathsExtractor(cpg);
+    //     extractor.find();
+    //
+    //     StringBuilder data = new StringBuilder();
+    //     for (GraphPath<DWGNode, DWGEdge> path : extractor.getPaths()) {
+    //         List<Service> services = PlanExtractors.getServices(path);
+    //         log.trace("Service {}", services);
+    //         Qos qos = QosUtils.mergeQos(services);
+    //         log.trace("Qos {}", qos);
+    //         data.append(qos.toNumpy());
+    //         data.append("\n");
+    //     }
+    //
+    //     Path dataFile = WorkDir.getSearchSpaceFile("cpg_" + dataset.name());
+    //     Files.write(dataFile, data.toString().getBytes());
+    //     log.info("[{}] Saved to file {}", dataset, dataFile.getFileName());
+    //
+    // }
 
     public static void findByHWSC(Dataset dataset, int bench) throws IOException, ConfigurationException, NoSuchMethodException, IllegalAccessException, HWSCConfigException, InstantiationException, InvocationTargetException, ClassNotFoundException {
 
-        PlannerConfig config = new PlannerConfigFile();
+        DscgConfig config = new DscgConfigFile();
         config.setDataset(dataset);
         log.debug("{}", config);
-        Planner planner = new Planner();
-        planner.setup(config, new XmlDatasetReader());
+        Dscg DSCG = new Dscg();
+        DSCG.setup(config, new XmlDatasetReader());
 
         log.info("Warm up search");
         for (int i = 0; i < 3; i++) {
-            planner.exec();
+            DSCG.exec();
         }
 
         // Start bench test
@@ -107,9 +97,9 @@ public class SearchSpace {
              FileOutputStream rfos = new FileOutputStream(rawSearchSpaceFile.toFile(), true)) {
             for (int b = 0; b < bench; b++) {
                 log.info("Bench {}/{}", b + 1, bench);
-                planner.exec();
+                DSCG.exec();
 
-                PlannerAnalyzer analyzer = planner.getAnalyzer();
+                DscgAnalyzer analyzer = DSCG.getAnalyzer();
 
                 Set<String> qos = analyzer.getLastPop().stream().map(ind -> ind.getQos().toNumpy()).collect(Collectors.toSet());
                 for (String q : qos) {
