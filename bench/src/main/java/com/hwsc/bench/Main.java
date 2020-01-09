@@ -5,6 +5,7 @@ import com.beust.jcommander.Parameter;
 import com.ingbyr.hwsc.common.DataSetReader;
 import com.ingbyr.hwsc.common.Dataset;
 import com.ingbyr.hwsc.common.XmlDatasetReader;
+import com.ingbyr.hwsc.graphplan.qgp.BeamTPG;
 import com.ingbyr.hwsc.graphplan.qgp.QPG;
 import lombok.extern.slf4j.Slf4j;
 
@@ -52,10 +53,11 @@ public class Main {
                 case "pf":
                     ParetoFront.find(dataset);
                     break;
-                case "qpg":
+                case "tpg":
                     reader.setDataset(dataset);
-                    QPG qpg = new QPG(reader);
-                    qpg.qosWSC();
+                    BeamTPG tpg = new BeamTPG(reader);
+                    BeamTPG.BEAM_WIDTH = maxPreNode;
+                    tpg.beamSearch();
                     break;
                 default:
                     displayHelpInfo();

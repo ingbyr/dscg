@@ -1,10 +1,10 @@
 package com.ingbyr.hwsc.graphplan.qgp;
 
+import com.google.common.collect.Sets;
 import com.ingbyr.hwsc.common.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
@@ -15,7 +15,14 @@ import java.util.stream.Collectors;
 public class BeamTPG {
 
     private static final Service dummyService = new Service("I");
+
     private static final Set<Service> dummyServiceSet = new HashSet<>();
+
+    private static final double pathUtilityWeight = 0.5;
+
+    private static final double goalWeight = 1 - pathUtilityWeight;
+
+    public static int BEAM_WIDTH = 5;
 
     static {
         dummyServiceSet.add(dummyService);
@@ -26,18 +33,14 @@ public class BeamTPG {
 
     private int level = 0;
 
-    private static final double pathUtilityWeight = 0.5;
-
-    private static final double goalWeight = 1 - pathUtilityWeight;
-
-
     @NoArgsConstructor
     @EqualsAndHashCode
     @Getter
-    private static class Label {
+    private static class Label implements Comparable<Label> {
+        @Setter
         Concept concept;
 
-        Set<Service> services;
+        Set<Service> services = new HashSet<>();
 
         double cost;
 
@@ -49,22 +52,35 @@ public class BeamTPG {
             this.concept = concept;
         }
 
-        public Label(Label label, Concept concept) {
-            this.services = new HashSet<>(label.services);
-            this.cost = label.cost;
-            this.concept = concept;
+        Set<Concept> getOutputConceptSet() {
+            Set<Concept> out = new HashSet<>();
+            for (Service service : services) {
+                out.addAll(service.getOutputConceptSet());
+            }
+            return out;
+        }
+
+        void addService(Service service) {
+            boolean newService = this.services.add(service);
+            if (newService) {
+                this.cost += service.getCost();
+            }
         }
 
         @Override
         public String toString() {
-            return "{" + concept + ", " + services + ", " + cost + "}";
+            return "{" + concept + ", " + services + ", " + cost + ", " + h + "}";
         }
 
+        @Override
+        public int compareTo(Label o) {
+            return Double.compare(this.h, o.h);
+        }
 
-        public static Label copyOf(Label label) {
+        public static Label of(Label label) {
             Label newLabel = new Label();
             newLabel.concept = label.concept;
-            newLabel.services = new HashSet<>(label.services);
+            newLabel.services.addAll(label.services);
             newLabel.cost = label.cost;
             newLabel.h = label.h;
             return newLabel;
@@ -72,41 +88,73 @@ public class BeamTPG {
     }
 
     @EqualsAndHashCode
-    private static class PLevel implements Serializable {
+    private static class PLevel {
 
-        Set<Label> labels = new HashSet<>();
+        int labelSize = 0;
 
         @EqualsAndHashCode.Exclude
-        Map<Concept, Set<Label>> conceptLabelsMap = new HashMap<>();
+        Map<Concept, Set<Label>> map = new HashMap<>();
 
         void addLabel(Label label) {
-            labels.add(label);
+            Set<Label> labelSet = map.get(label.concept);
+            if (labelSet == null) {
+                labelSet = new HashSet<>();
+                labelSet.add(label);
+                map.put(label.concept, labelSet);
+                labelSize++;
+            } else if (labelSet.add(label)) {
+                labelSize++;
 
-            // Update concept labels map
-            if (conceptLabelsMap.containsKey(label.concept)) {
-                conceptLabelsMap.get(label.concept).add(label);
-            } else {
-                Set<Label> labels = new HashSet<>();
-                labels.add(label);
-                conceptLabelsMap.put(label.concept, labels);
+                // Beam top k
+                if (labelSet.size() > BeamTPG.BEAM_WIDTH) {
+                    Label rmLabel = label;
+                    for (Label labelInSet : labelSet) {
+                        if (labelInSet.h > rmLabel.h) {
+                            rmLabel = labelInSet;
+                        }
+                    }
+                    labelSet.remove(rmLabel);
+                    log.trace("[Beam] Remove {}", rmLabel);
+                }
             }
         }
 
+        void setLabels(Set<Label> labels) {
+            labelSize = 0;
+            map = new HashMap<>();
+            for (Label label : labels) {
+                addLabel(label);
+            }
+        }
+
+        public boolean contains(Label parentLabel) {
+            for (Map.Entry<Concept, Set<Label>> entry : map.entrySet()) {
+                if (entry.getValue().contains(parentLabel))
+                    return true;
+            }
+            return false;
+        }
+
         public boolean containsAll(Set<Concept> inputConceptSet) {
-            return conceptLabelsMap.keySet().containsAll(inputConceptSet);
+            for (Concept inputConcept : inputConceptSet) {
+                if (!map.containsKey(inputConcept))
+                    return false;
+            }
+            return true;
         }
 
         @Override
         public String toString() {
-            return "PLevel{" + labels + "}";
+            return "PLevel{" + map + "}";
         }
 
-        public static PLevel copyOf(PLevel pLevel) {
+        public static PLevel of(PLevel pLevel) {
             PLevel newPLevel = new PLevel();
-            for (Label label : pLevel.labels) {
-                newPLevel.labels.add(Label.copyOf(label));
+            for (Map.Entry<Concept, Set<Label>> entry : pLevel.map.entrySet()) {
+                for (Label label : entry.getValue()) {
+                    newPLevel.addLabel(Label.of(label));
+                }
             }
-            newPLevel.conceptLabelsMap = new HashMap<>(pLevel.conceptLabelsMap);
             return newPLevel;
         }
     }
@@ -164,15 +212,17 @@ public class BeamTPG {
      * Main
      */
     public void beamSearch() {
+        log.info("Max beam width {}", BEAM_WIDTH);
         Instant startTime = Instant.now();
 
         TPG gh = buildTPG();
-        // displayPALevel(gh);
-
+        displayPALevel(gh);
         CombService combService = resultServicesList(gh);
 
         Instant endTime = Instant.now();
         log.info("Runtime {}", Duration.between(startTime, endTime).toMillis() / 1000.0);
+        log.info("Best comb-service {}", combService);
+        log.info("Best comb-service qos {}", QosUtils.mergeQos(combService.services));
     }
 
     private CombService resultServicesList(TPG gh) {
@@ -180,7 +230,7 @@ public class BeamTPG {
 
         List<List<Label>> goalLabels = new ArrayList<>();
         for (Concept concept : reader.getGoalSet()) {
-            List<Label> labels = new ArrayList<>(lastPLevel.conceptLabelsMap.get(concept));
+            List<Label> labels = new ArrayList<>(lastPLevel.map.get(concept));
             goalLabels.add(labels);
         }
 
@@ -214,6 +264,7 @@ public class BeamTPG {
         PLevel p0 = new PLevel();
         for (Concept inputConcept : reader.getInputSet()) {
             Label dummyLabel = new Label(dummyServiceSet, 0.0, inputConcept);
+            dummyLabel.h = 0;
             p0.addLabel(dummyLabel);
         }
         pList.add(p0);
@@ -226,10 +277,11 @@ public class BeamTPG {
         level = 1;
         int reachable = 0;
 
+
         while (true) {
-            log.debug("Processing level {}", level);
+            log.info("Processing level {}", level);
             // Pre p level
-            PLevel pLevel = PLevel.copyOf(pList.get(level - 1));
+            PLevel pLevel = PLevel.of(pList.get(level - 1));
 
             // A_i
             Set<Service> aLevelServices = serviceSet.stream()
@@ -255,30 +307,65 @@ public class BeamTPG {
 
             // System.out.println("P_i-1 level: " + pList.get(level - 1));
             // System.out.println("A level: " + aLevel);
-            for (Service service : aLevel.services) {
 
+            for (Service service : aLevel.services) {
                 // Parent labels
                 Set<Label> parentLabels = new HashSet<>();
                 for (Concept in : service.getInputConceptSet()) {
-                    parentLabels.addAll(pList.get(level - 1).conceptLabelsMap.get(in));
+                    parentLabels.addAll(pList.get(level - 1).map.get(in));
                 }
-                // System.out.println(service + " parents " + parentLabels);
+                // System.out.println(service + " labels: " + parentLabels);
 
                 for (Concept concept : service.getOutputConceptSet()) {
-
-                    // TODO beam parents
-                    parentLabels = beam(parentLabels);
                     for (Label parentLabel : parentLabels) {
-                        Label outputLabel = Label.copyOf(parentLabel);
-                        outputLabel.concept = concept;
-                        outputLabel.services.add(service);
-                        outputLabel.cost = outputLabel.cost + service.getCost();
+                        // System.out.println(parentLabel);
+                        if (p0.contains(parentLabel) && level != 1)
+                            continue;
+
+                        Label outputLabel = Label.of(parentLabel);
+                        outputLabel.setConcept(concept);
+                        outputLabel.addService(service);
+                        setLabelH(outputLabel);
                         pLevel.addLabel(outputLabel);
                     }
                 }
             }
 
-            // System.out.println("P level: ");
+            // Set<Concept> updateConcepts = new HashSet<>();
+            // for (Service service : sa) {
+            //     updateConcepts.addAll(service.getOutputConceptSet());
+            // }
+            // System.out.println("Service " + sa);
+            // System.out.println("Update concept" + updateConcepts);
+            //
+            // System.out.println("Before update:" + pLevel);
+            // for (Concept updateConcept : updateConcepts) {
+            //     for (Service service : sa) {
+            //         if (service.getOutputConceptSet().contains(updateConcept)) {
+            //             for (Concept serviceIn : service.getInputConceptSet()) {
+            //                 Set<Label> labels = pList.get(level - 1).conceptLabelsMap.get(serviceIn);
+            //                 log.debug("Labels {}", labels);
+            //                 for (Label label : labels) {
+            //                     if (pList.get(0).labels.contains(label) && level != 1)
+            //                         continue;
+            //                     Label newLabel = Label.copyOf(label);
+            //                     newLabel.concept = updateConcept;
+            //                     newLabel.services.add(service);
+            //                     newLabel.cost += service.getCost();
+            //                     log.debug("{}, {} add label {}", service, updateConcept, newLabel);
+            //                     pLevel.addLabel(newLabel);
+            //                 }
+            //             }
+            //         }
+            //     }
+            //
+            //     log.debug("Now concept {} label size {}", updateConcept, pLevel.conceptLabelsMap.get(updateConcept).size());
+            // }
+            // System.out.println("After update:" + pLevel);
+
+
+            // TODO Beam
+            // beamPLevel(pLevel);
             pList.add(pLevel);
 
             // Fixed point
@@ -294,55 +381,55 @@ public class BeamTPG {
         return new TPG(pList, aList, level);
     }
 
-    private Set<Label> beam(Set<Label> parentLabels) {
-        // pLevelLabels = pLevelLabels.stream().limit(5).collect(Collectors.toSet());;
-        // // TODO Top k selection
-        // Map<Concept, Set<Label>> cache = new HashMap<>();
-        //
-        // for (Label pLevelLabel : pLevelLabels) {
-        //     Set<Label> labels = cache.get(pLevelLabel.concept);
-        //     if (labels == null) {
-        //         labels = new HashSet<>();
-        //         labels.add(pLevelLabel);
-        //         cache.put(pLevelLabel.concept, labels);
-        //     } else {
-        //         labels.add(pLevelLabel);
-        //     }
-        // }
-        //
-        // // End of top k selection
-        // cache.forEach((concept, labels) -> {
-        //     log.debug("PLevel {} parents :{}", concept, labels);
-        //     double pu = pathUtility(labels) * beamPathUtilityWeight;
-        //     double pug = percentageOfUnsatisfiedGoals(labels) * beamGoalDistanceWeight;
-        //
-        //     log.debug("Path utility {}", pathUtility);
-        // });
-        // log.debug("");
-        return parentLabels.stream().limit(5).collect(Collectors.toSet());
+    // private void beamPLevel(PLevel pLevel) {
+    //     log.info("Before beam label size {}", pLevel.labelSize);
+    //     Set<Label> pLevelLabels = new HashSet<>();
+    //
+    //     for (Map.Entry<Concept, Set<Label>> entry : pLevel.map.entrySet()) {
+    //         Concept concept = entry.getKey();
+    //         Set<Label> labels = entry.getValue();
+    //         System.out.println(concept + ": " + labels);
+    //
+    //         // Reduce label set size to width
+    //         if (labels.size() > BEAM_WIDTH) {
+    //             for (Label label : labels) {
+    //                 setH(label);
+    //             }
+    //             System.out.println("Beam " + concept + ": " + labels);
+    //             Queue<Label> labelQueue = new PriorityQueue<>(labels);
+    //             Set<Label> beamLabels = new HashSet<>();
+    //             for (int i = 0; i < BEAM_WIDTH; i++) {
+    //                 beamLabels.add(labelQueue.poll());
+    //             }
+    //             entry.setValue(beamLabels);
+    //             pLevelLabels.addAll(beamLabels);
+    //             System.out.println("After beam " + concept + beamLabels);
+    //         } else {
+    //             pLevelLabels.addAll(labels);
+    //         }
+    //     }
+    //     pLevel.setLabels(pLevelLabels);
+    //     log.info("After beam label size {}", pLevel.labelSize);
+    // }
+
+    private void setLabelH(Label label) {
+        double h = pathUtility(label);
+        h += percentageOfUnsatisfiedGoals(label);
+        label.h = h;
     }
 
-    private double pathUtility(Set<Label> labels) {
-        double pathUtility = 0.0;
-        for (Label label : labels) {
-            pathUtility += label.cost;
-        }
-        log.debug("Path utility {}", pathUtility);
-        return pathUtility;
+    private double pathUtility(Label labels) {
+        return labels.cost;
     }
 
-    private double percentageOfUnsatisfiedGoals(Set<Label> labels) {
+    private double percentageOfUnsatisfiedGoals(Label label) {
         double goalSize = reader.getGoalSet().size();
-        Set<Concept> partGoalSet = new HashSet<>();
-        for (Label label : labels) {
-            // partGoalSet.addAll(Sets.intersection(label.service.getOutputConceptSet(), reader.getGoalSet()));
-        }
-        log.debug("Part goal size {}", partGoalSet.size());
-        return (goalSize - partGoalSet.size()) / goalSize;
+        Set<Concept> partGoalSet = new HashSet<>(Sets.intersection(label.getOutputConceptSet(), reader.getGoalSet()));
+        return goalWeight * (goalSize - partGoalSet.size()) / goalSize;
     }
 
     private void displayPLevel(PLevel pLevel, int level) {
-        pLevel.conceptLabelsMap.forEach(((concept, labels) -> {
+        pLevel.map.forEach(((concept, labels) -> {
             log.debug("[P{}] {}:{}", level, concept, labels);
         }));
         log.debug("");
@@ -359,16 +446,16 @@ public class BeamTPG {
         List<PLevel> pList = gh.pList;
         List<ALevel> aList = gh.aList;
         for (int i = 0; i < pList.size(); i++) {
-            log.info("============== level {}/{} =============", i, gh.level);
-            log.info("A level : {}", aList.get(i).size());
+            log.debug("============== level {}/{} =============", i, gh.level);
+            log.debug("A level : {}", aList.get(i).size());
             for (Service service : aList.get(i).services) {
                 log.debug("{}, in {}, out {}", service, service.getInputConceptSet(), service.getOutputConceptSet());
             }
 
             PLevel pLevel = pList.get(i);
-            log.info("P level: {}", pLevel.labels.size());
-            for (Label label : pLevel.labels) {
-                log.debug("{}", label);
+            log.debug("P level: {}", pLevel.labelSize);
+            for (Map.Entry<Concept, Set<Label>> entry : pLevel.map.entrySet()) {
+                log.debug("{}: {}", entry.getKey(), entry.getValue());
             }
         }
     }

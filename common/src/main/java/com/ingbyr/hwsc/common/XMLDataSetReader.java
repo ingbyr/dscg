@@ -147,8 +147,8 @@ public class XmlDatasetReader extends LocalDatasetSetReader {
             service.setQos(qos);
 
             // TODO change service cost here
-            service.setCost(QosUtils.sumQosToCost(service.getOriginQos()));
-            // service.setCost(QosUtils.sumQosToCost(service.getQos()));
+            // service.setCost(QosUtils.sumQosToCost(service.getOriginQos()));
+            service.setCost(QosUtils.sumQosToCost(service.getQos()));
             log.trace("{} origin {}", service, service.getOriginQos().getData());
             log.trace("{} rescale {}", service, service.getQos().getData());
         }

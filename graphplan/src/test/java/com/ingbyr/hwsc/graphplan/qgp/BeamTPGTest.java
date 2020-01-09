@@ -14,7 +14,7 @@ class BeamTPGTest {
         DataSetReader reader = new XmlDatasetReader();
         // reader.setDataset(Dataset.wsc2020_01);
         // reader.setDataset(Dataset.wsc2008_01);
-        reader.setDataset(Dataset.wsc2009_01);
+        reader.setDataset(Dataset.wsc2009_05);
         BeamTPG beamTPG = new BeamTPG(reader);
         beamTPG.beamSearch();
     }
